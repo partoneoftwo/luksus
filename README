@@ -32,7 +32,7 @@
 # dialog
 # shred
 
-# This script will work on linux
+# this script will work on linux
 # but could potentially also work on other LUKS enabled
 # OS'es, like FreeBSD.
 
@@ -54,8 +54,9 @@
 ########################################################
 
 # v0.5 25.04.2012 12:30 on company time
-# + initial published release!
+# + initial public release
 #   live on github here: https://github.com/thomasfrivold/luksus
+#   (yay)
 # + massive cleanup
 # + added a conditional check to verify that user is root
 # + added a conditional check in the middle of the procedure to
