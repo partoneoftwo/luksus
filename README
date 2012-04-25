@@ -36,6 +36,12 @@
 # but could potentially also work on other LUKS enabled
 # OS'es, like FreeBSD.
 
+# Luksus is released under GNU GPLv2 License
+# see URL below
+# http://www.gnu.org/licenses/gpl-2.0.html
+# I would love to hear from you regarding suggestions
+# tips and so on. My email is: thomas .at. aftenstorm.com
+
 ########################################################
 #################### TODO ##############################
 ########################################################
@@ -53,7 +59,7 @@
 #################### CHANGELOG #########################
 ########################################################
 
-# v0.5 25.04.2012 12:30 on company time
+# v0.5 25.04.2012 12:30
 # + initial public release
 #   live on github here: https://github.com/thomasfrivold/luksus
 #   (yay)

@@ -11,7 +11,10 @@
 # 
 # please see README file for complete information
 # regarding LUKSUS
-
+# 
+# LUKSUS is released under GNU GPLv2 License
+# see URL below
+# http://www.gnu.org/licenses/gpl-2.0.html 
 
 programname=LUKSUS
 version=v0.5
