@@ -11,13 +11,16 @@
 # creating LUKSUS.
 #
 # The purpose of this script is to provide an easy eay to encrypt
-# storage media in Linux, such as hardrives, usb sticks, sd cards or external hardrives
+# storage media in Linux, such as hardrives, usb sticks, 
+# sd cards or external hardrives
 # requirements: an empty hardrive or storage media
 # all existing data will be brutally removed beyond reconstruction (forensically)
 
 # then write random data to the drive
 # then create a keyfile
 # then encrypt the drive using the keyfile stored in /keys
+# a LUKS header backup will also be placed in /keys
+# remember to take care of your /keys
 
 # requirements:
 # full attention of the user
@@ -29,7 +32,7 @@
 # dialog
 # shred
 
-# this script will work on linux
+# This script will work on linux
 # but could potentially also work on other LUKS enabled
 # OS'es, like FreeBSD.
 
