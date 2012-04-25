@@ -1,0 +1,86 @@
+########################################################
+#################### LUKSUS ############################
+############EASY DRIVE ENCRYPTION SCRIPT################
+########################################################
+#################GENERAL INFORMATION####################
+########################################################
+
+# This is a wrapper script for cryptsetup, shred and mkfs
+# I like doing it this way instead of using luksformat
+# which I didn't know existed at the time when I began
+# creating LUKSUS.
+#
+# The purpose of this script is to provide an easy eay to encrypt
+# storage media in Linux, such as hardrives, usb sticks, sd cards or external hardrives
+# requirements: an empty hardrive or storage media
+# all existing data will be brutally removed beyond reconstruction (forensically)
+
+# then write random data to the drive
+# then create a keyfile
+# then encrypt the drive using the keyfile stored in /keys
+
+# requirements:
+# full attention of the user
+# an empty hardrive or storage media
+# knowledge about which device the hardrive or storage
+# blkid will provide this
+# media resides on
+# cryptsetup
+# dialog
+# shred
+
+# this script will work on linux
+# but could potentially also work on other LUKS enabled
+# OS'es, like FreeBSD.
+
+########################################################
+#################### TODO ##############################
+########################################################
+
+# + add a nice dialog interface
+# + must be escapable - ie. have a CANCEL button within 
+#   the dialog windows
+# + add a nice ARE YOU SURE sequence
+# + clean up script, make it more modern
+# + rewrite the script using python
+# + include more conditional arguments to make
+#   it more elegant
+
+########################################################
+#################### CHANGELOG #########################
+########################################################
+
+# v0.5 25.04.2012 12:30 on company time
+# + published to github!
+# + massive cleanup
+# + added a conditional check to verify that user is root
+# + added a conditional check in the middle of the procedure to
+#   verify that a LUKS container has been created on the device
+#   good for integrity 
+# + added a routine to hackup the luks header with a conditional
+#   check as suggested by the luks FAQ
+#   here: http://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions#6._Backup_and_Data_Recovery
+# + fixed mounting procedure
+#   changed name of the script from cryptcreate to luksus
+#   the luksus name is more a pun than a functional name
+#   luksus means luxury in Norwegian and coincidentally it includes the main technology
+#   used to encrypt hardrives in Linux since the 2.6 kernels - Linux Unified Key Setup
+#   on a celebratory note, the script can now be considered stable. Even though
+#   it lacks some niceties such as a fully fledged ncurses dialog menu system
+#   which is aimed at version v1.0
+#   - Thomas Frivold 
+
+# v0.4
+# + cleaned up script
+# + added required runtime arguments
+
+# v0.3
+# + added command line input
+
+# v0.2
+# + cosmetic fixes
+# + did some nice thinking about dialog
+
+# v0.1 16.04.2012 GMT+1 1320
+# + initial release
+

@@ -1,0 +1,251 @@
+#!/bin/bash
+# LUKSUS v2.5
+# Easy drive encryption script
+# using LUKS
+# by Thomas Frivold
+#
+# github code repository (project page):
+# https://github.com/thomasfrivold/luksus
+#
+# my private homepage: http://www.aftenstorm.com
+# 
+# please see README file for complete information
+# regarding LUKSUS
+
+
+programname=LUKSUS
+version=v0.5
+date=25.04.2012
+author="Thomas J. Frivold"
+
+
+###############################
+######### VARIABLES ###########
+###############################
+
+# $1 is command line argument 1
+device=$1
+# $2 is command line argument 2
+name=$2
+keydir=/keys
+keyfile=/keys/$name.key
+headerfile=/keys/$name.luks.header
+mountpoint=/mnt/$name
+
+###############################
+###############################
+###############################
+
+# DOING SOME CONDITIONAL CHECKING
+# CHECKING IF RUNTIME ARGUMENTS ARE COOL
+if [ -z "$1" ]
+then
+	clear
+	echo "Welcome to $programname $version ($date)"
+	echo "by $author"
+        echo ""
+	echo "YOU FORGOT TO PROVIDE COMMANDLINE ARGUMENTS"
+	echo "SEE SOLUTION BELOW"
+        echo ""
+	echo "USAGE: "
+	echo "./luksus DEVICENAME NICKNAME-of-luks-container"
+        echo ""
+	echo "EXAMPLE:"
+        echo "./luksus /dev/sdb1 rambo1"
+        echo ""
+exit 1
+fi
+
+if [ -z "$2" ]
+then
+	clear
+	echo "Welcome to $programname $version ($date)"
+	echo "by $author"
+        echo ""
+	echo "YOU FORGOT TO PROVIDE COMMANDLINE ARGUMENTS"
+	echo "SEE SOLUTION BELOW"
+        echo ""
+	echo "USAGE: "
+	echo "./luksus DEVICENAME NICKNAME-of-luks-container"
+        echo ""
+	echo "EXAMPLE:"
+        echo "./luksus /dev/sdb1 rambo1"
+        echo ""
+exit 1
+fi
+
+# CHECKING TO SEE IF THIS SCRIPT IS RUN BY ROOT 
+# (root is required)
+FILE="/tmp/out.$$"
+GREP="/bin/grep"
+#....
+# Make sure only root can run our script
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+echo "Great! We are root"
+echo "Proceeding with LUKSUS"
+
+
+# OUTPUTING SCRIPT VERSION AND DATE
+dialog --title "WELCOME TO $PROGRAMNAME" \
+--msgbox "\n 
+\n
+VERSION: $version\n
+DATE   : $date \n
+ \n
+THIS SCRIPT WILL TOTALLY WIPE OUT THE DRIVE OF YOUR CHOICE \n
+AND CREATE AN ENCRYPTED FILESYSTEM ON THE SELECTED DRIVE
+\n \n
+\n 
+THE KEYFILE FOR THE DRIVE OR STORAGE DEVICE
+WILL BE LOCATED IN $keydir
+PLEASE TAKE CARE OF THE KEY AS IT IS THE ONLY WAY
+TO OPEN THE DRIVE AFTER ENCRYPTION
+UNLESS YOU ADD MORE KEYS OR KEYPHRASES TO THE LUKS CONTAINER
+\n\n
+THE LUKS CONTAINER CONTAINS A HEADER WHICH MUST ALWAYS 
+REMAIN INTACT. TO ENSURE THAT IT STAYS INTACT WE WILL ALSO
+CREATE A BACKUP OF THE HEADER WHICH WILL BE LOCATED AT\n
+$headerfile\n\n\n
+
+usage: \n
+./luksus DEVICENAME nickname \n
+EXAMPLE: ./luksus /dev/sdb1 pictures2tb
+\n
+\n
+If you have not specified these arguments, the script will exit
+" 50 50
+
+# BEGINNING WORK
+echo clearing screen in 1s
+sleep 1s
+clear
+
+
+echo ################################################
+echo DRIVE ENCRYPTION
+echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY NUKE
+echo THE DEVICE YOU HAVE SPECIFIED
+echo ################################################
+
+dialog --title "DRIVE ENCRYPTION SCRIPT" \
+--msgbox "\n DETAILS AS SUBMITTED IN THE VARIABLES
+\n \n \n
+NAME: 	        $name \n
+DRIVE:         $device \n
+MOUNTPOINT:    $mountpoint \n
+KEYFILE:       $keyfile \n
+HEADER BACKUP: $headerfile\n
+
+\n \n
+WHEN YOU PUSH ENTER YOU WILL HAVE 10 SECONDS \n
+TO CANCEL THE SCRIPT USING CTRL+C\n
+" 50 50
+
+
+echo ################################################
+echo DETAILS AS SUBMITTED IN THE VARIABLES
+echo WHICH WILL BE USED FOR THE DRIVE ENCRYPTION
+echo DRIVE: $device
+echo NAME: $name
+echo KEYFILE: $keyfile
+echo MOUNTPOINT: $mountpoint
+echo HEADER BACKUP: $headerfile
+echo ################################################
+clear
+echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
+echo YOU WILL NOW HAVE 10 SECONDS TO PERUSE THE ABOVE DETAILS
+echo HIT CTRL+C NOW IF THE DETAILS ARE NOT CORRECT
+sleep 10s
+
+
+#########################################################
+#########################################################
+#########################################################
+#########################################################
+################ BEGINNING PROGRAM ######################
+#########################################################
+#########################################################
+#########################################################
+#########################################################
+
+# mkdir
+# create mountpoint & keydirectory
+# i should create an if routine here
+# works for now
+mkdir -p $mountpoint
+mkdir -p $keydir
+
+# shred
+# Totally infuse the drive with random data
+# Good for paranoid and security minded people
+# This takes about 5 hours on a 3TB drive
+shred -v -n1 $device
+
+# dd
+# generate a keyfile using completely random data
+# from /dev/urandom
+dd if=/dev/urandom of=$keyfile bs=512 count=256
+
+# cryptsetup
+# format the drive using encryption
+# create an encrypted drive with aes-xts-plain cipher
+# key size 512
+# remember that the key size will increase the safety of the
+# encryption, but the a stronger keyfile with more entropy (randomness)
+# will produce the best security. 
+cryptsetup --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
+
+# cryptsetup isLuks
+# check to see if the device has got a valid LUKS container
+# if it does not, then exit
+#if cryptsetup isLuks /dev/sda1 &> /dev/null  # Suppress output.
+if cryptsetup isLuks $device  # Provides output
+then
+echo "Checking to see if the device contains a LUKS volume"
+echo "The device positively contains a LUKS volume."
+echo "Great!"
+echo "Continuing LUKSUS"
+else echo "The device does not contain a LUKS volume"
+echo "Something went wrong and the LUKS device has not been created"
+echo "Exiting"
+exit 1
+fi
+
+
+# cryptsetup luksOpen
+# mount the encrypted drive using a keyfile
+cryptsetup luksOpen $device $name --key-file=$keyfile
+
+# cryptsetup luksHeaderBackup
+# backup the header of the luks container
+# as strongly recommended by the luks FAQ
+# if it does not, then exit
+echo "Taking a backup of the LUKS container header"
+if cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose
+then
+echo "The LUKS container header has been backed up successfully"
+echo "Great!"
+echo "Continuing LUKSUS"
+else echo "CATASTROPHIC FAILURE: Could not backup LUKS container header"
+echo "Something went wrong and LUKSUS failed to backup the LUKS header"
+echo "Exiting"
+exit 1
+fi
+
+
+
+
+# mkfs.ext4
+# create a filesystem on top of the encrypted drive
+mkfs.ext4 /dev/mapper/$name
+# mount
+# mount the drive
+# mounting using mapper
+mount -t ext4 /dev/mapper/$name $mountpoint >/dev/null 2>&1
+# or alternatively using /dev/device
+mount -t ext4 $device $mountpoint >/dev/null 2>&1
+
+echo "Thanks for using LUKSUS"
