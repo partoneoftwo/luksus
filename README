@@ -26,11 +26,19 @@
 # please
 # remember to take care of your /keys
 
-# if running remotely, via ssh, it makes a lot of sense
+# USAGE:
+# ./luksus DEVICENAME NICKNAME-of-luks-container
+#
+# EXAMPLE:
+# ./luksus /dev/sdb1 rambo1
+#
+# if running remotely, for instance via ssh, it makes a lot of sense
 # to run this in screen, just append screen to the command
-# ie. screen ./luksus /dev/sdc1 rambo
+#
+# EXAMPLE:
+# screen ./luksus /dev/sdb1 rambo
 
-# requirements:
+# REQUIREMENTS:
 # full attention of the user
 # an empty hardrive or storage media
 # knowledge about which device the hardrive or storage
@@ -65,7 +73,11 @@
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
-
+#
+# vCURRENT
+# + improved documentation (README file)
+#
+#
 # v0.5 25.04.2012 12:30
 # + initial public release
 #   live on github here: https://github.com/thomasfrivold/luksus
