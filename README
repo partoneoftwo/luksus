@@ -10,7 +10,25 @@
 # storage media in Linux, such as hardrives, usb sticks, 
 # sd cards or external hardrives.
 # Why? Because doing all these tasks manually is 
-# time consuming and error proned.
+# time consuming, and the procedure is hard to remember.
+
+# DISCLAIMER 
+# (this script might be used in the US, I have 
+# to put this disclaimer here)
+#
+# I, the author, take no responsibility if a black hole appears,
+# and implodes your house, your town and the entire planet earth as an
+# effect of using this script.
+# Understand that the author takes no responsibility, and cannot
+# be held liable if you, the user, use the script to destroy the
+# files/contents of your storage media.
+# As a consequence it is the sole responsibility of the user
+# to use this software correctly. The author cannot be held
+# liable for any damages, as of this disclaimer.
+#
+# On a bright note, I, the author, have never experienced problems
+#with it, the program.
+
 
 # This is a wrapper script for cryptsetup, shred and mkfs
 # I like doing it this way instead of using luksformat
@@ -25,6 +43,8 @@
 # a LUKS header backup will also be placed in /keys
 # please
 # remember to take care of your /keys
+# if you loose your /keys, the keyfile to your encrypted drive, then
+# the data will be impossible to retrieve.
 
 # USAGE:
 # ./luksus DEVICENAME NICKNAME-of-luks-container
