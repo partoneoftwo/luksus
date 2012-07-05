@@ -1,26 +1,34 @@
 ########################################################
 #################### LUKSUS ############################
-############EASY DRIVE ENCRYPTION SCRIPT################
+############ EASY DRIVE ENCRYPTION SCRIPT ##############
 ########################################################
-#################GENERAL INFORMATION####################
+################# GENERAL INFORMATION ##################
 ########################################################
+
+#
+# The purpose of this script is to provide an easy eay to encrypt
+# storage media in Linux, such as hardrives, usb sticks, 
+# sd cards or external hardrives.
+# Why? Because doing all these tasks manually is 
+# time consuming and error proned.
 
 # This is a wrapper script for cryptsetup, shred and mkfs
 # I like doing it this way instead of using luksformat
 # which I didn't know existed at the time when I began
 # creating LUKSUS.
-#
-# The purpose of this script is to provide an easy eay to encrypt
-# storage media in Linux, such as hardrives, usb sticks, 
-# sd cards or external hardrives
-# requirements: an empty hardrive or storage media
-# all existing data will be brutally removed beyond reconstruction (forensically)
 
-# then write random data to the drive
-# then create a keyfile
-# then encrypt the drive using the keyfile stored in /keys
+# The script works like this:
+# all existing data will be brutally removed beyond reconstruction (forensically)
+# then it writes random data to the drive
+# then creates a keyfile
+# then encrypts the drive using the keyfile stored in /keys
 # a LUKS header backup will also be placed in /keys
+# please
 # remember to take care of your /keys
+
+# if running remotely, via ssh, it makes a lot of sense
+# to run this in screen, just append screen to the command
+# ie. screen ./luksus /dev/sdc1 rambo
 
 # requirements:
 # full attention of the user
@@ -32,13 +40,12 @@
 # dialog
 # shred
 
-# this script will work on linux
+# this script works on Linux
 # but could potentially also work on other LUKS enabled
 # OS'es, like FreeBSD.
 
 # Luksus is released under GNU GPLv2 License
-# see URL below
-# http://www.gnu.org/licenses/gpl-2.0.html
+# located here: http://www.gnu.org/licenses/gpl-2.0.html
 # I would love to hear from you regarding suggestions
 # tips and so on. My email is: thomas .at. aftenstorm.com
 
