@@ -27,8 +27,9 @@
 # liable for any damages, as of this disclaimer.
 #
 # On a bright note, I, the author, have never experienced problems
-#with it, the program.
-
+# with it, the program.
+#
+# END DISCLAIMER
 
 # This is a wrapper script for cryptsetup, shred and mkfs
 # I like doing it this way instead of using luksformat
