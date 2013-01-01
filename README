@@ -85,8 +85,9 @@
 # + rewrite the script using python
 # + include more conditional arguments to make
 #   it more elegant
-# + incorporate suggestions from my reddit friends
-# + Need to check for dialog, cryptsetup
+# + incorporate suggestions from my reddit friends (currently ongoing)
+# + Need to checks for dialog, cryptsetup, $device
+# + Implement loopback file support (from cryptsetup FAQ)
 
 
 ########################################################
