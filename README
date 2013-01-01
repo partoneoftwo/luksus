@@ -2,20 +2,18 @@
 #################### LUKSUS ############################
 ############ EASY DRIVE ENCRYPTION SCRIPT ##############
 ########################################################
-################# GENERAL INFORMATION ##################
 ########################################################
 
 #
+# I wrote this script to make it quick and easy
+# to created encrypted volumes.
 # The purpose of this script is to provide an easy eay to encrypt
 # storage media in Linux, such as hardrives, usb sticks, 
 # sd cards or external hardrives.
 # Why? Because doing all these tasks manually is 
-# time consuming, and the procedure is hard to remember.
+# time consuming and can be a little tricky.
 
 # DISCLAIMER 
-# (this script might be used in the US, I have 
-# to put this disclaimer here)
-#
 # I, the author, take no responsibility if a black hole appears,
 # and implodes your house, your town and the entire planet earth as an
 # effect of using this script.
@@ -25,10 +23,6 @@
 # As a consequence it is the sole responsibility of the user
 # to use this software correctly. The author cannot be held
 # liable for any damages, as of this disclaimer.
-#
-# On a bright note, I, the author, have never experienced problems
-# with it, the program.
-#
 # END DISCLAIMER
 
 # This is a wrapper script for cryptsetup, shred and mkfs
@@ -85,21 +79,24 @@
 # + add a nice dialog interface
 # + must be escapable - ie. have a CANCEL button within 
 #   the dialog windows
-# + add a nice ARE YOU SURE sequence
 # + clean up script, make it more modern
 # + rewrite the script using python
 # + include more conditional arguments to make
 #   it more elegant
 # + incorporate suggestions from my reddit friends
- 
+# + Need to check for dialog, cryptsetup
+
+
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
 #
-# vCURRENT
+# v0.6 01.01.2013 23:00
 # + improved documentation (README file)
-#
-#
+# + Added some nice sanity checks
+# + Further cleaned up the code
+# + Added a definite CTRL+C to cancel now
+
 # v0.5 25.04.2012 12:30
 # + initial public release
 #   live on github here: https://github.com/thomasfrivold/luksus

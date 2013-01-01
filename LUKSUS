@@ -1,5 +1,5 @@
 #!/bin/bash
-# LUKSUS v0.5
+# LUKSUS
 # Easy drive encryption script
 # using LUKS
 # by Thomas Frivold
@@ -7,8 +7,6 @@
 # github code repository (project page):
 # https://github.com/thomasfrivold/luksus
 #
-# my private homepage: http://www.aftenstorm.com
-# 
 # please see README file for complete information
 # regarding LUKSUS
 # 
@@ -17,8 +15,8 @@
 # http://www.gnu.org/licenses/gpl-2.0.html 
 
 programname=LUKSUS
-version=v0.5
-date=25.04.2012
+version=v0.6
+date=01.01.2013
 author="Thomas J. Frivold"
 
 
@@ -48,7 +46,6 @@ then
 	echo "by $author"
         echo ""
 	echo "YOU FORGOT TO PROVIDE COMMANDLINE ARGUMENTS"
-	echo "SEE SOLUTION BELOW"
         echo ""
 	echo "USAGE: "
 	echo "./luksus DEVICENAME NICKNAME-of-luks-container"
@@ -66,7 +63,6 @@ then
 	echo "by $author"
         echo ""
 	echo "YOU FORGOT TO PROVIDE COMMANDLINE ARGUMENTS"
-	echo "SEE SOLUTION BELOW"
         echo ""
 	echo "USAGE: "
 	echo "./luksus DEVICENAME NICKNAME-of-luks-container"
@@ -77,11 +73,11 @@ then
 exit 1
 fi
 
-# CHECKING TO SEE IF THIS SCRIPT IS RUN BY ROOT 
-# (root is required)
 FILE="/tmp/out.$$"
-GREP="/bin/grep"
-#....
+GREP=`which grep`
+
+
+# Sanity check
 # Make sure only root can run our script
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 1>&2
@@ -89,6 +85,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 echo "Great! We are root"
 echo "Proceeding with LUKSUS"
+
+# Check to see if specified device exists
+
+
 
 
 # OUTPUTING SCRIPT VERSION AND DATE
@@ -122,10 +122,6 @@ If you have not specified these arguments, the script will exit
 " 50 50
 
 # BEGINNING WORK
-echo clearing screen in 1s
-sleep 1s
-clear
-
 
 echo ################################################
 echo DRIVE ENCRYPTION
@@ -141,10 +137,6 @@ DRIVE:         $device \n
 MOUNTPOINT:    $mountpoint \n
 KEYFILE:       $keyfile \n
 HEADER BACKUP: $headerfile\n
-
-\n \n
-WHEN YOU PUSH ENTER YOU WILL HAVE 10 SECONDS \n
-TO CANCEL THE SCRIPT USING CTRL+C\n
 " 50 50
 
 
@@ -157,11 +149,9 @@ echo KEYFILE: $keyfile
 echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
 echo ################################################
-clear
 echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
-echo YOU WILL NOW HAVE 10 SECONDS TO PERUSE THE ABOVE DETAILS
-echo HIT CTRL+C NOW IF THE DETAILS ARE NOT CORRECT
-sleep 10s
+echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
+read || exit
 
 
 #########################################################
@@ -185,7 +175,7 @@ mkdir -p $keydir
 # Totally infuse the drive with random data
 # Good for paranoid and security minded people
 # This takes about 5 hours on a 3TB drive
-shred -v -n1 $device
+shred -f -v -n1 $device
 
 # dd
 # generate a keyfile using completely random data
@@ -199,7 +189,7 @@ dd if=/dev/urandom of=$keyfile bs=512 count=256
 # remember that the key size will increase the safety of the
 # encryption, but the a stronger keyfile with more entropy (randomness)
 # will produce the best security. 
-cryptsetup --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
+cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
 
 # cryptsetup isLuks
 # check to see if the device has got a valid LUKS container
@@ -240,15 +230,27 @@ fi
 
 
 
-
-# mkfs.ext4
-# create a filesystem on top of the encrypted drive
+# fs creation
+# mkfs.ext4 - create a filesystem on top of the encrypted drive
 mkfs.ext4 /dev/mapper/$name
-# mount
-# mount the drive
-# mounting using mapper
-mount -t ext4 /dev/mapper/$name $mountpoint >/dev/null 2>&1
-# or alternatively using /dev/device
-mount -t ext4 $device $mountpoint >/dev/null 2>&1
+if [ $? -ne 0 ] ; then
+    mkfs.ext4 $device
+    fi
 
-echo "Thanks for using LUKSUS"
+# mount the drive
+# mounting using mapper or devicename
+mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
+if [ $? -ne 0 ] ; then
+    mount -t ext4 $device $mountpoint > /dev/null 2>&1
+    fi
+
+echo ################################################
+echo Thanks for using LUKSUS
+echo DETAILS AS SUBMITTED IN THE VARIABLE
+echo WHICH WILL BE USED FOR THE DRIVE ENCRYPTION
+echo DRIVE: $device
+echo NAME: $name
+echo KEYFILE: $keyfile
+echo MOUNTPOINT: $mountpoint
+echo HEADER BACKUP: $headerfile
+echo ################################################
