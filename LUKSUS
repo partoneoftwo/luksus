@@ -97,7 +97,6 @@ echo "$programname is proceeding"
 
 
 # Check to see if specified device exists
-#if [ -b "$device" ] || echo "$device was not found. $programname is now exiting" ; fi
 if [ -b "$device" ] ; then echo "OK, $device exists"  ;else echo "$device was not found. $programname is now exiting" && exit 1; fi
 
 # A crude dependency check, could need a list and a for loop
@@ -111,7 +110,7 @@ LOOPBACKMETHOD()
 {
   if [[ $device = *loop* ]]
   then
-    echo Okay we are using $device ... Beginning Loopbackmethod
+    echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
     losetup $device $luksfile
 else       # Don't want to mix up the two instances. 
@@ -184,6 +183,8 @@ DRIVE:         $device \n
 MOUNTPOINT:    $mountpoint \n
 KEYFILE:       $keyfile \n
 HEADER BACKUP: $headerfile\n
+$luksfile
+$luksfilesize
 " 50 50
 
 
@@ -302,6 +303,11 @@ echo KEYFILE: $keyfile
 echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
 echo CONTAINER $luksfile $luksfilesize MB
+echo Currently mounted at: `mount | grep $name`
+echo `df -h | head --lines 1`
+echo `df -h | grep $name`
 echo ################################################
 time2="$(date +%s.%N)"
 echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
+
+exit 0
