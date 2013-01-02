@@ -7,7 +7,7 @@
 # I wrote this script to make it quick and easy
 # to created encrypted volumes.
 # The purpose of this script is to provide an easy eay to encrypt
-# storage media in Linux, such as hardrives, usb sticks, 
+# storage media in Linux, such as hardrives, usb sticks,
 # sd cards or external hardrives.
 # Why? Because doing all these tasks manually is 
 # time consuming and can be a little tricky.
@@ -42,16 +42,29 @@
 
 
 # USAGE:
-# ./luksus DEVICENAME NICKNAME-of-luks-container
+# ./LUKSUS DEVICENAME NICKNAME-of-luks-container
 #
 # EXAMPLE:
-# ./luksus /dev/sdb1 rambo1
+# ./LUKSUS /dev/sdb1 rambo1
 #
 # if running remotely, for instance via ssh, it makes a lot of sense
 # to run this in screen, just append screen to the command
 #
 # EXAMPLE:
-# screen ./luksus /dev/sdb1 rambo
+# screen ./LUKSUS /dev/sdb1 rambo
+
+# It is also possible to create an encrypted file container
+# The usage then changes a little as the script then needs to
+# know which loopbackdevice you wish to use, where the encrypted
+# filecontainer should be located, and how large it should be.
+# Please note that the size must have M for megabytes or G for
+# gigabyte appended to the size.
+
+# The following will use loop0, and place the encrypted container in
+# /usr and will have 1000MiB as space.
+#
+# ./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
 
 # REQUIREMENTS:
 # an empty hardrive or storage media
@@ -78,13 +91,14 @@
 # + add a nice dialog interface
 # + must be escapable - ie. have a CANCEL button within 
 #   the dialog windows
+# + better support command line options in a pro-manner
 # + add the commandline option to use with or without dialog
 # + rewrite the script using python
 # + include more conditional arguments to make
 #   it more elegant
 # + incorporate suggestions from my reddit friends (ongoing)
 # + implement functions in the script, and then call these functions,
-as seen here: http://www.tldp.org/LDP/abs/html/functions.html
+as seen here: http://www.tldp.org/LDP/abs/html/functions.html (ongoing)
 # + seriously improve usage instructions and script output
 
 
@@ -93,9 +107,10 @@ as seen here: http://www.tldp.org/LDP/abs/html/functions.html
 ########################################################
 
 # v0.7 02.01.2013 13:20
-# + Added support for loopback device - creating an encrypted container
-# + Began work on implementing functions
-# + Some regex was used
+# + Added support for loopback devices 
+#   creating an encrypted container is now possible with LUKSUS
+# + Began work on implementing functions throughout
+# + Added some conditional checks with regex
 
 # v0.6 02.01.2013 01:35
 # + improved documentation (README file)
