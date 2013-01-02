@@ -4,6 +4,13 @@
 ########################################################
 ########################################################
 
+# SYNOPSIS
+#
+# Create an encrypted filesystem on a hardrive or other storage
+# media. LUKSUS also supports creating an encrypted filecontainer.
+
+# BACKGROUND
+#
 # I wrote this script to make it quick and easy
 # to created encrypted volumes.
 # The purpose of this script is to provide an easy eay to encrypt
@@ -17,18 +24,20 @@
 # which I didn't know existed at the time when I began
 # creating LUKSUS.
 
+# HOW IT WORKS
+#
 # The script works like this:
 # all existing data will be brutally removed beyond reconstruction (forensically)
 # then it writes random data to the drive
 # then creates a keyfile
 # then encrypts the drive using the keyfile stored in /keys
 # a LUKS header backup will also be placed in /keys
-# please
-# remember to take care of your /keys
+# please remember to take care of your /keys
 # if you loose your /keys, the keyfile to your encrypted drive, then
 # the data will be impossible to retrieve.
 
 # DISCLAIMER 
+#
 # I, the author, take no responsibility if a black hole appears,
 # and implodes your house, your town and the entire planet earth as an
 # effect of using this script.
@@ -41,7 +50,8 @@
 # END DISCLAIMER
 
 
-# USAGE:
+# USAGE
+#
 # ./LUKSUS DEVICENAME NICKNAME-of-luks-container
 #
 # EXAMPLE:
