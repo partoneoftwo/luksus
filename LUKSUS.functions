@@ -1,0 +1,100 @@
+#### FUNCTIONS ######
+
+LOOPBACKMETHOD()
+{
+  if [[ $device = *loop* ]]
+  then
+    echo Okay we are using $device ... Beginning loopbackmethod
+    head -c $luksfilesize /dev/zero > $luksfile
+    losetup $device $luksfile
+else       # Don't want to mix up the two instances. 
+    echo "Okay, not using a loopback device, proceeding in normal mode"
+  fi
+
+}  
+
+
+DONTSHREDIFLOOPBACK()
+{
+  if [[ $device != *loop* ]]
+  then
+    echo Okay we are using $device ... Which is not a loopback device
+    echo Shredding ...
+    # shred
+    # Totally infuse the drive with random data
+    # Good for paranoid and security minded people
+    # This takes about 5 hours on a 3TB drive
+    shred -f -v -n1 $device
+else       # Don't want to mix up the two instances. 
+    echo "Okay, we are using a loopback device, not shredding."
+  fi
+
+}  
+
+ASKUSERVERIFY()
+{
+
+# OUTPUTING SCRIPT VERSION AND DATE
+
+dialog --title "WELCOME TO $PROGRAMNAME" \
+--msgbox "\n 
+\n
+VERSION: $version\n
+DATE   : $date \n
+ \n
+THIS SCRIPT WILL TOTALLY WIPE OUT THE DRIVE OF YOUR CHOICE \n
+AND CREATE AN ENCRYPTED FILESYSTEM ON THE SELECTED DRIVE
+\n \n
+\n 
+THE KEYFILE FOR THE DRIVE OR STORAGE DEVICE
+WILL BE LOCATED IN $keydir
+PLEASE TAKE CARE OF THE KEY AS IT IS THE ONLY WAY
+TO OPEN THE DRIVE AFTER ENCRYPTION
+UNLESS YOU ADD MORE KEYS OR KEYPHRASES TO THE LUKS CONTAINER
+\n\n
+THE LUKS CONTAINER CONTAINS A HEADER WHICH MUST ALWAYS 
+REMAIN INTACT. TO ENSURE THAT IT STAYS INTACT WE WILL ALSO
+CREATE A BACKUP OF THE HEADER WHICH WILL BE LOCATED AT\n
+$headerfile\n\n\n
+
+usage: \n
+./luksus DEVICENAME nickname \n
+EXAMPLE: ./luksus /dev/sdb1 testresults
+\n
+\n
+If you have not specified these arguments, the script will exit
+" 50 50
+
+echo ################################################
+echo DRIVE ENCRYPTION
+echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE
+echo THE DEVICE YOU HAVE SPECIFIED
+echo ################################################
+
+dialog --title "DRIVE ENCRYPTION SCRIPT" \
+--msgbox "\n DETAILS AS SUBMITTED IN THE VARIABLES
+\n \n \n
+NAME: 	        $name \n
+DRIVE:         $device \n
+MOUNTPOINT:    $mountpoint \n
+KEYFILE:       $keyfile \n
+HEADER BACKUP: $headerfile\n
+$luksfile
+$luksfilesize
+" 50 50
+
+
+echo ################################################
+echo DETAILS AS SUBMITTED IN THE VARIABLES
+echo WHICH WILL BE USED FOR THE DRIVE ENCRYPTION
+echo DRIVE: $device
+echo NAME: $name
+echo KEYFILE: $keyfile
+echo MOUNTPOINT: $mountpoint
+echo HEADER BACKUP: $headerfile
+echo ################################################
+echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
+echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
+read || exit
+}
+

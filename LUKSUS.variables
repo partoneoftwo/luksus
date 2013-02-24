@@ -1,0 +1,37 @@
+
+#!/bin/bash
+# LUKSUS
+# Easy drive encryption script using LUKS
+# by Thomas Frivold
+#
+# github code repository (project page):
+# https://github.com/thomasfrivold/luksus
+#
+# please see README file for complete information
+# regarding LUKSUS
+# 
+# LUKSUS is released under GNU GPLv2 License
+# see URL below
+# http://www.gnu.org/licenses/gpl-2.0.html 
+
+###############################
+######### VARIABLES ###########
+###############################
+programname=LUKSUS
+version=v0.7
+date=02.01.2013
+author="Thomas J. Frivold"
+
+time1="$(date +%s.%N)"
+# $1, %2, %3, %4 are command line arguments
+device=$1
+name=$2
+luksfile=$3
+luksfilesize=$4
+keydir=/keys
+keyfile=/keys/$name.key
+headerfile=/keys/$name.luks.header
+mountpoint=/mnt/$name
+FILE="/tmp/out.$$"
+GREP=`which grep`
+
