@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # LUKSUS
 # Easy drive encryption script using LUKS
@@ -16,191 +17,36 @@
 ###############################
 ######### VARIABLES ###########
 ###############################
-programname=LUKSUS
-version=v0.7
-date=02.01.2013
-author="Thomas J. Frivold"
 
-time1="$(date +%s.%N)"
-# $1 is command line argument 1
-device=$1
-name=$2
-luksfile=$3
-luksfilesize=$4
-keydir=/keys
-keyfile=/keys/$name.key
-headerfile=/keys/$name.luks.header
-mountpoint=/mnt/$name
-FILE="/tmp/out.$$"
-GREP=`which grep`
-
-###############################
-###############################
-###############################
-
-# DOING SOME CONDITIONAL CHECKING
-# CHECKING IF RUNTIME ARGUMENTS ARE COOL
-if [ -z "$1" ]
-then
-	clear
-	echo "Welcome to $programname $version ($date)"
-	echo "by $author"
-        echo ""
-	echo "ERROR: AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
-        echo ""
-	echo "USAGE: "
-	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
-        echo ""
-	echo "EXAMPLE:"
-        echo "./LUKSUS /dev/sdb1 rambo1"
-        echo ""
-        echo "$programname now also supports loopback devices (an encrypted file-container instead of a physical medium)"
-        echo "./luksus DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-        echo "EXAMPLE for an encrypted filecontainer"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
-        echo ""
-#exit 1
-fi
-
-if [ -z "$2" ]
-then
-	clear
-	echo "Welcome to $programname $version ($date)"
-	echo "by $author"
-        echo ""
-	echo "ERROR: AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
-        echo ""
-	echo "USAGE: "
-	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
-        echo ""
-	echo "EXAMPLE:"
-        echo "./LUKSUS /dev/sdb1 rambo1"
-        echo ""
-        echo "$programname now also supports loopback devices (an encrypted file-container instead of a physical medium)"
-        echo "./luksus DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-        echo "EXAMPLE for an encrypted filecontainer"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
-        echo ""
-exit 1
+if [ -r LUKSUS.variables ]; then
+	. ./LUKSUS.variables
+else
+	exit 0
 fi
 
 
-# Sanity check
-# Make sure only root can run our script
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
+###############################
+##### CONDITIONAL CHECKS ######
+###############################
+
+
+if [ -r LUKSUS.checks ]; then
+	. ./LUKSUS.checks
+else
+	exit 0
 fi
-echo "Great! We are root"
-echo "$programname is proceeding"
 
 
-
-# Check to see if specified device exists
-if [ -b "$device" ] ; then echo "OK, $device exists"  ;else echo "$device was not found. $programname is now exiting" && exit 1; fi
-
-# A crude dependency check, could need a list and a for loop
-if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
-if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
-if [ -z `which dialog` ] ;then echo "Missing dialog" && exit; fi
-if [ -z `which shred` ] ;then echo "Missing shred" && exit; fi
+###############################
+#####    FUNCTIONS       ######
+###############################
 
 
-LOOPBACKMETHOD()
-{
-  if [[ $device = *loop* ]]
-  then
-    echo Okay we are using $device ... Beginning loopbackmethod
-    head -c $luksfilesize /dev/zero > $luksfile
-    losetup $device $luksfile
-else       # Don't want to mix up the two instances. 
-    echo "Okay, not using a loopback device, proceeding in normal mode"
-  fi
-
-}  
-
-
-DONTSHREDIFLOOPBACK()
-{
-  if [[ $device != *loop* ]]
-  then
-    echo Okay we are using $device ... Which is not a loopback device
-    echo Shredding ...
-    # shred
-    # Totally infuse the drive with random data
-    # Good for paranoid and security minded people
-    # This takes about 5 hours on a 3TB drive
-    shred -f -v -n1 $device
-else       # Don't want to mix up the two instances. 
-    echo "Okay, we are using a loopback device, not shredding."
-  fi
-
-}  
-
-ASKUSERVERIFY()
-{
-# OUTPUTING SCRIPT VERSION AND DATE
-dialog --title "WELCOME TO $PROGRAMNAME" \
---msgbox "\n 
-\n
-VERSION: $version\n
-DATE   : $date \n
- \n
-THIS SCRIPT WILL TOTALLY WIPE OUT THE DRIVE OF YOUR CHOICE \n
-AND CREATE AN ENCRYPTED FILESYSTEM ON THE SELECTED DRIVE
-\n \n
-\n 
-THE KEYFILE FOR THE DRIVE OR STORAGE DEVICE
-WILL BE LOCATED IN $keydir
-PLEASE TAKE CARE OF THE KEY AS IT IS THE ONLY WAY
-TO OPEN THE DRIVE AFTER ENCRYPTION
-UNLESS YOU ADD MORE KEYS OR KEYPHRASES TO THE LUKS CONTAINER
-\n\n
-THE LUKS CONTAINER CONTAINS A HEADER WHICH MUST ALWAYS 
-REMAIN INTACT. TO ENSURE THAT IT STAYS INTACT WE WILL ALSO
-CREATE A BACKUP OF THE HEADER WHICH WILL BE LOCATED AT\n
-$headerfile\n\n\n
-
-usage: \n
-./luksus DEVICENAME nickname \n
-EXAMPLE: ./luksus /dev/sdb1 testresults
-\n
-\n
-If you have not specified these arguments, the script will exit
-" 50 50
-
-echo ################################################
-echo DRIVE ENCRYPTION
-echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY NUKE
-echo THE DEVICE YOU HAVE SPECIFIED
-echo ################################################
-
-dialog --title "DRIVE ENCRYPTION SCRIPT" \
---msgbox "\n DETAILS AS SUBMITTED IN THE VARIABLES
-\n \n \n
-NAME: 	        $name \n
-DRIVE:         $device \n
-MOUNTPOINT:    $mountpoint \n
-KEYFILE:       $keyfile \n
-HEADER BACKUP: $headerfile\n
-$luksfile
-$luksfilesize
-" 50 50
-
-
-echo ################################################
-echo DETAILS AS SUBMITTED IN THE VARIABLES
-echo WHICH WILL BE USED FOR THE DRIVE ENCRYPTION
-echo DRIVE: $device
-echo NAME: $name
-echo KEYFILE: $keyfile
-echo MOUNTPOINT: $mountpoint
-echo HEADER BACKUP: $headerfile
-echo ################################################
-echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
-echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
-read || exit
-}
+if [ -r LUKSUS.functions ]; then
+	. ./LUKSUS.functions
+else
+	exit 0
+fi
 
 #########################################################
 #########################################################
@@ -214,9 +60,15 @@ read || exit
 
 # loopback specific functions
 # WELCOME - had to botch this one, does functions not allow conditions?
+# Call functions
+
 ASKUSERVERIFY
 LOOPBACKMETHOD
 DONTSHREDIFLOOPBACK
+
+
+### From here / something more elegant needs to be written
+# use the blkid script
 
 # mkdir
 # create mountpoint & keydirectory
@@ -234,7 +86,7 @@ dd if=/dev/urandom of=$keyfile bs=512 count=256
 
 # cryptsetup
 # format the drive using encryption
-	 # create an encrypted drive with aes-xts-plain cipher
+# create an encrypted drive with aes-xts-plain cipher
 # key size 512
 # remember that the key size will increase the safety of the
 # encryption, but the a stronger keyfile with more entropy (randomness)
@@ -277,7 +129,6 @@ echo "Something went wrong and LUKSUS failed to backup the LUKS header"
 echo "Exiting"
 exit 1
 fi
-
 
 
 # fs creation
