@@ -86,8 +86,7 @@
 # shred
 
 # this script works on Linux
-# but could potentially also work on other LUKS enabled
-# OS'es, like FreeBSD.
+# but should also work on DragonflyBSD. Testing needed.
 
 # Luksus is released under GNU GPLv2 License
 # located here: http://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +97,7 @@
 #################### TODO ##############################
 ########################################################
 
+# + Add TrueCrypt support
 # + add a nice dialog interface
 # + must be escapable - ie. have a CANCEL button within 
 #   the dialog windows
@@ -115,6 +115,11 @@ as seen here: http://www.tldp.org/LDP/abs/html/functions.html (ongoing)
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v0.8 24.02.2013 10:15
+# + Improved code quality, implemented simple modularization.
+
+
 
 # v0.7 02.01.2013 13:20
 # + Added support for loopback devices 
