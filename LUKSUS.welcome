@@ -1,0 +1,4 @@
+# WELCOME SEQUENCE
+cat LUKSUS.logo
+echo "$programname $version ($date)"
+echo "by $author"
