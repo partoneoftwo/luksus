@@ -19,11 +19,10 @@
 ###############################
 
 if [ -r LUKSUS.variables ]; then
-	. ./LUKSUS.variables
+	source LUKSUS.variables
 else
 	exit 0
 fi
-
 
 ###############################
 ##### CONDITIONAL CHECKS ######
@@ -31,11 +30,10 @@ fi
 
 
 if [ -r LUKSUS.checks ]; then
-	. ./LUKSUS.checks
+	source LUKSUS.checks
 else
 	exit 0
 fi
-
 
 ###############################
 #####    FUNCTIONS       ######
@@ -43,7 +41,7 @@ fi
 
 
 if [ -r LUKSUS.functions ]; then
-	. ./LUKSUS.functions
+	source LUKSUS.functions
 else
 	exit 0
 fi

@@ -1,12 +1,17 @@
-# DOING SOME CONDITIONAL CHECKING
+# DOING CONDITIONAL CHECKING
 # CHECKING IF RUNTIME ARGUMENTS ARE COOL
+# These checks do not check if the 3rd and 4th runtime arguments
+# are provided or correct. In the future, this be necessary, just
+# for consistency and correctness sake. It only checks the first $1
+# and second $2 argument.
+
 if [ -z "$1" ]
 then
 	clear
 	echo "Welcome to $programname $version ($date)"
 	echo "by $author"
         echo ""
-	echo "ERROR: NO ARGUMENTS SPECIFIED
+	echo "ERROR: NO ARGUMENTS SPECIFIED"
         echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
         echo ""
 	echo "USAGE: "
