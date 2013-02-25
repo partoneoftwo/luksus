@@ -104,17 +104,21 @@
 # + better support command line options in a pro-manner
 # + add the commandline option to use with or without dialog
 # + rewrite the script using python
-# + include more conditional arguments to make
-#   it more elegant
 # + incorporate suggestions from my reddit friends (ongoing)
 # + implement functions in the script, and then call these functions,
 as seen here: http://www.tldp.org/LDP/abs/html/functions.html (ongoing)
-# + seriously improve usage instructions and script output
 
 
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v0.8.2 25.02.2013 15:00
+# Added a welcome sequence
+# Added a logo! (yay)
+
+# v0.8.1 25.02.2013 14:30
+# Added missing apostrophe
 
 # v0.8 24.02.2013 10:15
 # + Improved code quality, implemented simple modularization.

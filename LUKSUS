@@ -14,6 +14,7 @@
 # see URL below
 # http://www.gnu.org/licenses/gpl-2.0.html 
 
+
 ###############################
 ######### VARIABLES ###########
 ###############################
@@ -23,6 +24,18 @@ if [ -r LUKSUS.variables ]; then
 else
 	exit 0
 fi
+
+
+###############################
+###### INITIAL WELCOME ########
+###############################
+
+if [ -r LUKSUS.welcome ]; then
+	source LUKSUS.welcome
+else
+	exit 0
+fi
+
 
 ###############################
 ##### CONDITIONAL CHECKS ######

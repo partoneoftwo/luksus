@@ -7,47 +7,42 @@
 
 if [ -z "$1" ]
 then
-	clear
-	echo "Welcome to $programname $version ($date)"
-	echo "by $author"
         echo ""
 	echo "ERROR: NO ARGUMENTS SPECIFIED"
         echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
         echo ""
 	echo "USAGE: "
 	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
+        echo "OR"
+	echo "./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
         echo ""
-	echo "EXAMPLE:"
+	echo "EXAMPLE FOR A DISK DRIVE, MEMORY CARD or USB STICK:"
         echo "./LUKSUS /dev/sdb1 rambo1"
         echo ""
-        echo "$programname also supports loopback devices (an encrypted file-container instead of a physical medium)"
-        echo "./luksus loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-        echo "EXAMPLE for an encrypted filecontainer"
+        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
         echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
         echo ""
-# hmm exit 1
+exit 0
 fi
 
 if [ -z "$2" ]
 then
-	clear
-	echo "Welcome to $programname $version ($date)"
-	echo "by $author"
         echo ""
-	echo "ERROR: AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
+	echo "ERROR: NO ARGUMENTS SPECIFIED"
+        echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
         echo ""
 	echo "USAGE: "
 	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
+        echo "OR"
+	echo "./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
         echo ""
-	echo "EXAMPLE:"
+	echo "EXAMPLE FOR A DISK DRIVE, MEMORY CARD or USB STICK:"
         echo "./LUKSUS /dev/sdb1 rambo1"
         echo ""
-        echo "$programname now also supports loopback devices (an encrypted file-container instead of a physical medium)"
-        echo "./luksus DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-        echo "EXAMPLE for an encrypted filecontainer"
+        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
         echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
         echo ""
-exit 1
+exit 0
 fi
 
 
