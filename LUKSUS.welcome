@@ -14,9 +14,9 @@ width=$(echo $screensize | cut -d " " -f 2)
 
 if [ $width -gt 119 ] 
 then
-  cat LUKSUS.logo.large
+  tail --lines 12 LUKSUS.logo
   else
-  cat LUKSUS.logo
+  head --lines 6 LUKSUS.logo
 fi
 echo "$programname $version ($date)"
 echo "by $author"
