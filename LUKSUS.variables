@@ -1,6 +1,6 @@
 programname=LUKSUS
-version=v0.8.3
-date=25.02.2013
+version=v0.8.5
+date=26.02.2013
 author="Thomas J. Frivold"
 
 time1="$(date +%s.%N)"
@@ -15,4 +15,7 @@ headerfile=/keys/$name.luks.header
 mountpoint=/mnt/$name
 FILE="/tmp/out.$$"
 GREP=`which grep`
+screensize=`echo -e "lines\ncols"|tput -S`
+height=$(echo $screensize | cut -d " " -f 1)
+width=$(echo $screensize | cut -d " " -f 2)
 

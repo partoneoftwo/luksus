@@ -1,5 +1,16 @@
 #### FUNCTIONS ######
 
+# SHOW LOGO, BUT DO IT OPTIMALLY BY DETERMINING TERMINAL SIZE
+DISPLAYLOGO()
+{
+if [ $width -gt 119 ] 
+then
+  tail --lines 12 LUKSUS.logo
+  else
+  head --lines 6 LUKSUS.logo
+fi
+}
+
 LOOPBACKMETHOD()
 {
   if [[ $device = *loop* ]]
@@ -33,10 +44,7 @@ else       # Don't want to mix up the two instances.
 
 ASKUSERVERIFY()
 {
-
-# OUTPUTING SCRIPT VERSION AND DATE
-
-dialog --title "WELCOME TO $PROGRAMNAME" \
+dialog --title "WELCOME TO $programname" \
 --msgbox "\n 
 \n
 VERSION: $version\n
@@ -72,21 +80,21 @@ echo THE DEVICE YOU HAVE SPECIFIED
 echo ################################################
 
 dialog --title "DRIVE ENCRYPTION SCRIPT" \
---msgbox "\n DETAILS AS SUBMITTED IN THE VARIABLES
+--msgbox "\n DETAILS AS SUBMITTED BY THE USER
 \n \n \n
 NAME: 	        $name \n
 DRIVE:         $device \n
 MOUNTPOINT:    $mountpoint \n
 KEYFILE:       $keyfile \n
 HEADER BACKUP: $headerfile\n
-$luksfile
-$luksfilesize
+FILECONTAINER LOCATION: $luksfile
+FILECONTAINER SIZE: $luksfilesize
 " 50 50
 
 
 echo ################################################
-echo DETAILS AS SUBMITTED IN THE VARIABLES
-echo WHICH WILL BE USED FOR THE DRIVE ENCRYPTION
+echo DETAILS AS SUBMITTED BY THE USER
+echo PLEASE VERIFY THAT THESE ARE CORRECT
 echo DRIVE: $device
 echo NAME: $name
 echo KEYFILE: $keyfile

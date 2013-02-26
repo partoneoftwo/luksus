@@ -90,8 +90,10 @@
 
 # Luksus is released under GNU GPLv2 License
 # located here: http://www.gnu.org/licenses/gpl-2.0.html
-# I would love to hear from you regarding suggestions
-# tips and so on. My email is: thomas .at. aftenstorm.com
+#
+# I would love to hear from you regarding feedback, ways you use it, 
+# suggestions, tips and so on. 
+# My email is: thomas.frivold.at.gmail.com
 
 ########################################################
 #################### TODO ##############################
@@ -104,14 +106,23 @@
 # + better support command line options in a pro-manner
 # + add the commandline option to use with or without dialog
 # + rewrite the script using python
-# + incorporate suggestions from my reddit friends (ongoing)
-# + implement functions in the script, and then call these functions,
-as seen here: http://www.tldp.org/LDP/abs/html/functions.html (ongoing)
 
 
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v0.8.5 26.02.2013 12:00
+# Cleanup before public release on Freecode.com!
+# Hello World
+
+# v0.8.4 26.02.2013 10:00
+# Added a routine to check the screensize, and display
+# a logo according to which screensize the user has.
+# Cleaned up a little bit here and there
+
+# v0.8.3 25.02.2013 20:00
+# Tweaks 
 
 # v0.8.2 25.02.2013 15:00
 # Added a welcome sequence
