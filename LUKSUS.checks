@@ -20,7 +20,7 @@ then
         echo "./LUKSUS /dev/sdb1 rambo1"
         echo ""
         echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
+        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
         echo ""
 exit 0
 fi
@@ -40,7 +40,7 @@ then
         echo "./LUKSUS /dev/sdb1 rambo1"
         echo ""
         echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /snacks.encrypted 300M" 
+        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
         echo ""
 exit 0
 fi
