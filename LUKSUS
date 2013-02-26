@@ -157,7 +157,8 @@ if [ $? -ne 0 ] ; then
     fi
 
 echo ################################################
-echo Thanks for using LUKSUS
+echo Thanks for using
+cat LUKSUS.logo
 echo Results:
 echo DRIVE: $device
 echo NAME: $name

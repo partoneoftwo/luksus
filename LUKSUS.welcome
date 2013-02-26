@@ -1,4 +1,16 @@
 # WELCOME SEQUENCE
-cat LUKSUS.logo
+# having to cheat a little bit here, conditional things and if
+# statements, should be in the other runtime files. But we launch this
+# before everything else, so it must be here.
+# at least for now
+screensize=`echo -e "lines\ncols"|tput -S`
+height=$(echo $screensize | cut -d " " -f 1)
+width=$(echo $screensize | cut -d " " -f 2)
+if [ $width -gt 119 ] 
+then
+  cat LUKSUS.logo.large
+  else
+  cat LUKSUS.logo
+fi
 echo "$programname $version ($date)"
 echo "by $author"
