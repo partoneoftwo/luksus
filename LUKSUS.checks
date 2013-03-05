@@ -82,6 +82,10 @@ echo We are on DragonFlyBSD here. Cool.
 alias shred=gshred
 # loading dm kernel module
 kldload dm
+# for some reason vnconfig must be ran once before it will start working
+# it seems that the DragonFlyBSD kernel is initializing something
+# so that's exactly what I'm doing here
+vnconfig 1>/dev/null 2>/dev/null
 else
 echo On Linux, continuing.
 fi

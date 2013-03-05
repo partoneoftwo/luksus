@@ -26,7 +26,6 @@ LOOPBACKMETHOD()
     ghead -c $luksfilesize /dev/zero > $luksfile
     # vnconfig needs to run once first, it seems that the kernel
     # is initializing something on first run
-    vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
@@ -99,3 +98,27 @@ echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
 read || exit
 }
 
+
+CREATEANDMOUNTFS()
+{
+if [ $UNAME = DragonFly ] ;
+then
+echo DragonFlyBSD mode
+# ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
+newfs /dev/mapper/$name
+# mounting
+mount /dev/mapper/$name /mnt/$name
+else
+# mkfs.ext4 - create a filesystem on top of the encrypted drive
+mkfs.ext4 /dev/mapper/$name
+if [ $? -ne 0 ] ; then
+    mkfs.ext4 -F $device
+    fi
+# mounting the newly created drive
+mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
+if [ $? -ne 0 ] ; then
+    mount -t ext4 $device $mountpoint > /dev/null 2>&1
+    fi
+fi
+
+}

@@ -85,7 +85,7 @@ mkdir -p $keydir
 # generate a keyfile using completely random data
 # from /dev/urandom
 dd if=/dev/urandom of=$keyfile bs=512 count=256
-
+DISPLAYLOGO
 echo cryptsetup starting
 # cryptsetup
 # format the drive using encryption
@@ -134,24 +134,7 @@ echo "Exiting"
 exit 1
 fi
 
-##### CREATE FUNCTION FOR THIS HERE
-# fs creation
-# mkfs.ext4 - create a filesystem on top of the encrypted drive
-mkfs.ext4 /dev/mapper/$name
-if [ $? -ne 0 ] ; then
-    mkfs.ext4 -F $device
-    fi
-
-# IF ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
-newfs /dev/mapper/$name
-mount /dev/mapper/$name /mnt/$name
-
-# mount the drive
-# mounting using mapper or devicename
-mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
-if [ $? -ne 0 ] ; then
-    mount -t ext4 $device $mountpoint > /dev/null 2>&1
-    fi
+CREATEANDMOUNTFS
 
 echo ################################################
 echo Thanks for using
