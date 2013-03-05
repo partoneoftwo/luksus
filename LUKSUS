@@ -1,5 +1,4 @@
-#!/bin/bash
-#!/usr/pkg/bin/bash
+#!/usr/bin/env bash
 # LUKSUS
 # Easy drive encryption script using LUKS
 # by Thomas Frivold
