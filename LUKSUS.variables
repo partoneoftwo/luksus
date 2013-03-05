@@ -15,7 +15,8 @@ headerfile=/keys/$name.luks.header
 mountpoint=/mnt/$name
 FILE="/tmp/out.$$"
 GREP=`which grep`
-screensize=`echo -e "lines\ncols"|tput -S`
+UNAME=`uname`
+screensize=`stty size`
 height=$(echo $screensize | cut -d " " -f 1)
 width=$(echo $screensize | cut -d " " -f 2)
 

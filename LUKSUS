@@ -1,5 +1,5 @@
-
 #!/bin/bash
+#!/usr/pkg/bin/bash
 # LUKSUS
 # Easy drive encryption script using LUKS
 # by Thomas Frivold
@@ -14,7 +14,6 @@
 # see URL below
 # http://www.gnu.org/licenses/gpl-2.0.html 
 
-
 ###############################
 ######### VARIABLES ###########
 ###############################
@@ -24,7 +23,6 @@ if [ -r LUKSUS.variables ]; then
 else
 	exit 0
 fi
-
 
 ###############################
 #####    FUNCTIONS       ######
@@ -72,11 +70,10 @@ fi
 #########################################################
 
 # Calling functions
+DISPLAYLOGO
 ASKUSERVERIFY
 LOOPBACKMETHOD
 DONTSHREDIFLOOPBACK
-
-
 # mkdir
 # create mountpoint & keydirectory
 # i should create an if routine here
@@ -90,7 +87,7 @@ mkdir -p $keydir
 # from /dev/urandom
 dd if=/dev/urandom of=$keyfile bs=512 count=256
 
-
+echo cryptsetup starting
 # cryptsetup
 # format the drive using encryption
 # create an encrypted drive with aes-xts-plain cipher
@@ -98,7 +95,7 @@ dd if=/dev/urandom of=$keyfile bs=512 count=256
 # remember that the key size will increase the safety of the
 # encryption, but the a stronger keyfile with more entropy (randomness)
 # will produce the best security. 
-cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
+cryptsetup --debug --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
 
 # cryptsetup isLuks
 # check to see if the device has got a valid LUKS container
@@ -138,13 +135,17 @@ echo "Exiting"
 exit 1
 fi
 
-
+##### CREATE FUNCTION FOR THIS HERE
 # fs creation
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
 mkfs.ext4 /dev/mapper/$name
 if [ $? -ne 0 ] ; then
-    mkfs.ext4 $device
+    mkfs.ext4 -F $device
     fi
+
+# IF ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
+newfs /dev/mapper/$name
+mount /dev/mapper/$name /mnt/$name
 
 # mount the drive
 # mounting using mapper or devicename
@@ -164,7 +165,7 @@ echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
 echo CONTAINER $luksfile $luksfilesize MB
 echo Currently mounted at: `mount | grep $name`
-echo `df -h | head --lines 1`
+echo `df -h | head -n 1`
 echo `df -h | grep $name`
 echo ################################################
 time2="$(date +%s.%N)"

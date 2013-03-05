@@ -19,8 +19,11 @@ then
 	echo "EXAMPLE FOR A DISK DRIVE, MEMORY CARD or USB STICK:"
         echo "./LUKSUS /dev/sdb1 rambo1"
         echo ""
-        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
+        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER (Linux)"
         echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
+        echo ""
+        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER (DragonFlyBSD)"
+        echo "./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
         echo ""
 exit 0
 fi
@@ -59,9 +62,26 @@ echo "$programname is proceeding"
 if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
 if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
 if [ -z `which dialog` ] ;then echo "Missing dialog" && exit; fi
-if [ -z `which shred` ] ;then echo "Missing shred" && exit; fi
+if [ -z `which shred` ] ;then alias shred=gshred; fi
+
+# need to use GNU head also - from GNU coreutils
+alias head=gshred
 				    
 # Check to see if specified device exists
-if [ -b "$device" ] ; then echo "OK, $device exists"  ;else echo "$device was not found. $programname is now exiting" && exit 1; fi
+if [ -e "$device" ] ; 
+	then echo "OK, $device exists";
+	else 
+	echo "$device was not found. $programname is now exiting" ; 
+	exit 1; 
+fi
 
-
+if [ $UNAME = DragonFly ] ;
+then
+echo We are on DragonFlyBSD here. Cool.
+# crude way to deal with different binary names
+alias shred=gshred
+# loading dm kernel module
+kldload dm
+else
+echo On Linux, continuing.
+fi

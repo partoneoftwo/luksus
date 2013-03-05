@@ -5,9 +5,9 @@ DISPLAYLOGO()
 {
 if [ $width -gt 119 ] 
 then
-  tail --lines 12 LUKSUS.logo
+  tail -n 12 LUKSUS.logo
   else
-  head --lines 6 LUKSUS.logo
+  head -n 6 LUKSUS.logo
 fi
 }
 
@@ -15,10 +15,20 @@ LOOPBACKMETHOD()
 {
   if [[ $device = *loop* ]]
   then
+    echo Running Linux
     echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
     losetup $device $luksfile
-else       # Don't want to mix up the two instances. 
+  elif [[ $device = *vn* ]]
+    then
+    echo DragonFlyBSD - Nice...
+    echo Okay we are using $device ... Beginning loopbackmethod
+    ghead -c $luksfilesize /dev/zero > $luksfile
+    # vnconfig needs to run once first, it seems that the kernel
+    # is initializing something on first run
+    vnconfig 1>/dev/null 2>/dev/null
+    vnconfig $device $luksfile
+  else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
 
@@ -36,10 +46,14 @@ DONTSHREDIFLOOPBACK()
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
     shred -f -v -n1 $device
-else       # Don't want to mix up the two instances. 
-    echo "Okay, we are using a loopback device, not shredding."
+  elif [[ $device != *vn* ]]
+  then
+    echo On DragonFlyBSD
+    echo in the middle of the shredding.place
+    gshred -f -v -n1 $device
+  else 
+    echo "Okay, $device is a loopback device, not shredding."
   fi
-
 }  
 
 ASKUSERVERIFY()
@@ -50,27 +64,6 @@ dialog --title "WELCOME TO $programname" \
 VERSION: $version\n
 DATE   : $date \n
  \n
-THIS SCRIPT WILL TOTALLY WIPE OUT THE DRIVE OF YOUR CHOICE \n
-AND CREATE AN ENCRYPTED FILESYSTEM ON THE SELECTED DRIVE
-\n \n
-\n 
-THE KEYFILE FOR THE DRIVE OR STORAGE DEVICE
-WILL BE LOCATED IN $keydir
-PLEASE TAKE CARE OF THE KEY AS IT IS THE ONLY WAY
-TO OPEN THE DRIVE AFTER ENCRYPTION
-UNLESS YOU ADD MORE KEYS OR KEYPHRASES TO THE LUKS CONTAINER
-\n\n
-THE LUKS CONTAINER CONTAINS A HEADER WHICH MUST ALWAYS 
-REMAIN INTACT. TO ENSURE THAT IT STAYS INTACT WE WILL ALSO
-CREATE A BACKUP OF THE HEADER WHICH WILL BE LOCATED AT\n
-$headerfile\n\n\n
-
-usage: \n
-./luksus DEVICENAME nickname \n
-EXAMPLE: ./luksus /dev/sdb1 testresults
-\n
-\n
-If you have not specified these arguments, the script will exit
 " 50 50
 
 echo ################################################
