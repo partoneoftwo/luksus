@@ -73,6 +73,7 @@ DISPLAYLOGO
 ASKUSERVERIFY
 LOOPBACKMETHOD
 DONTSHREDIFLOOPBACK
+DISPLAYLOGO
 # mkdir
 # create mountpoint & keydirectory
 # i should create an if routine here
