@@ -8,7 +8,8 @@
 
 ## Testing if the user has any options for LUKSUS. These should
 # probably be ported to GETOPTS code, but it has to stay like this for
-# now.
+# now. Also this is lame, I should be able to catch both arguments in
+# one test. Will fix later.
 if [ -z "$1" ]
 then
         echo ""
@@ -37,19 +38,34 @@ then
 	echo "ERROR: NO ARGUMENTS SPECIFIED"
         echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
         echo ""
-	echo "USAGE: "
+	echo "USAGE: Physical drive"
 	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
-        echo "OR"
+	echo "USAGE: File container"
 	echo "./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
+	echo "To enable the use of TrueCrypt instead of DM-LUKS append the option: truecrypt"
         echo ""
-	echo "EXAMPLE FOR A DISK DRIVE, MEMORY CARD or USB STICK:"
+        echo "EXAMPLES: DISK DRIVES, MEMORY CARDS, USB STICK, ETC"
         echo "./LUKSUS /dev/sdb1 rambo1"
+	echo "./LUKSUS /dev/sdc1 library truecrypt"
         echo ""
-        echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER:"
+        echo "CREATING AN ENCRYPTED FILECONTAINER (Linux and DragonFlyBSD)"
         echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
-        echo ""
+        echo "./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
 exit 1
 fi
+
+
+# I should use getops. Instead I make use of a crude but efficient 
+# test to see if the user wants truecrypt.
+
+if [[ "$3"=truecrypt || "$4"=truecrypt || "$5"=truecrypt ]] ; then
+if [ -z `which tcplay` ] ;then echo "Unable To Continue: Missing tcplay (truecrypt)" && exit; fi
+echo "Truecrypt Enabled"
+USETRUECRYPT=true
+else
+echo Using Cryptsetup
+fi
+
 
 
 # Sanity check
@@ -91,15 +107,4 @@ kldload dm
 vnconfig 1>/dev/null 2>/dev/null
 else
 echo On Linux, continuing.
-fi
-
-
-# I should use getops. Instead I make use of a crude but efficient 
-# test to see if the user wants truecrypt.
-
-if [[ "$3"=truecrypt || "$4"=truecrypt || "$5"=truecrypt ]] ; then
-echo "Truecrypt Enabled"
-USETRUECRYPT=true
-else
-echo Using Cryptsetup
 fi
