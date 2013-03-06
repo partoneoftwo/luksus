@@ -26,6 +26,7 @@ LOOPBACKMETHOD()
     ghead -c $luksfilesize /dev/zero > $luksfile
     # vnconfig needs to run once first, it seems that the kernel
     # is initializing something on first run
+    vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
