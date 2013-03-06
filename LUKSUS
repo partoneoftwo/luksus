@@ -73,87 +73,8 @@ DISPLAYLOGO
 ASKUSERVERIFY
 LOOPBACKMETHOD
 DONTSHREDIFLOOPBACK
-DISPLAYLOGO
-# mkdir
-# create mountpoint & keydirectory
-# i should create an if routine here
-# works for now
-mkdir -p $mountpoint
-mkdir -p $keydir
-
-
-# dd
-# generate a keyfile using completely random data
-# from /dev/urandom
-dd if=/dev/urandom of=$keyfile bs=512 count=256
-DISPLAYLOGO
-echo cryptsetup starting
-# cryptsetup
-# format the drive using encryption
-# create an encrypted drive with aes-xts-plain cipher
-# key size 512
-# remember that the key size will increase the safety of the
-# encryption, but the a stronger keyfile with more entropy (randomness)
-# will produce the best security. 
-cryptsetup --debug --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
-
-# cryptsetup isLuks
-# check to see if the device has got a valid LUKS container
-# if it does not, then exit
-#if cryptsetup isLuks /dev/sda1 &> /dev/null  # Suppress output.
-if cryptsetup isLuks $device  # Provides output
-then
-echo "Checking to see if the device contains a LUKS volume"
-echo "The device positively contains a LUKS volume."
-echo "Great!"
-echo "Continuing"
-DISPLAYLOGO
-else echo "The device does not contain a LUKS volume"
-echo "Something went wrong and the LUKS device has not been created"
-echo "Exiting"
-exit 1
-fi
-
-
-# cryptsetup luksOpen
-# mount the encrypted drive using a keyfile
-cryptsetup luksOpen $device $name --key-file=$keyfile
-
-# cryptsetup luksHeaderBackup
-# backup the header of the luks container
-# as strongly recommended by the luks FAQ
-# if it does not, then exit
-echo "Taking a backup of the LUKS container header"
-if cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose
-then
-echo "The LUKS container header has been backed up successfully"
-echo "Great!"
-echo "Continuing LUKSUS"
-else echo "CATASTROPHIC FAILURE: Could not backup LUKS container header"
-echo "Something went wrong and LUKSUS failed to backup the LUKS header"
-echo "Exiting"
-exit 1
-fi
-
+THESECRETSAUCE
 CREATEANDMOUNTFS
-
-echo ################################################
-echo Thanks for using
 DISPLAYLOGO
-echo Results:
-echo DRIVE: $device
-echo NAME: $name
-echo KEYFILE: $keyfile
-echo MOUNTPOINT: $mountpoint
-echo HEADER BACKUP: $headerfile
-echo CONTAINER $luksfile $luksfilesize MB
-echo Currently mounted at: `mount | grep $name`
-echo `df -h | head -n 1`
-echo `df -h | grep $name`
-echo ################################################
-time2="$(date +%s.%N)"
-# This time taken needs attention - does not work anymore
-# for some reason
-# echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
-
+DISPLAYSUMMARY
 exit 0

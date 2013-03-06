@@ -5,6 +5,37 @@
 # for consistency and correctness sake. It only checks the first $1
 # and second $2 argument.
 
+
+## COMMAND LINE ARGUMENTS
+## Checking to see if the user wants to use truecrypt
+USAGE="Usage: `basename $0` [-t]"
+
+# Parse command line options.
+while getopts t: OPT; do
+    case "$OPT" in
+        t)
+            TRUECRYPT=true
+	    echo TrueCrypt encryption facility chosen.
+            ;;
+    esac
+done
+
+# Remove the switches we parsed above.
+#shift `expr $OPTIND - 1`
+
+# We want at least one non-option argument. 
+# Remove this block if you don't need it.
+#if [ $# -eq 0 ]; then
+#    echo $USAGE >&2
+#    exit 1
+#fi
+
+# Access additional arguments as usual through 
+# variables $@, $*, $1, $2, etc. or using this loop:
+for PARAM; do
+    echo $PARAM
+done
+
 if [ -z "$1" ]
 then
         echo ""
@@ -25,6 +56,7 @@ then
         echo "EXAMPLE FOR CREATING AN ENCRYPTED FILECONTAINER (DragonFlyBSD)"
         echo "./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
         echo ""
+	echo "To enable the use of TrueCrypt instead of DM-LUKS use the switch: -t"
 exit 0
 fi
 
