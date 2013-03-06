@@ -122,7 +122,6 @@
 ########################################################
 
 # + Add TrueCrypt support
-# + Fully working DragonFlyBSD support
 # + add a nice dialog interface * or remove it *
 # + must be escapable - ie. have a CANCEL button within 
 #   the dialog windows * or remove dialog *
