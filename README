@@ -75,8 +75,26 @@
 #
 # ./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
 #
-# For DragonFlyBSD
+# For creating an encrypted filecontainer on DragonFlyBSD
 # ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
+# DragonflyBSD notes:
+# The scripts does the same things as under Linux, but with one major
+# exception.
+# It does not create EXT4 filesystems, but UFS filesystems. 
+# The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
+# loopback device, and I have not yet managed to get it to work.
+# Therefore the user will get a UFS filesystem instead.
+#
+# For some reason the cryptsetup tool in Dfly takes a very long time
+# to do its work when it is manipulating loopback LUKS volumes, ie.
+file containers... I do not know the reason to this strange behaviour, 
+# but once it has created the volume, file transfer speeds are nominal and fast.
+# Sometimes it takes 15 minutes to finish the process, just have
+# patience :)
+#
+# DragonFlyBSD does not come with bash, so you have to install it
+# from the repositories. "pkg_radd bash" will do the trick
 
 
 # REQUIREMENTS:
