@@ -132,6 +132,9 @@
 #################### CHANGELOG #########################
 ########################################################
 
+# v0.8.91 05.03.2013 20:00
+# Small bugfixes
+
 # v0.8.9 05.03.2013 13:28
 # +DragonFlyBSD support is now fully supported.
 # Cryptsetup / dm-luks spends a lot of time with its operation, 
