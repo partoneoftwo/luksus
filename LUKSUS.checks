@@ -5,37 +5,30 @@
 # for consistency and correctness sake. It only checks the first $1
 # and second $2 argument.
 
-
 ## COMMAND LINE ARGUMENTS
 ## Checking to see if the user wants to use truecrypt
-USAGE="Usage: `basename $0` [-t]"
+## Playing around with arcane getopts
 
-# Parse command line options.
-while getopts t: OPT; do
-    case "$OPT" in
-        t)
-            TRUECRYPT=true
-	    echo TrueCrypt encryption facility chosen.
-            ;;
+options=':t'
+while getopts $options option
+do
+    case $option in
+        t  )    USETRUECRYPT=true;;
+        \? )    if (( (err & ERROPTS) != ERROPTS ))
+                then
+                    error $NOEXIT $ERROPTS "Unknown option."
+                fi;;
+        *  )    error $NOEXIT $ERROARG "Missing option argument.";;
     esac
 done
 
-# Remove the switches we parsed above.
-#shift `expr $OPTIND - 1`
+shift $(($OPTIND - 1))
 
-# We want at least one non-option argument. 
-# Remove this block if you don't need it.
-#if [ $# -eq 0 ]; then
-#    echo $USAGE >&2
-#    exit 1
-#fi
 
-# Access additional arguments as usual through 
-# variables $@, $*, $1, $2, etc. or using this loop:
-for PARAM; do
-    echo $PARAM
-done
 
+## Testing if the user has any options for LUKSUS. These should
+# probably be ported to GETOPTS code, but it has to stay like this for
+# now.
 if [ -z "$1" ]
 then
         echo ""
@@ -121,3 +114,5 @@ vnconfig 1>/dev/null 2>/dev/null
 else
 echo On Linux, continuing.
 fi
+
+

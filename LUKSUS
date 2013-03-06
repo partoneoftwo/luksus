@@ -20,7 +20,7 @@
 if [ -r LUKSUS.variables ]; then
 	source LUKSUS.variables
 else
-	exit 0
+	exit 1
 fi
 
 ###############################
@@ -31,7 +31,7 @@ fi
 if [ -r LUKSUS.functions ]; then
 	source LUKSUS.functions
 else
-	exit 0
+	exit 1
 fi
 
 
@@ -42,7 +42,7 @@ fi
 if [ -r LUKSUS.welcome ]; then
 	source LUKSUS.welcome
 else
-	exit 0
+	exit 1
 fi
 
 
@@ -54,7 +54,7 @@ fi
 if [ -r LUKSUS.checks ]; then
 	source LUKSUS.checks
 else
-	exit 0
+	exit 1
 fi
 
 
@@ -77,4 +77,5 @@ THESECRETSAUCE
 CREATEANDMOUNTFS
 DISPLAYLOGO
 DISPLAYSUMMARY
+DISPLAYSUMMARY 1>$keydir/$name.information 2>$keydir/$name.information
 exit 0
