@@ -12,11 +12,10 @@
 
 # BACKGROUND
 #
-# I wrote this script to make it quick and easy
-# to created encrypted volumes.
 # The purpose of this script is to provide an easy eay to encrypt
-# storage media in Linux, such as hardrives, usb sticks,
+# storage media in Linux and DragonflyBSD, such as hardrives, usb sticks,
 # sd cards or external hardrives.
+
 # Why? Because doing all these tasks manually is 
 # time consuming and can be a little tricky.
 
