@@ -12,60 +12,28 @@
 # one test. Will fix later.
 if [ -z "$1" ]
 then
-        echo ""
-	echo "ERROR: NO ARGUMENTS SPECIFIED"
-        echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
-        echo ""
-	echo "USAGE: Physical drive"
-	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
-	echo "USAGE: File container"
-	echo "./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-	echo "To enable the use of TrueCrypt instead of DM-LUKS append the option: truecrypt"
-        echo ""
-        echo "EXAMPLES: DISK DRIVES, MEMORY CARDS, USB STICK, ETC"
-        echo "./LUKSUS /dev/sdb1 rambo1"
-	echo "./LUKSUS /dev/sdc1 library truecrypt"
-        echo ""
-        echo "CREATING AN ENCRYPTED FILECONTAINER (Linux and DragonFlyBSD)"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
-        echo "./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
+    cat LUKSUS.usage
 exit 1
 fi
 
 if [ -z "$2" ]
 then
-        echo ""
-	echo "ERROR: NO ARGUMENTS SPECIFIED"
-        echo "AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED"
-        echo ""
-	echo "USAGE: Physical drive"
-	echo "./LUKSUS DEVICENAME NICKNAME-of-luks-container"
-	echo "USAGE: File container"
-	echo "./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes"
-	echo "To enable the use of TrueCrypt instead of DM-LUKS append the option: truecrypt"
-        echo ""
-        echo "EXAMPLES: DISK DRIVES, MEMORY CARDS, USB STICK, ETC"
-        echo "./LUKSUS /dev/sdb1 rambo1"
-	echo "./LUKSUS /dev/sdc1 library truecrypt"
-        echo ""
-        echo "CREATING AN ENCRYPTED FILECONTAINER (Linux and DragonFlyBSD)"
-        echo "./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
-        echo "./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M" 
+    cat LUKSUS.usage
 exit 1
 fi
 
 
 # I should use getops. Instead I make use of a crude but efficient 
 # test to see if the user wants truecrypt.
-
-if [[ "$3"=truecrypt || "$4"=truecrypt || "$5"=truecrypt ]] ; then
-if [ -z `which tcplay` ] ;then echo "Unable To Continue: Missing tcplay (truecrypt)" && exit; fi
-echo "Truecrypt Enabled"
+#if [ $3="truecrypt" ] || [ $4="truecrypt" ] || [$5="truecrypt"]
+if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]]
+then
+echo "Using Truecrypt"
 USETRUECRYPT=true
+if [ -z `which tcplay` ] ;then echo "Missing tcplay. Cannot continue. Please install Truecrypt" && exit; fi
 else
-echo Using Cryptsetup
+echo Using DM-LUKS Cryptsetup
 fi
-
 
 
 # Sanity check

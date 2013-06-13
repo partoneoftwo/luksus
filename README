@@ -110,7 +110,7 @@
 # Luksus is released under GNU GPLv2 License
 # located here: http://www.gnu.org/licenses/gpl-2.0.html
 #
-# I would love to hear from you regarding feedback, ways you use it, 
+# I really want to hear from you, feedback, the ways you use it, 
 # suggestions, tips and so on. 
 # My email is: thomas.frivold.at.gmail.com
 
@@ -118,7 +118,9 @@
 #################### TODO ##############################
 ########################################################
 
-# + Add TrueCrypt support
+# Another round of extensive testing on several 
+# Linux distros and Dragonfly BSD with
+# DM-LUKS and Truecrypt
 # + add a nice dialog interface * or remove it *
 # + must be escapable - ie. have a CANCEL button within 
 #   the dialog windows * or remove dialog *
@@ -128,6 +130,14 @@
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v0.99
+# Truecrypt command line option added
+# Usage cleanup
+# Readme testing
+
+# v0.95 06.03.2013 15:13
+# +Truecrypt support
 
 # v0.8.91 05.03.2013 20:00
 # Small bugfixes
