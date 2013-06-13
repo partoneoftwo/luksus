@@ -1,0 +1,21 @@
+
+ ERROR: NO ARGUMENTS SPECIFIED
+ AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED
+
+ USAGE: Physical drive
+ ./LUKSUS DEVICENAME NICKNAME-of-luks-container
+
+ USAGE: File container
+ ./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes
+
+ EXAMPLES: 
+ DISK DRIVES, MEMORY CARDS, USB STICK, ETC
+ ./LUKSUS /dev/sdb1 rambo1
+
+ CREATING AN ENCRYPTED FILECONTAINER (Linux and DragonFlyBSD)
+ ./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M 
+ ./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M
+
+ To enable the use of TrueCrypt instead of DM-LUKS append the option: truecrypt
+ ./LUKSUS /dev/sdc1 library truecrypt
+ ./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M truecrypt
