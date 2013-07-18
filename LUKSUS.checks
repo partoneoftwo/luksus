@@ -62,17 +62,16 @@ if [ -e "$device" ] ;
 	exit 1; 
 fi
 
-if [ $UNAME = DragonFly ] ;
-then
-echo We are on DragonFlyBSD here. Cool.
-# crude way to deal with different binary names
-alias shred=gshred
-# loading dm kernel module
-kldload dm
-# for some reason vnconfig must be ran once before it will start working
-# it seems that the DragonFlyBSD kernel is initializing something
-# so that's exactly what I'm doing here
-vnconfig 1>/dev/null 2>/dev/null
-else
-echo On Linux, continuing.
+if [ $UNAME == DragonFly ] ;
+	then echo We are on DragonFlyBSD here. Cool.
+	# crude way to deal with different binary names
+	alias shred=gshred
+	# loading dm kernel module in DragonflyBSD
+	kldload dm
+	# for some reason vnconfig must be ran once before it will start working
+	# it seems that the DragonFlyBSD kernel is initializing something
+	# so that's exactly what I'm doing here
+	vnconfig 1>/dev/null 2>/dev/null
+	else
+	echo On Linux, continuing.
 fi

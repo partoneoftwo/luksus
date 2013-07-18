@@ -14,12 +14,13 @@
 #
 # The purpose of this script is to provide an easy eay to encrypt
 # storage media in Linux and DragonflyBSD, such as hardrives, usb sticks,
-# sd cards or external hardrives.
+# sd cards or external hardrives. It uses the LUKS and cryptsetup
+# crypto subsystem internal to the Linux Kernel.
+# This is thus a wrapper script for cryptsetup, shred and mkfs.
 
 # Why? Because doing all these tasks manually is 
-# time consuming and can be a little tricky.
+# time consuming and can be a little tricky. At least I think so.
 
-# This is a wrapper script for cryptsetup, shred and mkfs.
 
 # HOW IT WORKS
 #
@@ -33,6 +34,33 @@
 # if you loose your /keys, the keyfile to your encrypted drive, then
 # the data will be impossible to retrieve.
 
+# ON KEYFILES AND ARE THEY BETTER THAN PASSWORDS?
+-
+(Passphrase-protected) Keyfiles are two-factor (something you have,
+something you know) and passphrases are one-factor (something you
+know). It should be obvious that (passphrase-protected) keyfiles are
+at least as secure as passphrases because you need a passphrase to use
+them. Considering you also need access to the appropriate filesystem,
+they'd be more secure, if just by a little bit.
+If you're talking about plaintext keyfiles, they're one-factor secure
+(something you have). It's not so obvious whether a plaintext is more
+or less secure than a passphrase. It would depend on the context, I
+guess.
+-
+Keyfiles are possession factors (something you have). Possession
+factors are threatened by theft and duplication. Since a keyfile is
+just a file, it's relatively easy to duplicate it, so it's not a very
+strong factor. In theory, a possession factor can be destroyed -- but
+not if it's been duplicated or stolen!
+Passphrases are knowledge factors (something you know). Knowledge
+factors are threatened by guessing and discovery. A strong passphrase
+that's not stored anywhere but your head is still weak against
+compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).
+-
+Source: Reddit discussion
+http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
+
+
 # DISCLAIMER 
 #
 # I, the author, take no responsibility if a black hole appears,
@@ -44,10 +72,8 @@
 # As a consequence it is the sole responsibility of the user
 # to use this software correctly. The author cannot be held
 # liable for any damages, as of this disclaimer.
+# Furthermore you are responsible for the content you encrypt.
 # END DISCLAIMER
-
-
-# USAGE
 #
 # ./LUKSUS DEVICENAME NICKNAME-of-luks-container
 #
@@ -75,7 +101,7 @@
 # For creating an encrypted filecontainer on DragonFlyBSD
 # ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
 
-# DragonflyBSD notes:
+# DRAGONFLYBSD NOTES:
 # The scripts does the same things as under Linux, but with one major
 # exception.
 # It does not create EXT4 filesystems, but UFS filesystems. 
@@ -88,9 +114,9 @@
 # file containers... I do not know the reason to this strange behaviour, 
 # but once it has created the volume, file transfer speeds are nominal and fast.
 # Sometimes it takes 15 minutes to finish the process, just have
-# patience :)
+# patience when creating encrypted filecontainers with loopback devices:)
 #
-# DragonFlyBSD does not come with bash, so you have to install it
+# DragonFlyBSD does not ship with bash by default, so you have to install it
 # from the repositories. "pkg_radd bash" will do the trick
 
 
@@ -118,6 +144,7 @@
 #################### TODO ##############################
 ########################################################
 
+# Test on Android
 # Another round of extensive testing on several 
 # Linux distros and Dragonfly BSD with
 # DM-LUKS and Truecrypt
@@ -130,6 +157,19 @@
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v1.0RC2
+
+# +Improved logging and reporting further
+# +Cleaner OS Detection
+# THESE BELOW  ARENOT ENTIRELY TRUE YET
+# +Properly works on Truecrypt and LUKS
+# +Properly tested on Linux: Debian, Ubuntu, Arch, Fedora, CentOS
+# +Properly tested on DragonFlyBSD
+# +Attemps to work on default installations:
+#  Dialog use is not enforced anymore. If package is not installed,
+#  then the script will skip fancy dialog use. Dialog is not shipped
+#  with all distros by default. Less headache for the user.
 
 # v0.99
 # Truecrypt command line option added

@@ -199,7 +199,8 @@ fi
 
 DISPLAYSUMMARY()
 {
-echo Results:
+echo ################################################
+echo Results of LUKSUS:
 echo DRIVE: $device
 echo NAME: $name
 echo KEYFILE: $keyfile
@@ -214,4 +215,7 @@ time2="$(date +%s.%N)"
 # This time taken needs attention - does not work anymore
 # for some reason
 # echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
+ls -l $device
+ls -l $luksfile
+ls -l /keys/$name*
 }

@@ -76,6 +76,8 @@ DONTSHREDIFLOOPBACK
 THESECRETSAUCE
 CREATEANDMOUNTFS
 DISPLAYLOGO
+echo The data below can also be found in /keys/$name.information
 DISPLAYSUMMARY
-DISPLAYSUMMARY 1>$keydir/$name.information 2>$keydir/$name.information
+DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
+DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
 exit 0
