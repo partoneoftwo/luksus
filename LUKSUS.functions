@@ -34,27 +34,27 @@ LOOPBACKMETHOD()
 
 }  
 
-
 DONTSHREDIFLOOPBACK()
 {
   if [[ $device != *loop* ]]
   then
-    echo Okay we are using $device ... Which is not a loopback device
+    echo "Okay we are using $device ... And we are on Linux BTW... Which is not a loopback device"
     echo Shredding ...
     # shred
     # Totally infuse the drive with random data
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
     shred -f -v -n1 $device
-  elif [[ $device != *vn* ]]
+  elif [[ $device = *vn* ]]
   then
-    echo On DragonFlyBSD
+    echo On DragonFlyBSD. Okay cool.
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
   else 
-    echo "Okay, $device is a loopback device, not shredding."
+    echo "Okay, $device is a loopback device, not shredding. And we are on Linux BTW"
   fi
 }  
+
 
 ASKUSERVERIFY()
 {
