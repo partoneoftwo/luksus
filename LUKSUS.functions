@@ -90,7 +90,7 @@ ARE THESE VALUES CORRECT? PRESS NO IF UNSURE OR IF THEY ARE INCORRECT.
 
 case $? in
 0)
-  echo "Okay We are proceed to takeoff"   ;;
+    ;;
 1)
   echo "You have pressed NO. LUKSUS will now close."  
   exit 1;;
@@ -108,7 +108,9 @@ echo KEYFILE: $keyfile
 echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
 echo ################################################
-echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
+echo JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE
+echo WE ASK AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?
+echo YOU WILL NUKE YOUR DRIVE: $device
 echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
 echo ""
 echo SERIOUSLY - LAST CHANCE
