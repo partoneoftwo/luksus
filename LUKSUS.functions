@@ -162,10 +162,11 @@ echo "Checking to see if the device contains a LUKS volume"
 echo "The device positively contains a LUKS volume."
 echo "Great!"
 echo "Continuing"
-else echo "The device does not contain a LUKS volume"
-echo "Something went wrong and the LUKS device has not been created"
-echo "Exiting"
-exit 1
+else 
+#echo "The device does not contain a LUKS volume"
+#echo "Something went wrong and the LUKS device has not been created"
+#echo "Exiting"
+#exit 1
 fi
 
 
@@ -183,10 +184,11 @@ then
 echo "The LUKS container header has been backed up successfully"
 echo "Great!"
 echo "Continuing LUKSUS"
-else echo "CATASTROPHIC FAILURE: Could not backup LUKS container header"
-echo "Something went wrong and LUKSUS failed to backup the LUKS header"
-echo "Exiting"
-exit 1
+else 
+#echo "CATASTROPHIC FAILURE: Could not backup LUKS container header"
+#echo "Something went wrong and LUKSUS failed to backup the LUKS header"
+#echo "Exiting"
+#exit 1
 fi
 }
 
