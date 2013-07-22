@@ -173,6 +173,10 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 #################### CHANGELOG #########################
 ########################################################
 
+# v1.0RC4 22.07.2013 15:09
+# +Removed some extra integrity checks. They were redundant and broke
+# Truecrypt support
+# Feature freeze, and all that is required now is more testing.
 
 # v1.0RC3 22.07.2013 12:00
 # +Better dialog - yesno now works
