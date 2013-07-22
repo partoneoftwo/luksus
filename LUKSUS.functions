@@ -59,13 +59,10 @@ DONTSHREDIFLOOPBACK()
 ASKUSERVERIFY()
 {
 dialog --title "WELCOME TO $programname" \
---msgbox "\n 
-\n
-DISPLAYLOGO
-VERSION: $version\n
-DATE   : $date \n
- \n
-" 50 50
+--msgbox "\n$programname $version $date \n\n
+Written by \n
+$author
+" 10 30
 
 echo ################################################
 echo DRIVE ENCRYPTION
@@ -136,7 +133,8 @@ dd if=/dev/urandom of=$keyfile bs=512 count=256
 if [[ $USETRUECRYPT = true ]];
 then
 echo TrueCrypt mode
-tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile --map=$name
+# had to remove --map=$name
+tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile
 else
 # cryptsetup
 # format the drive using encryption
