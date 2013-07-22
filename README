@@ -7,8 +7,9 @@
 
 # SYNOPSIS
 #
-# Create an encrypted filesystem on a hardrive or other storage
+# Creates an encrypted filesystem on a hardrive or other storage
 # media. LUKSUS also supports creating an encrypted filecontainer.
+# Uses Linux LUKS encryption facility.
 
 # BACKGROUND
 #
@@ -20,7 +21,7 @@
 
 # Why? Because doing all these tasks manually is 
 # time consuming and can be a little tricky. At least I think so.
-
+# Also, writing this has been a great learning experience.
 
 # HOW IT WORKS
 #
@@ -144,25 +145,12 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 #################### TODO ##############################
 ########################################################
 
-# Test on Android
 # Another round of extensive testing on several 
 # Linux distros and Dragonfly BSD with
 # DM-LUKS and Truecrypt
 # + add a nice dialog interface * or remove it *
-# + must be escapable - ie. have a CANCEL button within 
-#   the dialog windows * or remove dialog *
 # + better support command line options in a nice POSIX manner
 # + add the commandline option to use with or without dialog *or forget it*
-
-########################################################
-#################### CHANGELOG #########################
-########################################################
-
-# v1.0RC2
-
-# +Improved logging and reporting further
-# +Cleaner OS Detection
-# THESE BELOW  ARENOT ENTIRELY TRUE YET
 # +Properly works on Truecrypt and LUKS
 # +Properly tested on Linux: Debian, Ubuntu, Arch, Fedora, CentOS
 # +Properly tested on DragonFlyBSD
@@ -170,6 +158,24 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 #  Dialog use is not enforced anymore. If package is not installed,
 #  then the script will skip fancy dialog use. Dialog is not shipped
 #  with all distros by default. Less headache for the user.
+# +Properly tested across Linux and DragonflyBSD (all features tested
+# on 3 linux distros and on Dfly.
+
+
+
+########################################################
+#################### CHANGELOG #########################
+########################################################
+
+
+# v1.0RC3 22.07.2013 12:00
+# +Better dialog - yesno now works
+# I like where this is going
+
+# v1.0RC2 18.07.2013 19:00
+
+# +Improved logging and reporting further
+# +Cleaner OS Detection
 
 # v0.99
 # Truecrypt command line option added

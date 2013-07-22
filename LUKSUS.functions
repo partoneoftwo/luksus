@@ -25,7 +25,7 @@ LOOPBACKMETHOD()
     echo Okay we are using $device ... Beginning loopbackmethod
     ghead -c $luksfilesize /dev/zero > $luksfile
     # vnconfig needs to run once first, it seems that the kernel
-    # is initializing something on first run
+    # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
   else
@@ -61,6 +61,7 @@ ASKUSERVERIFY()
 dialog --title "WELCOME TO $programname" \
 --msgbox "\n 
 \n
+DISPLAYLOGO
 VERSION: $version\n
 DATE   : $date \n
  \n
@@ -73,7 +74,7 @@ echo THE DEVICE YOU HAVE SPECIFIED
 echo ################################################
 
 dialog --title "DRIVE ENCRYPTION SCRIPT" \
---msgbox "\n DETAILS AS SUBMITTED BY THE USER
+--yesno "\n DETAILS AS SUBMITTED BY THE USER
 \n \n \n
 NAME: 	        $name \n
 DRIVE:         $device \n
@@ -83,9 +84,21 @@ HEADER BACKUP: $headerfile\n
 FILECONTAINER LOCATION: $luksfile\n
 FILECONTAINER SIZE: $luksfilesize\n
 USING TRUECRYPT: $USETRUECRYPT\n
+\n\n\n
+ARE THESE VALUES CORRECT? PRESS NO IF UNSURE OR IF THEY ARE INCORRECT.
 " 50 50
 
+case $? in
+0)
+  echo "Okay We are proceed to takeoff"   ;;
+1)
+  echo "You have pressed NO. LUKSUS will now close."  
+  exit 1;;
+255)
+  echo "Box closed"   ;;
+esac
 
+DISPLAYLOGO
 echo ################################################
 echo DETAILS AS SUBMITTED BY THE USER
 echo PLEASE VERIFY THAT THESE ARE CORRECT
@@ -97,6 +110,8 @@ echo HEADER BACKUP: $headerfile
 echo ################################################
 echo UNDERSTAND THAT YOU WILL NUKE YOUR DRIVE: $device
 echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
+echo ""
+echo SERIOUSLY - LAST CHANCE
 read || exit
 }
 
