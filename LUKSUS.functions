@@ -18,12 +18,15 @@ LOOPBACKMETHOD()
     echo Running Linux
     echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
+    # block device housekeeping
+    losetup -f
     losetup $device $luksfile
   elif [[ $device = *vn* ]]
     then
     echo DragonFlyBSD - Nice...
     echo Okay we are using $device ... Beginning loopbackmethod
     ghead -c $luksfilesize /dev/zero > $luksfile
+    # block device housekeeping
     # vnconfig needs to run once first, it seems that the kernel
     # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
