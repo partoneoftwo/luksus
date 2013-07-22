@@ -35,32 +35,6 @@
 # if you loose your /keys, the keyfile to your encrypted drive, then
 # the data will be impossible to retrieve.
 
-# ON KEYFILES AND ARE THEY BETTER THAN PASSWORDS?
--
-(Passphrase-protected) Keyfiles are two-factor (something you have,
-something you know) and passphrases are one-factor (something you
-know). It should be obvious that (passphrase-protected) keyfiles are
-at least as secure as passphrases because you need a passphrase to use
-them. Considering you also need access to the appropriate filesystem,
-they'd be more secure, if just by a little bit.
-If you're talking about plaintext keyfiles, they're one-factor secure
-(something you have). It's not so obvious whether a plaintext is more
-or less secure than a passphrase. It would depend on the context, I
-guess.
--
-Keyfiles are possession factors (something you have). Possession
-factors are threatened by theft and duplication. Since a keyfile is
-just a file, it's relatively easy to duplicate it, so it's not a very
-strong factor. In theory, a possession factor can be destroyed -- but
-not if it's been duplicated or stolen!
-Passphrases are knowledge factors (something you know). Knowledge
-factors are threatened by guessing and discovery. A strong passphrase
-that's not stored anywhere but your head is still weak against
-compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).
--
-Source: Reddit discussion
-http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
-
 
 # DISCLAIMER 
 #
@@ -103,6 +77,9 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 # ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
 
 # DRAGONFLYBSD NOTES:
+# There are a few things to note about running this on DragonflyBSD...
+#
+# NO EXT4, UFS IS USED 
 # The scripts does the same things as under Linux, but with one major
 # exception.
 # It does not create EXT4 filesystems, but UFS filesystems. 
@@ -110,15 +87,44 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 # loopback device, and I have not yet managed to get it to work.
 # Therefore the user will get a UFS filesystem instead.
 #
+# SLOW LOOPBACK BLOCK DEVICE
 # For some reason the cryptsetup tool in Dfly takes a very long time
 # to do its work when it is manipulating loopback LUKS volumes, ie.
 # file containers... I do not know the reason to this strange behaviour, 
 # but once it has created the volume, file transfer speeds are nominal and fast.
-# Sometimes it takes 15 minutes to finish the process, just have
-# patience when creating encrypted filecontainers with loopback devices:)
+# In my experience it takes 15 minutes to finish the process of creating
+# an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
+# loopback devices:)
 #
 # DragonFlyBSD does not ship with bash by default, so you have to install it
 # from the repositories. "pkg_radd bash" will do the trick
+
+# ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
+-
+(Passphrase-protected) Keyfiles are two-factor (something you have,
+something you know) and passphrases are one-factor (something you
+know). It should be obvious that (passphrase-protected) keyfiles are
+at least as secure as passphrases because you need a passphrase to use
+them. Considering you also need access to the appropriate filesystem,
+they'd be more secure, if just by a little bit.
+If you're talking about plaintext keyfiles, they're one-factor secure
+(something you have). It's not so obvious whether a plaintext is more
+or less secure than a passphrase. It would depend on the context, I
+guess.
+-
+Keyfiles are possession factors (something you have). Possession
+factors are threatened by theft and duplication. Since a keyfile is
+just a file, it's relatively easy to duplicate it, so it's not a very
+strong factor. In theory, a possession factor can be destroyed -- but
+not if it's been duplicated or stolen!
+Passphrases are knowledge factors (something you know). Knowledge
+factors are threatened by guessing and discovery. A strong passphrase
+that's not stored anywhere but your head is still weak against
+compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).
+-
+Source: Reddit discussion
+http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
+
 
 
 # REQUIREMENTS:
