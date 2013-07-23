@@ -163,9 +163,12 @@ echo "The device positively contains a LUKS volume."
 echo "Great!"
 echo "Continuing"
 else 
+## Need a more refined conditional system in order to catch
+## if using truecrypt and doing something completely different.
+## To be featured in 2.0: encryption engines
 #echo "The device does not contain a LUKS volume"
 #echo "Something went wrong and the LUKS device has not been created"
-#echo "Exiting"
+echo "Continuing"
 #exit 1
 fi
 
@@ -187,7 +190,7 @@ echo "Continuing LUKSUS"
 else 
 #echo "CATASTROPHIC FAILURE: Could not backup LUKS container header"
 #echo "Something went wrong and LUKSUS failed to backup the LUKS header"
-#echo "Exiting"
+echo "Continuing"
 #exit 1
 fi
 }

@@ -88,6 +88,13 @@
 # Therefore the user will get a UFS filesystem instead.
 #
 # SLOW LOOPBACK BLOCK DEVICE
+#
+# On Linux
+# Truecrypt / tcplay is slow when it is creating encrypted
+# filecontainers on Linux. Once the volume has been created
+# speeds are nominal. This has at least been the case in my 
+# testing on Virtualbox instances of various Linux distributions.
+#
 # For some reason the cryptsetup tool in Dfly takes a very long time
 # to do its work when it is manipulating loopback LUKS volumes, ie.
 # file containers... I do not know the reason to this strange behaviour, 
@@ -137,7 +144,6 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 # GNU coreutils
 
 # this script works on Linux and DragonFlyBSD.
-# It might also be possible to use DM-CRYPT on FreeBSD, not sure yet
 # Tested on: Debian, Ubuntu, ArchLinux and DragonFlyBSD
 
 # Luksus is released under GNU GPLv2 License
@@ -177,6 +183,7 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 # +Removed some extra integrity checks. They were redundant and broke
 # Truecrypt support
 # Feature freeze, and all that is required now is more testing.
+# Fixed some regressions. Testing is a good idea.
 
 # v1.0RC3 22.07.2013 12:00
 # +Better dialog - yesno now works
