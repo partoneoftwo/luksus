@@ -239,6 +239,6 @@ time2="$(date +%s.%N)"
 # for some reason
 # echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
 ls -l $device
-ls -l $luksfile
+#ls -l $luksfile
 ls -l /keys/$name*
 }
