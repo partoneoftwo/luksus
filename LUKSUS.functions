@@ -232,7 +232,7 @@ CREATEANDMOUNTFS()
 # works for now
 mkdir -p $mountpoint
 mkdir -p $keydir
-if [ $UNAME = DragonFly ] ;
+if [ $UNAME == DragonFly ] ;
 then
 echo DragonFlyBSD mode
 # ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
