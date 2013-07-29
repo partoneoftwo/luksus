@@ -13,9 +13,8 @@ fi
 
 LOOPBACKMETHOD()
 {
-  if [[ $device = *loop* ]]
+  if [[ $device = *loop* ]] && [[ $device = *vn* ]]
   then
-    echo Running Linux
     echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping

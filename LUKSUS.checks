@@ -54,15 +54,8 @@ if [ -z `which dialog` ] ;then echo "Missing dialog" && exit; fi
 if [ -z `which shred` ] ;then alias shred=gshred; fi
 
 # need to use GNU head also - from GNU coreutils
-alias head=gshred
-				    
-# Check to see if specified device exists
-if [ -e "$device" ] ; 
-	then echo "OK, $device exists";
-	else 
-	echo "$device was not found. $programname is now exiting" ; 
-	exit 1; 
-fi
+alias head gshred
+alias shred gshred
 
 if [ $UNAME == DragonFly ] ;
 	then echo We are on DragonFlyBSD here. Cool.
@@ -74,6 +67,16 @@ if [ $UNAME == DragonFly ] ;
 	# it seems that the DragonFlyBSD kernel is initializing something
 	# so that's exactly what I'm doing here
 	vnconfig 1>/dev/null 2>/dev/null
+	vnconfig
 	else
 	echo On Linux, continuing.
 fi
+
+# Check to see if specified device exists
+if [ -e "$device" ] ; 
+	then echo "OK, $device exists";
+	else 
+	echo "$device was not found. $programname is now exiting" ; 
+	exit 1; 
+fi
+
