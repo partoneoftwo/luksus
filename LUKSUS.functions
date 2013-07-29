@@ -120,6 +120,17 @@ echo SERIOUSLY - LAST CHANCE
 read || exit
 }
 
+CREATEKEYFILE()
+{
+if [[ $USEKEY == true ]];
+then
+echo Creating key
+# generate a keyfile using completely random data
+dd if=/dev/urandom of=$keyfile bs=512 count=256
+else 
+echo ...
+fi
+}
 
 LUKSUS1TRUECRYPT()
 {
@@ -138,9 +149,9 @@ fi
 LUKSUS1TRUECRYPTKEYFILE()
 {
 # Begin the encryption - with TrueCrypt and with key?
-if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == TRUE ]];
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
 then
-echo TrueCrypt mode
+echo TrueCrypt mode and adding a keyfile
 # had to remove --map=$name
 tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile
 else
@@ -151,11 +162,8 @@ fi
 LUKSUS2LUKS()
 {
 # Begin the encryption - with LUKS and with a keyfile?
-if [[ $USEKEY = true ]];
-#if [[ $USEKEY == true ]] && [[ $ENCRYPTION == LUKS ]] ;
+if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY = true ]];
 then
-# generate a keyfile using completely random data
-dd if=/dev/urandom of=$keyfile bs=512 count=256
 # cryptsetup
 # format the drive using encryption
 # create an encrypted drive with aes-xts-plain cipher
