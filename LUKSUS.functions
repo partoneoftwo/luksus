@@ -190,7 +190,11 @@ then
 # cryptsetup isLuks
 # check to see if the device has got a valid LUKS container
 # if it does not, then exit
+echo "Checking to see if the device contains a LUKS volume"
 cryptsetup isLuks $device  || "echo "The device does not contain a LUKS volume. This is a problem since it should have a LUKS volume by now. Please check commandline arguments and try again" && exit 1"
+echo "The device positively contains a LUKS volume."
+echo "Great!"
+echo "Continuing"
 # cryptsetup luksHeaderBackup
 # backup the header of the luks container
 # as strongly recommended by the luks FAQ
@@ -208,17 +212,14 @@ fi
 
 LUKSUS4LUKSOPEN()
 {
-if [[ $ENCRYPTION == LUKS ]];
+if [[ $ENCRYPTION = LUKS ]];
 then
-echo "Checking to see if the device contains a LUKS volume"
-echo "The device positively contains a LUKS volume."
-echo "Great!"
-echo "Continuing"
-else 
 # cryptsetup luksOpen
 # mount the encrypted drive using a keyfile
-cryptsetup luksOpen $device $name --key-file=$keyfile
+cryptsetup luksOpen $device $name --key-file=$keyfile 1>/dev/null 2>/dev/null
 cryptsetup luksOpen $device $name
+else 
+echo Proceeding
 fi
 }
 
