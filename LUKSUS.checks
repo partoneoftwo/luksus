@@ -18,7 +18,7 @@ fi
 # Runtime Arguments Checking
 # I should use getops. Instead I make use of a crude but efficient 
 # test to see if the user wants truecrypt.
-if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]]
+if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]];
 then
 echo "Using Truecrypt"
 ENCRYPTION=TRUECRYPT
@@ -29,15 +29,14 @@ ENCRYPTION=LUKS
 fi
 
 # user wants to use a keyfile
-if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]]
+if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]] || [[ "$3" = "keyfile" ]] || [[ "$4" = "keyfile" ]] || [[ "$5" = "keyfile" ]] || [[ "$6" = "keyfile" ]] ;
 then
-echo "Using key"
+echo "Using keyfile"
 USEKEY=true
 else
 echo Using passphrase
 USEKEY=false
 fi
-
 
 # Sanity check
 # Got root?

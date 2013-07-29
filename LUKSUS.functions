@@ -174,7 +174,7 @@ LUKSUS2LUKSPASSPHRASE()
 {
 if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
 then
-echo LUKS with Passphrase
+echo LUKS with passphrase
 echo Danger Will Robinson. 
 echo You will only be prompted for a password once. Type carefully.
 cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device
@@ -200,13 +200,13 @@ echo "Continuing"
 # as strongly recommended by the luks FAQ
 # if it does not, then exit
 echo "Taking a backup of the LUKS container header"
-cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose || echo "Something went wrong and LUKSUS failed to backup the LUKS header. Please check commandline arguments and try again." && echo 1
+cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose || "echo Something went wrong and LUKSUS failed to backup the LUKS header. Please check commandline arguments and try again. && exit 1"
 echo "The LUKS container header has been backed up successfully"
 echo "Great!"
 echo "Continuing LUKSUS"
 
 else 
-echo NOT WITH LUKS
+echo Not using LUKS
 fi
 }
 
@@ -217,6 +217,7 @@ then
 # cryptsetup luksOpen
 # mount the encrypted drive using a keyfile
 cryptsetup luksOpen $device $name --key-file=$keyfile 1>/dev/null 2>/dev/null
+echo Attempting to open and mount the newly encrypted volume
 cryptsetup luksOpen $device $name
 else 
 echo Proceeding
@@ -242,13 +243,8 @@ mount /dev/mapper/$name /mnt/$name
 else
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
 mkfs.ext4 /dev/mapper/$name
-# if [ $? -ne 0 ] ; then # retired line
-    mkfs.ext4 -F $device
 # mounting the newly created drive
 mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
-# if [ $? -ne 0 ] ; then # retired line
-    mount -t ext4 $device $mountpoint > /dev/null 2>&1
-
 fi
 }
 
@@ -259,6 +255,7 @@ date
 echo Results of LUKSUS:
 echo DRIVE: $device
 echo NAME: $name
+echo USED KEYFILE: $USEKEY
 echo KEYFILE: $keyfile
 echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
@@ -274,4 +271,11 @@ time2="$(date +%s.%N)"
 # echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
 ls -l $device
 #ls -l $luksfile
+}
+
+WRITEINFORMATIONFILE()
+{
+DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
+DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
+ls -l $keydir/$name* 1>>$keydir/$name.information 2>>$keydir/$name.information
 }
