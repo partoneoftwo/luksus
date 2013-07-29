@@ -38,9 +38,9 @@ LOOPBACKMETHOD()
 
 DONTSHREDIFLOOPBACK()
 {
-  if [[ $device != *loop* ]]
+  if [[ $device != *loop* ]] && [[ $device != *vn* ]]
   then
-    echo "Okay we are using $device ... And we are on Linux BTW... Which is not a loopback device"
+    echo "Okay we are using $device ..."
     echo Shredding ...
     # shred
     # Totally infuse the drive with random data

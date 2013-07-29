@@ -54,14 +54,13 @@ if [ -z `which dialog` ] ;then echo "Missing dialog" && exit; fi
 if [ -z `which shred` ] ;then alias shred=gshred; fi
 
 # need to use GNU head also - from GNU coreutils
-alias head gshred
-alias shred gshred
 
 if [ $UNAME == DragonFly ] ;
 	then echo We are on DragonFlyBSD here. Cool.
 	# crude way to deal with different binary names
-	alias shred=gshred
-	# loading dm kernel module in DragonflyBSD
+	alias head head
+        alias shred gshred
+# loading dm kernel module in DragonflyBSD
 	kldload dm
 	# for some reason vnconfig must be ran once before it will start working
 	# it seems that the DragonFlyBSD kernel is initializing something
