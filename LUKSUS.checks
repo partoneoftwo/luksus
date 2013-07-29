@@ -22,17 +22,27 @@ then
 exit 1
 fi
 
-
+# Runtime Arguments Checking
 # I should use getops. Instead I make use of a crude but efficient 
 # test to see if the user wants truecrypt.
 #if [ $3="truecrypt" ] || [ $4="truecrypt" ] || [$5="truecrypt"]
 if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]]
 then
 echo "Using Truecrypt"
-USETRUECRYPT=true
-if [ -z `which tcplay` ] ;then echo "Missing tcplay. Cannot continue. Please install Truecrypt" && exit; fi
+ENCRYPTION=TRUECRYPT
+if [ -z `which tcplay` ] ;then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package)" && exit; fi
 else
 echo Using DM-LUKS Cryptsetup
+ENCRYPTION=LUKS
+fi
+
+if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]]
+then
+echo "Using key"
+USEKEY=true
+else
+echo Using passphrase
+USEKEY=false
 fi
 
 

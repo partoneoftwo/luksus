@@ -178,6 +178,16 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+# v1.0RC5 29.07.2013 12:30
+
+# +LUKSUS now defaults to passphrase. Using a keyfile is 
+# optional. User feedback suggested that many users preferred
+# to use passphrase instead of keys. Therefore the default
+# has been set to passphrase, with using keyfiles being optional.
+# +The dawn of modularization of the encryption engine code.
+# I am hoping to be able to add support for FreeBSDs GBDE and GELI,
+# NetBSD's CGD and OpenBSDs BIOCTL. This would bump the number of
+supported platforms to 5.
 
 # v1.0RC4 22.07.2013 15:09
 # +Removed some extra integrity checks. They were redundant and broke

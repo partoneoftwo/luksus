@@ -1,6 +1,6 @@
 programname=LUKSUS
-version=v1.0RC4
-date=22.07.2013
+version=v1.0RC5
+date=29.07.2013
 author="Thomas J. Frivold"
 
 time1="$(date +%s.%N)"
@@ -19,5 +19,5 @@ UNAME=`uname`
 screensize=`stty size`
 height=$(echo $screensize | cut -d " " -f 1)
 width=$(echo $screensize | cut -d " " -f 2)
-USETRUECRYPT=false
-requirements=('grep' 'cryptsetup' 'dialog' 'shred' 'mc')
+ENCRYPTION=LUKS
+USEKEY=false
