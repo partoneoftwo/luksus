@@ -1,15 +1,8 @@
 # DOING CONDITIONAL CHECKING
 # CHECKING IF RUNTIME ARGUMENTS ARE COOL
-# These checks do not check if the 3rd and 4th runtime arguments
-# are provided or correct. In the future, this be necessary, just
-# for consistency and correctness sake. It only checks the first $1
-# and second $2 argument.
-
-
 ## Testing if the user has any options for LUKSUS. These should
 # probably be ported to GETOPTS code, but it has to stay like this for
-# now. Also this is lame, I should be able to catch both arguments in
-# one test. Will fix later.
+# now. Will fix later, maybe, one day.
 if [ -z "$1" ]
 then
     cat LUKSUS.usage
@@ -25,8 +18,7 @@ fi
 # Runtime Arguments Checking
 # I should use getops. Instead I make use of a crude but efficient 
 # test to see if the user wants truecrypt.
-#if [ $3="truecrypt" ] || [ $4="truecrypt" ] || [$5="truecrypt"]
-if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]]
+if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]]
 then
 echo "Using Truecrypt"
 ENCRYPTION=TRUECRYPT
@@ -36,6 +28,7 @@ echo Using DM-LUKS Cryptsetup
 ENCRYPTION=LUKS
 fi
 
+# user wants to use a keyfile
 if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]]
 then
 echo "Using key"

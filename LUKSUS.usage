@@ -6,16 +6,15 @@
  ./LUKSUS DEVICENAME NICKNAME-of-luks-container
 
  USAGE: File container
- ./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes
+ ./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-mb
 
  EXAMPLES: 
- DISK DRIVES, MEMORY CARDS, USB STICK, ETC
  ./LUKSUS /dev/sdb1 rambo1
+ ./LUKSUS /dev/sdb1 rambo1 usekey
+ ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+ ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 100M usekey 
+ ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
 
- CREATING AN ENCRYPTED FILECONTAINER (Linux and DragonFlyBSD)
- ./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M 
- ./LUKSUS /dev/vn0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M
+ Please refer to README for a further explanation of commandline options
+ and examples.
 
- To enable the use of TrueCrypt instead of DM-LUKS append the option: truecrypt
- ./LUKSUS /dev/sdc1 library truecrypt
- ./LUKSUS /dev/loop0 MY-SECRET-LIBRARY /mysecretlibrary.encrypted 300M truecrypt

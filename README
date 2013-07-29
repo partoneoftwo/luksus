@@ -38,6 +38,7 @@
 
 # DISCLAIMER 
 #
+# As with all securit measures: Use with caution.
 # I, the author, take no responsibility if a black hole appears,
 # and implodes your house, your town and the entire planet earth as an
 # effect of using this script.
@@ -49,19 +50,53 @@
 # liable for any damages, as of this disclaimer.
 # Furthermore you are responsible for the content you encrypt.
 # END DISCLAIMER
-#
-# ./LUKSUS DEVICENAME NICKNAME-of-luks-container
-#
-# EXAMPLE:
-# ./LUKSUS /dev/sdb1 rambo1
-#
-# if running remotely, for instance via ssh, it makes a lot of sense
-# to run this in screen, just append screen to the command
-#
-# EXAMPLE:
-# screen ./LUKSUS /dev/sdb1 rambo
 
-# It is also possible to create an encrypted file container
+# USAGE
+# The usage of LUKSUS can take two different forms, 
+# mainly whether you are using LUKSUS on a physical device or a
+# virtual file. These two requires somewhat different commandline
+# arguments.
+# As of version 1.0, LUKSUS defaults to passphrase
+# for securing the volume. Using a keyfile is optional
+# and can be activated by using the commandline option: usekey
+#
+#Command line arguments are: devicename volumename size truecrypt usekey
+# AT LEAST TWO FIRST COMMAND LINE ARGUMENTS ARE REQUIRED
+# IF CREATING A FILECONTAINER SIZE IS REQUIRED (examples: 1000M 5G)
+
+# ./LUKSUS DEVICENAME VOLUMENAME optional options
+# ./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER SIZE[M] truecrypt usekey
+
+# USAGE: Physical drive
+# ./LUKSUS DEVICENAME NICKNAME-of-luks-container
+# ./LUKSUS DEVICENAME VOLUMENAME truecrypt
+
+# USAGE: File container
+# ./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes
+
+# EXAMPLES: 
+# ENCRYPT PHYSICAL MEDIA: Using password
+# ./LUKSUS /dev/sdb1 rambo1
+ 
+# ENCRYPT PHYSICAL MEDIA: Using keyfile
+# ./LUKSUS /dev/sdb1 rambo1 usekey
+
+# CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
+# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
+# ./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+
+# To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
+# ./LUKSUS /dev/sdc1 library truecrypt
+# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
+
+# This last example is a corner case. This would create an encrypted
+# filecontainer using truecrypt with a passphrase as well as with a keyfile.
+# That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
+# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey
+
+
+# ENCRYPTED FILECONTAINER
+# It is possible to create an encrypted file container
 # The usage then changes a little as the script then needs to
 # know which loopbackdevice you wish to use, where the encrypted
 # filecontainer should be located, and how large it should be.
@@ -79,6 +114,9 @@
 # DRAGONFLYBSD NOTES:
 # There are a few things to note about running this on DragonflyBSD...
 #
+# DragonFlyBSD does not ship with bash by default, so you have to install it
+# from the repositories. "pkg_radd bash" will do the trick
+#
 # NO EXT4, UFS IS USED 
 # The scripts does the same things as under Linux, but with one major
 # exception.
@@ -87,9 +125,12 @@
 # loopback device, and I have not yet managed to get it to work.
 # Therefore the user will get a UFS filesystem instead.
 #
-# SLOW LOOPBACK BLOCK DEVICE
+# TRUECRYPT NOTES:
 #
-# On Linux
+# Truecrypt defaults to using passphrase for volume security.
+# A keyfile can be added by using the commandline argument: usekey
+#
+# Applies to both on Linux and DragonflyBSD
 # Truecrypt / tcplay is slow when it is creating encrypted
 # filecontainers on Linux. Once the volume has been created
 # speeds are nominal. This has at least been the case in my 
@@ -103,9 +144,6 @@
 # an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
 # loopback devices:)
 #
-# DragonFlyBSD does not ship with bash by default, so you have to install it
-# from the repositories. "pkg_radd bash" will do the trick
-
 # ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
 -
 (Passphrase-protected) Keyfiles are two-factor (something you have,

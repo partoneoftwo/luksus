@@ -19,7 +19,7 @@ LOOPBACKMETHOD()
     echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping
-    losetup -f
+    losetup -f 1>/dev/null 2>/dev/null
     losetup $device $luksfile
   elif [[ $device = *vn* ]]
     then
@@ -62,7 +62,7 @@ DONTSHREDIFLOOPBACK()
 ASKUSERVERIFY()
 {
 dialog --title "WELCOME TO $programname" \
---msgbox "\n$programname $version $date \n\n
+--msgbox "\n$programname $version $date on $UNAME\n\n
 Written by \n
 $author
 " 10 30
