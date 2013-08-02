@@ -9,7 +9,8 @@
 #
 # LUKSUS creates an encrypted filesystem on a hardrive or other storage
 # media. LUKSUS also supports creating an encrypted filecontainer.
-# Uses Linux LUKS encryption facility.
+# It can use the following encryption facilities: LUKS, Truecrypt and Geli. 
+# It works on Linux, DragonflyBSD and FreeBSD.
 
 # BACKGROUND
 #
@@ -19,8 +20,11 @@
 # crypto subsystem internal to the Linux Kernel.
 # This is thus a wrapper script for cryptsetup, shred and mkfs.
 
-# Why? Because doing all these tasks manually is 
-# time consuming and can be a little tricky. At least I think so.
+# Why? 
+# Because doing all these tasks manually is 
+# time consuming and can be a little tricky. I wanted to have a simple
+way of creating encrypted volumes instead of having to consult
+documentation each and every time I wanted to do it.
 # Also, writing this has been a great learning experience.
 
 # HOW IT WORKS

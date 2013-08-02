@@ -1,6 +1,6 @@
 programname=LUKSUS
-version=v1.0RC7
-date=29.07.2013
+version=v1.0RC8
+date=02.08.2013
 author="Thomas J. Frivold"
 
 time1="$(date +%s.%N)"
