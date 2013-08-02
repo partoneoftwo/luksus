@@ -196,6 +196,17 @@ Q: I lost the key or the password, is there a way to restore the key
 if I forgot it?
 A: No. Really. No.
 
+Q: What's in the secret sauce?
+This is the gist of the encryption process is this command:
+
+LUKS
+cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
+
+Truecrypt (tcplay)
+tcplay --create --device=$device --cipher=AES-256-XTS
+
+Geli (FreeBSD)
+# coming soon
 
 Q: Why are we using the AES-256 cipher?
 A: http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
