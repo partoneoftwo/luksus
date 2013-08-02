@@ -10,17 +10,47 @@ then
   head -n 6 LUKSUS.logo
 fi
 }
+  
+
+# can't get this function to work
+# something's wrong
+# I really want this to work
+#LOOPBACK()
+#{
+#if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]; then
+#    echo Loopback device on Linux
+#    echo Okay we are using $device ... Beginning loopbackmethod
+#    head -c $luksfilesize /dev/zero > $luksfile
+#    # block device housekeeping
+#    losetup -f 1>/dev/null 2>/dev/null
+#    losetup $device $luksfile
+#elif [[ $loopbackdevice == true ]] && [[ $UNAME == Dragonfly ]]; then
+#    echo DragonFlyBSD - Nice...
+#    echo Okay we are using $device ... Beginning loopbackmethod
+#    ghead -c $luksfilesize /dev/zero > $luksfile
+#    # block device housekeeping
+#    # vnconfig needs to run once first, it seems that the kernel
+#    # is initializing something on first run. Then it must run again.
+#    vnconfig 1>/dev/null 2>/dev/null
+#    vnconfig $device $luksfile
+#elif [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD]]; then
+#    echo FreeBSD
+#else
+#    echo Continuing
+#fi
+#}
+  
 
 LOOPBACKMETHOD()
 {
-  if [[ $device = *loop* ]] && [[ $device = *vn* ]]
+  if [[ $loopbackdevice = true ]] && [[ $UNAME = Linux ]]
   then
     echo Okay we are using $device ... Beginning loopbackmethod
     head -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping
     losetup -f 1>/dev/null 2>/dev/null
     losetup $device $luksfile
-  elif [[ $device = *vn* ]]
+  elif [[ $loopbackdevice = true ]] && [[ UNAME = DragonFly ]]
     then
     echo DragonFlyBSD - Nice...
     echo Okay we are using $device ... Beginning loopbackmethod
@@ -33,7 +63,6 @@ LOOPBACKMETHOD()
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
-
 }  
 
 DONTSHREDIFLOOPBACK()

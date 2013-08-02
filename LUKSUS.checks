@@ -120,3 +120,19 @@ if [ -e "$device" ]
 	exit 1
 fi
 
+LOOPBACKTEST()
+{
+  if [[ $device == *loop* ]]
+  then
+  loopbackdevice=true
+  elif [[ $device == *vn* ]]
+  then
+  loopbackdevice=true
+  elif [[ $device = *md* ]]
+  then
+  loopbackdevice=true
+  else
+  loopbackdevice=false  
+  fi
+}
+LOOPBACKTEST
