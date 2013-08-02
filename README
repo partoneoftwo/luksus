@@ -20,41 +20,6 @@
 # crypto subsystem internal to the Linux Kernel.
 # This is thus a wrapper script for cryptsetup, shred and mkfs.
 
-# Why? 
-# Because doing all these tasks manually is 
-# time consuming and can be a little tricky. I wanted to have a simple
-way of creating encrypted volumes instead of having to consult
-documentation each and every time I wanted to do it.
-# Also, writing this has been a great learning experience.
-
-# HOW IT WORKS
-#
-# The script works like this:
-# all existing data will be brutally removed beyond reconstruction (forensically)
-# then it writes random data to the drive
-# then creates a keyfile
-# then encrypts the drive using the keyfile stored in /keys
-# a LUKS header backup will also be placed in /keys
-# please remember to take care of your /keys
-# if you loose your /keys, the keyfile to your encrypted drive, then
-# the data will be impossible to retrieve.
-
-
-# DISCLAIMER 
-#
-# As with all security measures: Think them through, use with caution.
-# I, the author, take no responsibility if a black hole appears,
-# and implodes your house, your town and the entire planet earth as an
-# effect of using this script.
-# Understand that the author takes no responsibility, and cannot
-# be held liable if you, the user, use the script to destroy the
-# files/contents of your storage media.
-# As a consequence it is the sole responsibility of the user
-# to use this software correctly. The author cannot be held
-# liable for any damages, as of this disclaimer.
-# Furthermore you are responsible for the content you encrypt.
-# END DISCLAIMER
-
 # USAGE
 # The usage of LUKSUS can take two different forms, 
 # mainly whether you are using LUKSUS on a physical device or a
@@ -156,8 +121,78 @@ documentation each and every time I wanted to do it.
 # an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
 # loopback devices:)
 #
-# ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
--
+
+
+FAQ:
+Q: Why should I use this script? 
+A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
+   Because doing all these tasks manually is 
+   time consuming and can be a little tricky. I wanted to have a simple
+   way of creating encrypted volumes instead of having to consult
+   documentation each and every time I wanted to do it.
+   Also, writing this has been a great learning experience.
+
+Q: What is the license of LUKSUS?
+A: LUKSUS is free libre open source software, released under the GPLv2
+   license.
+
+Q: Why should I encrypt?
+A: It is beyond the scope of this README to go indepth, but let me
+   give you a primer with 3 different scenarios. Please
+   google/duckduckgo for more info. Read some of Bruce Schneier's excellent articles and essays.
+    
+   At university I have met many wonderful people. Among them are
+   exchange students who come from repressive regimes. These students,
+   say they are studying political science and get fairly deeply into
+   studies of democracy. When they bring their laptop back home, and it
+   for whichever reason gets seized by the government, that person will
+   be in trouble. The solution to that would be to encrypt the
+   files/drives.
+
+   You are working for a top notch startup. You have written a bunch
+   of amazing code, and created some fantastic technical charts and your
+   competitors are envious. Then one day, at a cafe, your laptop gets
+   stolen. You loose all your files. You had a backup, sure, but the
+   thief might sell your data. The solution is to encrypt the drive.
+
+Q: How is the script designed?
+A: The script works like this:
+   all existing data will be brutally removed beyond reconstruction (forensically)
+   then it writes random data to the drive
+   then creates a keyfile
+   then encrypts the drive using the keyfile stored in /keys
+   a LUKS header backup will also be placed in /keys
+   please remember to take care of your /keys
+   if you loose your /keys, the keyfile to your encrypted drive, then
+   the data will be impossible to retrieve.
+
+
+Q: Is there a Disclaimer? 
+A: Oh yes there is.
+    As with all security measures: Think them through, use with caution.
+    I, the author, take no responsibility if a black hole appears,
+    and implodes your house, your town and the entire planet earth as an
+    effect of using this script.
+    Understand that the author takes no responsibility, and cannot
+    be held liable if you, the user, use the script to destroy the
+    files/contents of your storage media.
+    As a consequence it is the sole responsibility of the user
+    to use this software correctly. The author cannot be held
+    liable for any damages, as of this disclaimer.
+    Furthermore you are responsible for the content you encrypt.
+    END DISCLAIMER
+
+
+Q: I lost the key or the password, is there a way to restore the key
+if I forgot it?
+A: No. Really. No.
+
+
+Q: Why are we using the AES-256 cipher?
+A: http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
+
+Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
+A: -
 (Passphrase-protected) Keyfiles are two-factor (something you have,
 something you know) and passphrases are one-factor (something you
 know). It should be obvious that (passphrase-protected) keyfiles are
@@ -183,7 +218,7 @@ Source: Reddit discussion
 http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 
 
-# REQUIREMENTS:
+Q: What are the requirements of using LUKSUS:
 # an empty hardrive or storage media
 # knowledge about which device the hardrive or storage
 # blkid will provide this
@@ -216,9 +251,6 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 # +Properly tested on Linux: Debian, Ubuntu, Arch, Fedora, CentOS
 # +Properly tested on DragonFlyBSD
 # +Attemps to work on default installations:
-#  Dialog use is not enforced anymore. If package is not installed,
-#  then the script will skip fancy dialog use. Dialog is not shipped
-#  with all distros by default. Less headache for the user.
 # +Properly tested across Linux and DragonflyBSD (all features tested
 # on 3 linux distros and on Dfly.
 
@@ -229,7 +261,11 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 ########################################################
 
 # v1.0RC8 02.08.2013
-# added nodialog option and FreeBSD support
+# + added nodialog option and FreeBSD support
+# + Dialog use is not enforced anymore. If package is not installed,
+# +  then the script will skip fancy dialog use. Dialog is not shipped
+# +  with all distros by default. Less headache for the user.
+
 
 # v1.0RC7 30.07.2013
 # +Cleanup
