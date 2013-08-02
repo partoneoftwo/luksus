@@ -60,6 +60,9 @@ LOOPBACKMETHOD()
     # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
+   elif [[ $loopbackdevice = true ]] && [[ UNAME = FreeBSD ]]
+   then
+   echo FreeBSD. Support is coming for FreeBSD. Please hang tight faithful users.
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
