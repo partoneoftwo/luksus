@@ -155,6 +155,15 @@ A: It is beyond the scope of this README to go indepth, but let me
    stolen. You loose all your files. You had a backup, sure, but the
    thief might sell your data. The solution is to encrypt the drive.
 
+Q: What have you based this on?
+It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
+Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
+Truecrypt documentation:  http://www.truecrypt.org/docs/
+FreeBSD disk encryption documentation: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/disks-encrypting.html
+NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
+OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
+OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
+
 Q: How is the script designed?
 A: The script works like this:
    all existing data will be brutally removed beyond reconstruction (forensically)

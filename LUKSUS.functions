@@ -50,7 +50,7 @@ LOOPBACKMETHOD()
     # block device housekeeping
     losetup -f 1>/dev/null 2>/dev/null
     losetup $device $luksfile
-  elif [[ $loopbackdevice = true ]] && [[ UNAME = DragonFly ]]
+  elif [[ $loopbackdevice = true ]] && [[ $UNAME = DragonFly ]]
     then
     echo DragonFlyBSD - Nice...
     echo Okay we are using $device ... Beginning loopbackmethod
@@ -60,7 +60,7 @@ LOOPBACKMETHOD()
     # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
-   elif [[ $loopbackdevice = true ]] && [[ UNAME = FreeBSD ]]
+   elif [[ $loopbackdevice = true ]] && [[ $UNAME = FreeBSD ]]
    then
    echo FreeBSD. Support is coming for FreeBSD. Please hang tight faithful users.
   else
