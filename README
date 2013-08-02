@@ -7,7 +7,7 @@
 
 # SYNOPSIS
 #
-# Creates an encrypted filesystem on a hardrive or other storage
+# LUKSUS creates an encrypted filesystem on a hardrive or other storage
 # media. LUKSUS also supports creating an encrypted filecontainer.
 # Uses Linux LUKS encryption facility.
 
@@ -60,9 +60,17 @@
 # for securing the volume. Using a keyfile is optional
 # and can be activated by using the commandline option: usekey
 #
-#Command line arguments are: devicename volumename size truecrypt usekey
+# Command line arguments are: devicename volumename size truecrypt 
+
+# Explanations:
+# If creating a filecontainer, then the argument size is needed (examples: 1000M 5G)
+# See further description below.
+
+# optional commandline arguments are: usekey nodialog
+# usekey will enable the use of a keyfile instead of a passphrase
+# nodialog will disable dialog prompts. Some people wants this.
+
 # AT LEAST TWO FIRST COMMAND LINE ARGUMENTS ARE REQUIRED
-# IF CREATING A FILECONTAINER SIZE IS REQUIRED (examples: 1000M 5G)
 
 # ./LUKSUS DEVICENAME VOLUMENAME optional options
 # ./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER SIZE[M] truecrypt usekey
@@ -171,7 +179,6 @@ Source: Reddit discussion
 http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 
 
-
 # REQUIREMENTS:
 # an empty hardrive or storage media
 # knowledge about which device the hardrive or storage
@@ -216,6 +223,13 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 ########################################################
 #################### CHANGELOG #########################
 ########################################################
+
+# v1.0RC8 02.08.2013
+# added nodialog option and FreeBSD support
+
+# v1.0RC7 30.07.2013
+# +Cleanup
+
 # v1.0RC5 29.07.2013 12:30
 
 # +LUKSUS now defaults to passphrase. Using a keyfile is 

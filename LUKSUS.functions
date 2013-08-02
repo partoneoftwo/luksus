@@ -58,8 +58,10 @@ DONTSHREDIFLOOPBACK()
 }  
 
 
-ASKUSERVERIFY()
+ASKUSERVERIFYDIALOG()
 {
+if [[ $dialog == true ]];
+then
 dialog --title "WELCOME TO $programname" \
 --msgbox "\n$programname $version $date on $UNAME\n\n
 Written by \n
@@ -97,8 +99,13 @@ case $? in
 255)
   echo "Box closed"   ;;
 esac
+else
+echo ""
+fi
+}
 
-DISPLAYLOGO
+ASKUSERVERIFYCONSOLE()
+{
 echo ################################################
 echo DETAILS AS SUBMITTED BY THE USER
 echo PLEASE VERIFY THAT THESE ARE CORRECT

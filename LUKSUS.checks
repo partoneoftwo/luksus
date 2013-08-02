@@ -18,7 +18,7 @@ fi
 # Runtime Arguments Checking
 # I should use getops. Instead I make use of a crude but efficient 
 # test to see if the user wants truecrypt.
-if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]];
+if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]] || [[ "$7" = "truecrypt" ]] || [[ "$8" = "truecrypt" ]] || [[ "$9" = "truecrypt" ]];
 then
 echo "Using Truecrypt"
 ENCRYPTION=TRUECRYPT
@@ -28,8 +28,27 @@ echo Using DM-LUKS Cryptsetup
 ENCRYPTION=LUKS
 fi
 
+# Dialog checks
+if [ -z `which dialog` ] ;
+then 
+echo "Missing dialog. Disabling Dialogs." 
+dialog=false
+else
+echo "Dialog exists"
+dialog=true
+fi
+
+# Does the user explicitly not wish to see dialog? Those crazy purists!
+if [[ "$3" = "nodialog" ]] || [[ "$4" = "nodialog" ]] || [[ "$5" = "nodialog" ]] || [[ "$6" = "nodialog" ]] || [[ "7" = "nodialog" ]] || [[ "$8" = "nodialog" ]] || [[ "$9" = "nodialog" ]];
+then
+dialog=false
+echo Dialog disabled by user request
+else
+echo Proceeding
+fi
+
 # user wants to use a keyfile
-if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]] || [[ "$3" = "keyfile" ]] || [[ "$4" = "keyfile" ]] || [[ "$5" = "keyfile" ]] || [[ "$6" = "keyfile" ]] ;
+if [[ "$3" = "usekey" ]] || [[ "$4" = "usekey" ]] || [[ "$5" = "usekey" ]] || [[ "$6" = "usekey" ]] || [[ "7" = "usekey" ]] || [[ "$3" = "keyfile" ]] || [[ "$4" = "keyfile" ]] || [[ "$5" = "keyfile" ]] || [[ "$6" = "keyfile" ]] || [[ "7" = "keyfile" ]] ;
 then
 echo "Using keyfile"
 USEKEY=true
@@ -50,13 +69,13 @@ echo "$programname is proceeding"
 # Dependency check, could need a list and a for loop. recreate as a function and include a for loop
 if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
 if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
-if [ -z `which dialog` ] ;then echo "Missing dialog" && exit; fi
 if [ -z `which shred` ] ;then alias shred=gshred; fi
 
 # need to use GNU head also - from GNU coreutils
 
 if [ $UNAME == DragonFly ] ;
-	then echo We are on DragonFlyBSD here. Cool.
+	then 
+	echo We are on DragonFlyBSD here. 
 	# crude way to deal with different binary names
 	alias head head
         alias shred gshred
@@ -67,15 +86,37 @@ if [ $UNAME == DragonFly ] ;
 	# so that's exactly what I'm doing here
 	vnconfig 1>/dev/null 2>/dev/null
 	vnconfig
+	OS=DragonFly
 	else
 	echo On Linux, continuing.
 fi
 
+
+if [ $UNAME == FreeBSD ] ;
+	then 
+	echo We are on FreeBSD here. Cool.
+	# crude way to deal with different binary names
+	alias head head
+        alias shred gshred
+# loading dm kernel module in FreeBSD
+	kldload geom_eli
+	# for some reason vnconfig must be ran once before it will start working
+	# it seems that the FreeBSD kernel is initializing something
+	# so that's exactly what I'm doing here
+	vnconfig 1>/dev/null 2>/dev/null
+	vnconfig
+	OS=FreeBSD
+	else
+	echo On Linux, continuing.
+fi
+
+
 # Check to see if specified device exists
-if [ -e "$device" ] ; 
-	then echo "OK, $device exists";
+if [ -e "$device" ]
+	then 
+	echo "OK, $device exists"
 	else 
-	echo "$device was not found. $programname is now exiting" ; 
-	exit 1; 
+	echo "$device was not found. $programname is now exiting" 
+	exit 1
 fi
 
