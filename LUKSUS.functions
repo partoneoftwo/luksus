@@ -33,8 +33,8 @@ if [ $UNAME == DragonFly ] ;
 	then 
 	echo We are on DragonFlyBSD here. 
 	# crude way to deal with different binary names
-	alias head head
-        alias shred gshred
+	alias head=ghead
+        alias shred=gshred
 # loading dm kernel module in DragonflyBSD
 	kldload dm
 	# for some reason vnconfig must be ran once before it will start working
