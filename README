@@ -288,7 +288,7 @@ Q: What are the requirements of using LUKSUS:
 # improvements all over. The code is now completely modular, and
 # adding further encryption engines and operating systems should
 # be a walk in the park.
-# Now executes flawlessly in all operating modes on Linux.
+# Now executes flawlessly in all operating modes on Linux and DragonFlyBSD
 
 # v1.0RC8 02.08.2013
 # + added nodialog option and FreeBSD support

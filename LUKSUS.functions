@@ -259,7 +259,7 @@ then
 # remember that the key size will increase the safety of the
 # encryption, but the a stronger keyfile with more entropy (randomness)
 # will produce the best security. 
-echo Cryptsetup mode
+echo LUKS mode
 cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
 else
 echo ""

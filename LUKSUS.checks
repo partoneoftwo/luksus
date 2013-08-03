@@ -29,7 +29,6 @@ ENCRYPTION=LUKS
 fi
 
 # Dialog checks
-if [ -z `which dialog` ] ;
 then 
 echo "Missing dialog. Disabling Dialogs." 
 dialog=false
@@ -43,8 +42,12 @@ if [[ "$3" = "nodialog" ]] || [[ "$4" = "nodialog" ]] || [[ "$5" = "nodialog" ]]
 then
 dialog=false
 echo Dialog disabled by user request
+elif [ -z `which dialog` ] ;
+then
+echo Dialog is not installed. Will not use dialog.
+dialog=false
 else
-echo Proceeding
+echo Dialog enabled
 fi
 
 # user wants to use a keyfile
