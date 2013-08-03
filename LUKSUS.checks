@@ -57,6 +57,15 @@ echo Using passphrase
 USEKEY=false
 fi
 
+# user wants to force LUKS
+if [[ "$3" = "luks" ]] || [[ "$4" = "luks" ]] || [[ "$5" = "luks" ]] || [[ "$6" = "luks" ]] || [[ "$7" = "luks" ]] || [[ "$8" = "luks" ]] 
+then
+echo "LUKS encryption enabled"
+ENCRYPTION=LUKS
+else
+echo ""
+fi
+
 # Sanity check
 # Got root?
 if [[ $EUID -ne 0 ]]; then
@@ -120,19 +129,3 @@ if [ -e "$device" ]
 	exit 1
 fi
 
-LOOPBACKTEST()
-{
-  if [[ $device == *loop* ]]
-  then
-  loopbackdevice=true
-  elif [[ $device == *vn* ]]
-  then
-  loopbackdevice=true
-  elif [[ $device = *md* ]]
-  then
-  loopbackdevice=true
-  else
-  loopbackdevice=false  
-  fi
-}
-LOOPBACKTEST

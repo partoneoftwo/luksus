@@ -10,7 +10,23 @@ then
   head -n 6 LUKSUS.logo
 fi
 }
-  
+
+LOOPBACKTEST()
+{
+  if [[ $device == *loop* ]]
+  then
+  loopbackdevice=true
+  elif [[ $device == *vn* ]]
+  then
+  loopbackdevice=true
+  elif [[ $device = *md* ]]
+  then
+  loopbackdevice=true
+  else
+  loopbackdevice=false  
+  fi
+}
+
 
 # can't get this function to work
 # something's wrong
@@ -258,11 +274,10 @@ then
 # cryptsetup isLuks
 # check to see if the device has got a valid LUKS container
 # if it does not, then exit
-echo "Checking to see if the device contains a LUKS volume"
+echo "Verifying LUKS volume"
 cryptsetup isLuks $device  || "echo "The device does not contain a LUKS volume. This is a problem since it should have a LUKS volume by now. Please check commandline arguments and try again" && exit 1"
 echo "The device positively contains a LUKS volume."
 echo "Great!"
-echo "Continuing"
 # cryptsetup luksHeaderBackup
 # backup the header of the luks container
 # as strongly recommended by the luks FAQ
@@ -271,7 +286,6 @@ echo "Taking a backup of the LUKS container header"
 cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose || "echo Something went wrong and LUKSUS failed to backup the LUKS header. Please check commandline arguments and try again. && exit 1"
 echo "The LUKS container header has been backed up successfully"
 echo "Great!"
-echo "Continuing LUKSUS"
 else 
 echo ""
 fi
@@ -279,27 +293,25 @@ fi
 
 LUKSOPEN()
 {
-if [[ $ENCRYPTION == LUKS ]] && [[ USEKEY == true ]];
+if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == true ]];
 then
 # cryptsetup luksOpen
 # mount the encrypted drive using a keyfile
-cryptsetup luksOpen $device $name --key-file=$keyfile 1>/dev/null 2>/dev/null
-echo Attempting to open the newly encrypted LUKS volume $name
-elif [[ $ENCRYPTION == LUKS ]] && [[ USEKEY == false ]];
+echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
+cryptsetup luksOpen $device $name --key-file=$keyfile
+elif [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
 then
-echo Attempting to open the newly encrypted LUKS volume $name
+echo Attempting to open the newly created $ENCRYPTION volume $name
 cryptsetup luksOpen $device $name
 else 
 echo ""
 fi
 }
 
+
+
 CREATEANDMOUNTFS()
 {
-# mkdir
-# create mountpoint & keydirectory
-# i should create an if routine here
-# works for now
 mkdir -p $mountpoint
 mkdir -p $keydir
 if [ $UNAME == DragonFly ] ;
