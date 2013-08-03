@@ -7,18 +7,21 @@
 
 # SYNOPSIS
 #
-# LUKSUS creates an encrypted filesystem on a hardrive or other storage
-# media. LUKSUS also supports creating an encrypted filecontainer.
-# It can use the following encryption facilities: LUKS, Truecrypt and Geli. 
-# It works on Linux, DragonflyBSD and FreeBSD.
+# LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
+# media as well as a filecontainer.
+# It can use the following encryption facilities: LUKS and Truecrypt (Geli support is coming soon). 
+# It works on Linux, DragonflyBSD (FreeBSD is coming soon).
 
 # BACKGROUND
 #
-# The purpose of this script is to provide an easy eay to encrypt
+# The purpose of this script is to provide to myself, an easy eay to encrypt
 # storage media in Linux and DragonflyBSD, such as hardrives, usb sticks,
 # sd cards or external hardrives. It uses the LUKS and cryptsetup
-# crypto subsystem internal to the Linux Kernel.
+# crypto subsystem internal to the Linux Kernel. It can also use
+# Truecrypt encryption with the tcplay command.
 # This is thus a wrapper script for cryptsetup, shred and mkfs.
+# Instead of having to read up on the documentation for these
+# wonderful tools, I wrote this wrapper script to handle the dirtywork.
 
 # USAGE
 # The usage of LUKSUS can take two different forms, 
@@ -239,6 +242,7 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 
 
 Q: What are the requirements of using LUKSUS:
+A:
 # an empty hardrive or storage media
 # knowledge about which device the hardrive or storage
 # blkid or dmesg will provide this
@@ -250,15 +254,20 @@ Q: What are the requirements of using LUKSUS:
 # tcplay - If you want to encrypt using truecrypt, then install the
 # tcplay package.
 
-# this script works on Linux and DragonFlyBSD.
-# Tested on: Debian, Ubuntu, ArchLinux and DragonFlyBSD
+Q: On what platforms and distributions has LUKSUS been tested?
+A: LUKSUS works on Linux and DragonFlyBSD.
+   Tested on the distros: Debian, Ubuntu, ArchLinux and DragonFlyBSD
 
-# Luksus is released under GNU GPLv2 License
-# located here: http://www.gnu.org/licenses/gpl-2.0.html
-#
-# I really want to hear from you, feedback, the ways you use it, 
-# suggestions, tips and so on. 
-# My email is: thomas.frivold.at.gmail.com
+Q: What license is LUKSUS released under?
+A: Luksus is released under GNU GPLv2 License
+   located here: http://www.gnu.org/licenses/gpl-2.0.html
+ 
+Q: I have found a bug or have another issue, how can I report it?
+A: Any issues can be reported to the Github issue tracker for
+   this project, located here: https://github.com/thomasfrivold/luksus/issues
+   I really want to hear from you, feedback, the ways you use it, 
+   suggestions, tips and so on. 
+   My email is: thomas.frivold./\a\/t/\.gmail.com
 
 ########################################################
 #################### TODO ##############################
@@ -267,7 +276,6 @@ Q: What are the requirements of using LUKSUS:
 # Another round of extensive testing on several 
 # Linux distros and Dragonfly BSD with
 # DM-LUKS and Truecrypt
-# + add a nice dialog interface * or remove it *
 # + better support command line options in a nice POSIX manner
 # + add the commandline option to use with or without dialog *or forget it*
 # +Properly works on Truecrypt and LUKS
