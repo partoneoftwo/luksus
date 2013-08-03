@@ -159,13 +159,13 @@ A: It is beyond the scope of this README to go indepth, but let me
    thief might sell your data. The solution is to encrypt the drive.
 
 Q: What have you based this on?
-It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
-Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
-Truecrypt documentation:  http://www.truecrypt.org/docs/
-FreeBSD disk encryption documentation: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/disks-encrypting.html
-NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
-OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
-OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
+A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
+   Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
+   Truecrypt documentation:  http://www.truecrypt.org/docs/
+   FreeBSD disk encryption documentation: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/disks-encrypting.html
+   NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
+   OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
+   OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
 
 Q: How is the script designed?
 A: The script works like this:
@@ -242,17 +242,16 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 
 
 Q: What are the requirements of using LUKSUS:
-A:
-# an empty hardrive or storage media
-# knowledge about which device the hardrive or storage
-# blkid or dmesg will provide this
-# GNU coreutils
-# optional requirements:
-# dialog - If you want a nice dialog box, then make sure you have 
-# dialog installed. This is not required anymore though. Some nutty
-# puritans dislike dialog.
-# tcplay - If you want to encrypt using truecrypt, then install the
-# tcplay package.
+A: an empty hardrive or storage media
+   knowledge about which device the hardrive or storage
+   blkid or dmesg will provide this
+   GNU coreutils
+   optional requirements:
+   dialog - If you want a nice dialog box, then make sure you have 
+   dialog installed. This is not required anymore though. Some nutty
+   puritans dislike dialog.
+   tcplay - If you want to encrypt using truecrypt, then install the
+   tcplay package.
 
 Q: On what platforms and distributions has LUKSUS been tested?
 A: LUKSUS works on Linux and DragonFlyBSD.
@@ -268,6 +267,11 @@ A: Any issues can be reported to the Github issue tracker for
    I really want to hear from you, feedback, the ways you use it, 
    suggestions, tips and so on. 
    My email is: thomas.frivold./\a\/t/\.gmail.com
+
+Q: What is the LUKSUS homepage?
+A: LUKSUS is maintained in a Github repository.
+   The latest version can always be downloaded
+   from http://github.com/thomasfrivold/luksus
 
 ########################################################
 #################### TODO ##############################

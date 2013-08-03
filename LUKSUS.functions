@@ -152,7 +152,7 @@ LOOPBACKDEVICE: $loopbackdevice\n
 OS: $UNAME\n
 \n\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
-" 50 50
+" 30 50
 
 case $? in
 0)
