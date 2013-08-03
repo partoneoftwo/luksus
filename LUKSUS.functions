@@ -69,6 +69,18 @@ if [ $UNAME == FreeBSD ] ;
 fi
 }
 
+DEVICEEXISTS()
+{
+# Check to see if specified device exists
+if [ -e "$device" ]
+	then 
+	echo "OK, $device exists"
+	else 
+	echo "$device was not found. $programname is now exiting" 
+	exit 1
+fi
+}
+
 LOOPBACKMETHOD()
 {
   if [[ $loopbackdevice = true ]] && [[ $UNAME = Linux ]]

@@ -76,16 +76,4 @@ if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
 if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
 if [ -z `which shred` ] ;then alias shred=gshred; fi
 
-# need to use GNU head also - from GNU coreutils
-
-
-
-# Check to see if specified device exists
-if [ -e "$device" ]
-	then 
-	echo "OK, $device exists"
-	else 
-	echo "$device was not found. $programname is now exiting" 
-	exit 1
-fi
 
