@@ -1,8 +1,7 @@
 programname=LUKSUS
-version=v1.0RC8
-date=02.08.2013
+version=v1.0RC9
+date=03.08.2013
 author="Thomas J. Frivold"
-
 time1="$(date +%s.%N)"
 # $1, %2, %3, %4 are command line arguments
 device=$1
@@ -14,9 +13,9 @@ keyfile=/keys/$name.key
 headerfile=/keys/$name.luks.header
 mountpoint=/mnt/$name
 FILE="/tmp/out.$$"
-GREP=`which grep`
-UNAME=`uname`
-screensize=`stty size`
+GREP=$(which grep)
+UNAME=$(uname)
+screensize=$(stty size)
 height=$(echo $screensize | cut -d " " -f 1)
 width=$(echo $screensize | cut -d " " -f 2)
 ENCRYPTION=LUKS

@@ -45,7 +45,7 @@ LOOPBACKMETHOD()
 {
   if [[ $loopbackdevice = true ]] && [[ $UNAME = Linux ]]
   then
-    echo Okay we are using $device ... Beginning loopbackmethod
+    echo Beginning loopbackmethod on $device
     head -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping
     losetup -f 1>/dev/null 2>/dev/null
@@ -53,7 +53,7 @@ LOOPBACKMETHOD()
   elif [[ $loopbackdevice = true ]] && [[ $UNAME = DragonFly ]]
     then
     echo DragonFlyBSD - Nice...
-    echo Okay we are using $device ... Beginning loopbackmethod
+    echo Beginning loopbackmethod on $device
     ghead -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping
     # vnconfig needs to run once first, it seems that the kernel
@@ -85,7 +85,7 @@ DONTSHREDIFLOOPBACK()
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
   else 
-    echo "Okay, $device is a loopback device, not shredding. And we are on Linux BTW"
+    echo "$device is a loopback device"
   fi
 }  
 
@@ -109,6 +109,8 @@ echo ################################################
 dialog --title "DRIVE ENCRYPTION SCRIPT" \
 --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
+ENCRYPTION USED: $ENCRYPTION
+\n
 NAME: 	        $name \n
 DRIVE:         $device \n
 MOUNTPOINT:    $mountpoint \n
@@ -118,8 +120,8 @@ FILECONTAINER LOCATION: $luksfile\n
 FILECONTAINER SIZE: $luksfilesize\n
 ENCRYPTION USED: $ENCRYPTION\n
 USING KEYFILE: $USEKEY\n
-LOOPBACKDEVICE: $loopbackdevice
-OS: $UNAME
+LOOPBACKDEVICE: $loopbackdevice\n
+OS: $UNAME\n
 \n\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 " 50 50
@@ -143,11 +145,11 @@ ASKUSERVERIFYCONSOLE()
 echo ################################################
 echo DETAILS AS SUBMITTED BY THE USER
 echo PLEASE VERIFY THAT THESE ARE CORRECT
+echo ENCRYPTION USED: $ENCRYPTION
 echo DRIVE: $device
 echo NAME: $name
 echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
-echo ENCRYPTION USED: $ENCRYPTION
 echo USING KEYFILE: $USEKEY
 echo KEYFILE: $keyfile
 echo LOOPBACK: $loopbackdevice
@@ -174,21 +176,19 @@ echo ...
 fi
 }
 
-LUKSUS1TRUECRYPT()
+TRUECRYPT()
 {
 # Begin the encryption - with TrueCrypt?
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]];
 then
 echo TrueCrypt mode
-# had to remove --map=$name
 tcplay --create --device=$device --cipher=AES-256-XTS
 else
-echo Continuing
+echo ""
 fi
 }
 
-
-LUKSUS1TRUECRYPTKEYFILE()
+TRUECRYPTKEYFILE()
 {
 # Begin the encryption - with TrueCrypt and with key?
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
@@ -197,11 +197,41 @@ echo TrueCrypt mode and adding a keyfile
 # had to remove --map=$name
 tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile
 else
-echo Continuing
+echo ""
 fi
 }
 
-LUKSUS2LUKS()
+TRUECRYPTOPEN()
+{
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]];
+then
+# tcplay mount
+# mount the encrypted drive using a keyfile
+echo Attempting to open and mount the newly created Truecrypt encrypted volume
+tcplay -m $name -d $device
+elif [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
+then
+echo Attempting to open newly created Truecrypt volume $name
+tcplay -m $name -d $device -k $keyfile
+else 
+echo ""
+fi
+}
+
+
+LUKS()
+{
+if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
+then
+echo LUKS with passphrase
+echo You will only be prompted for a password once. Type carefully.
+cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device
+else
+echo ""
+fi
+}
+
+LUKSKEYFILE()
 {
 # Begin the encryption - with LUKS and with a keyfile?
 if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY = true ]];
@@ -216,24 +246,12 @@ then
 echo Cryptsetup mode
 cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
 else
-echo Proceeding
+echo ""
 fi
 }
 
-LUKSUS2LUKSPASSPHRASE()
-{
-if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
-then
-echo LUKS with passphrase
-echo Danger Will Robinson. 
-echo You will only be prompted for a password once. Type carefully.
-cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device
-else
-echo Proceeding
-fi
-}
 
-LUKSUS3LUKSVERIFY()
+LUKSVERIFY()
 {
 if [[ $ENCRYPTION = LUKS ]];
 then
@@ -254,26 +272,27 @@ cryptsetup luksHeaderBackup --header-backup-file=$headerfile $device --verbose |
 echo "The LUKS container header has been backed up successfully"
 echo "Great!"
 echo "Continuing LUKSUS"
-
 else 
-echo Not using LUKS
+echo ""
 fi
 }
 
-LUKSUS4LUKSOPEN()
+LUKSOPEN()
 {
-if [[ $ENCRYPTION = LUKS ]];
+if [[ $ENCRYPTION == LUKS ]] && [[ USEKEY == true ]];
 then
 # cryptsetup luksOpen
 # mount the encrypted drive using a keyfile
 cryptsetup luksOpen $device $name --key-file=$keyfile 1>/dev/null 2>/dev/null
-echo Attempting to open and mount the newly encrypted volume
+echo Attempting to open the newly encrypted LUKS volume $name
+elif [[ $ENCRYPTION == LUKS ]] && [[ USEKEY == false ]];
+then
+echo Attempting to open the newly encrypted LUKS volume $name
 cryptsetup luksOpen $device $name
 else 
-echo Proceeding
+echo ""
 fi
 }
-
 
 CREATEANDMOUNTFS()
 {
@@ -311,7 +330,7 @@ echo MOUNTPOINT: $mountpoint
 echo HEADER BACKUP: $headerfile
 echo ENCRYPTION USED: $ENCRYPTION
 echo CONTAINER $luksfile $luksfilesize
-echo Currently mounted at: `mount | grep $name`
+echo MOUNTPOINT: `mount | grep $name`
 echo `df -h | head -n 1`
 echo `df -h | grep $name`
 echo ################################################
