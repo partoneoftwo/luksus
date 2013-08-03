@@ -41,7 +41,6 @@ if [ $UNAME == DragonFly ] ;
 	# it seems that the DragonFlyBSD kernel is initializing something
 	# so that's exactly what I'm doing here
 	vnconfig 1>/dev/null 2>/dev/null
-	vnconfig
 	OS=DragonFly
 	else
 	echo On Linux, continuing.
