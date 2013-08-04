@@ -84,7 +84,7 @@ echo "$programname is proceeding"
 
 # Dependency check, could need a list and a for loop. recreate as a function and include a for loop
 ## Which unix system doesnt come with grep... This test is redundant. if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
-if [ -z `which shred` ] ;then alias shred=gshred; fi
+if [ -z `which shred` ] ;then alias gshred=shred; fi
 ## This test is deprechated since times has changed and we are more refined now.if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
 
 

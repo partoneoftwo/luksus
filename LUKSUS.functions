@@ -54,8 +54,8 @@ if [ $UNAME == DragonFly ] ;
 	then 
 	echo We are on DragonFlyBSD here. 
 	# crude way to deal with different binary names
-	alias head=ghead
-        alias shred=gshred
+	alias ghead=head
+        alias gshred=shred
 # loading dm kernel module in DragonflyBSD
 	kldload dm
 	# for some reason vnconfig must be ran once before it will start working
@@ -73,10 +73,8 @@ if [ $UNAME == FreeBSD ] ;
 	then 
 	echo We are on FreeBSD here. Cool.
 	# crude way to deal with different binary names
-	alias head=ghead
-        alias shred=gshred
-	alias head ghead
-	alias shred gshred
+	alias ghead=head
+        alias gshred=shred
 # loading dm kernel module in FreeBSD
 	kldload geom_eli
         else 
@@ -136,8 +134,7 @@ DONTSHREDIFLOOPBACK()
     # Totally infuse the drive with random data
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
-    shred -f -v -n1 $device
-    gshred -f -v -n1 $device
+    shred -f -v -n1 $device || gshred -f -v -n1 $device
   elif [[ $device = !*vn* ]]
   then
     echo On DragonFlyBSD. Okay cool.
@@ -422,6 +419,7 @@ else
 echo No Idea What To Do
 fi
 }
+
 
 DISPLAYSUMMARY()
 {

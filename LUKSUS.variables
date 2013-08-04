@@ -18,5 +18,6 @@ UNAME=$(uname)
 screensize=$(stty size)
 height=$(echo $screensize | cut -d " " -f 1)
 width=$(echo $screensize | cut -d " " -f 2)
+datenow=$(date)
 USEKEY=false
 freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
