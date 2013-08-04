@@ -5,10 +5,31 @@ DISPLAYLOGO()
 {
 if [ $width -gt 119 ] 
 then
-  tail -n 12 LUKSUS.logo
+  gtail -n 12 LUKSUS.logo
   else
-  head -n 6 LUKSUS.logo
+  ghead -n 6 LUKSUS.logo
 fi
+}
+
+OSTEST()
+{
+# OS Checking
+  if [[ $UNAME == Linux ]]
+  then
+  ENCRYPTION=LUKS
+  echo On $UNAME, defaulting to $ENCRYPTION
+  elif [[ $UNAME == Dragonfly ]]
+  then
+  ENCRYPTION=LUKS
+  echo On $UNAME, defaulting to $ENCRYPTION
+  elif [[ $UNAME = FreeBSD ]]
+  then
+  ENCRYPTION=GELI
+  echo On $UNAME, Encryption set to $ENCRYPTION
+  else
+  ENCRYPTION=LUKSUS
+  echo No idea $UNAME, defaulting to $ENCRYPTION
+  fi
 }
 
 LOOPBACKTEST()
@@ -41,9 +62,8 @@ if [ $UNAME == DragonFly ] ;
 	# it seems that the DragonFlyBSD kernel is initializing something
 	# so that's exactly what I'm doing here
 	vnconfig 1>/dev/null 2>/dev/null
-	OS=DragonFly
 	else
-	echo On Linux, continuing.
+	echo ""
 fi
 }
 
@@ -53,18 +73,14 @@ if [ $UNAME == FreeBSD ] ;
 	then 
 	echo We are on FreeBSD here. Cool.
 	# crude way to deal with different binary names
-	alias head head
-        alias shred gshred
+	alias head=ghead
+        alias shred=gshred
+	alias head ghead
+	alias shred gshred
 # loading dm kernel module in FreeBSD
 	kldload geom_eli
-	# for some reason vnconfig must be ran once before it will start working
-	# it seems that the FreeBSD kernel is initializing something
-	# so that's exactly what I'm doing here
-	vnconfig 1>/dev/null 2>/dev/null
-	vnconfig
-	OS=FreeBSD
-	else
-	echo On Linux, continuing.
+        else 
+	echo ""
 fi
 }
 
@@ -101,7 +117,10 @@ LOOPBACKMETHOD()
     vnconfig $device $luksfile
    elif [[ $loopbackdevice = true ]] && [[ $UNAME = FreeBSD ]]
    then
+   echo FreeBSD - Nice...
    echo FreeBSD. Support is coming for FreeBSD. Please hang tight faithful users.
+   ghead -c $luksfilesize /dev/zero > $luksfile
+   mdconfig -a -t vnode -f $luksfile
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
@@ -109,7 +128,7 @@ LOOPBACKMETHOD()
 
 DONTSHREDIFLOOPBACK()
 {
-  if [[ $device != *loop* ]] && [[ $device != *vn* ]]
+  if [[ $device != *loop* ]] && [[ $device != *vn* ]] && [[ $device != *md* ]]
   then
     echo "Okay we are using $device ..."
     echo Shredding ...
@@ -123,8 +142,13 @@ DONTSHREDIFLOOPBACK()
     echo On DragonFlyBSD. Okay cool.
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
-  else 
-    echo "$device is a loopback device"
+    elif [[ $device = *md* ]]
+  then
+    echo On FreeBSD. Okay cool.
+    echo in the middle of the shredding.place
+    gshred -f -v -n1 $device
+  else
+echo "$device is a loopback device"
   fi
 }  
 
@@ -331,24 +355,69 @@ echo ""
 fi
 }
 
+GELI()
+{
+if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]
+then
+# geli create
+echo Initializing $device with $ENCRYPTION
+geli init -s 4096 $device label $name
+else
+echo ""
+fi
+}
 
+GELIKEYFILE()
+{
+if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]
+then
+echo Initializing $device with $ENCRYPTION with a keyfile
+geli init -s 4096 -K $keyfile $device label $name
+else
+echo ""
+fi
+}
+
+GELIOPEN()
+{
+if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == true ]];
+then
+# geli attach
+# mount the encrypted drive using a keyfile
+echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
+geli attach -k $keyfile $device
+elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
+then
+echo Attempting to open the newly created $ENCRYPTION volume $name
+geli attach $device $name
+else 
+echo ""
+fi
+}
 
 CREATEANDMOUNTFS()
 {
 mkdir -p $mountpoint
 mkdir -p $keydir
-if [ $UNAME == DragonFly ] ;
+if [[ $UNAME == DragonFly ]] ;
 then
 echo DragonFlyBSD mode
 # ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
 newfs /dev/mapper/$name
 # mounting
 mount /dev/mapper/$name /mnt/$name
-else
+elif [[ $UNAME == FreeBSD ]]
+then
+newfs $device.eli
+mount $device.eli /mnt/$name
+elif [[ $UNAME == Linux ]]
+then
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
 mkfs.ext4 /dev/mapper/$name
 # mounting the newly created drive
 mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
+else
+echo No Idea What To Do
 fi
 }
 

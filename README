@@ -244,8 +244,12 @@ http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 Q: What are the requirements of using LUKSUS:
 A: an empty hardrive or storage media
    knowledge about which device the hardrive or storage
-   blkid or dmesg will provide this
-   GNU coreutils
+   (blkid or dmesg will provide this)
+   
+   On BSD:
+   coreutils 
+   - GNU coreutils
+   bash
    optional requirements:
    dialog - If you want a nice dialog box, then make sure you have 
    dialog installed. This is not required anymore though. Some nutty

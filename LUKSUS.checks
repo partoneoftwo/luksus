@@ -24,9 +24,20 @@ echo "Using Truecrypt"
 ENCRYPTION=TRUECRYPT
 if [ -z `which tcplay` ] ;then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package)" && exit; fi
 else
-echo Using DM-LUKS Cryptsetup
-ENCRYPTION=LUKS
+echo ""
 fi
+
+# test to see if the user wants geli (FreeBSD)
+if [[ "$3" = "geli" ]] || [[ "$4" = "geli" ]] || [[ "$5" = "geli" ]] || [[ "$6" = "geli" ]] || [[ "$7" = "geli" ]] || [[ "$8" = "geli" ]] || [[ "$9" = "geli" ]];
+then
+echo "Using GELI"
+ENCRYPTION=GELI
+if [ -z `which geli` ] ;then echo "Missing geli. Cannot continue. Please install geli" && exit; fi
+else
+echo ""
+fi
+
+
 
 # Dialog checks
 # Does the user explicitly not wish to see dialog? Those crazy purists!
@@ -72,8 +83,8 @@ echo "Great! We are root"
 echo "$programname is proceeding"
 
 # Dependency check, could need a list and a for loop. recreate as a function and include a for loop
-if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
-if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
+## Which unix system doesnt come with grep... This test is redundant. if [ -z `which grep` ] ;then echo "Missing grep" && exit; fi
 if [ -z `which shred` ] ;then alias shred=gshred; fi
+## This test is deprechated since times has changed and we are more refined now.if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup" && exit; fi
 
 
