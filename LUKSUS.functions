@@ -137,6 +137,7 @@ DONTSHREDIFLOOPBACK()
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
     shred -f -v -n1 $device
+    gshred -f -v -n1 $device
   elif [[ $device = !*vn* ]]
   then
     echo On DragonFlyBSD. Okay cool.
