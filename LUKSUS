@@ -106,7 +106,7 @@ LUKSOPEN
 GELI
 GELIKEYFILE
 GELIOPEN
-
+sleep 20
 # CGD PROCESS COMMING SOON
 # CGD
 # CGDKEYFILE
@@ -121,8 +121,8 @@ GELIOPEN
 CREATEANDMOUNTFS
 
 # END PROGRAM
-DISPLAYLOGO
-echo The data below can also be found in /keys/$name.information
-DISPLAYSUMMARY
-WRITEINFORMATIONFILE
-exit 0
+#DISPLAYLOGO
+#echo The data below can also be found in /keys/$name.information
+#DISPLAYSUMMARY
+#WRITEINFORMATIONFILE
+#exit 0
