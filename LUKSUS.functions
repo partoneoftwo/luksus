@@ -5,9 +5,9 @@ DISPLAYLOGO()
 {
 if [ $width -gt 119 ] 
 then
-  gtail -n 12 LUKSUS.logo
+  gtail -n 12 LUKSUS.logo 2>/dev/null || tail -n 12 LUKSUS.logo
   else
-  ghead -n 6 LUKSUS.logo
+  ghead -n 6 LUKSUS.logo 2>/dev/null || head -n 6 lUKSUS.logo
 fi
 }
 
@@ -18,7 +18,7 @@ OSTEST()
   then
   ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
-  elif [[ $UNAME == Dragonfly ]]
+  elif [[ $UNAME == DragonFly ]]
   then
   ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
