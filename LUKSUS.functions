@@ -118,7 +118,6 @@ LOOPBACKMETHOD()
    elif [[ $loopbackdevice = true ]] && [[ $UNAME = FreeBSD ]]
    then
    echo FreeBSD - Nice...
-   echo FreeBSD. Support is coming for FreeBSD. Please hang tight faithful users.
    ghead /dev/zero -c $luksfilesize > $luksfile
 #  vanilla, but needs the devicenumber also #  mdconfig -a -t vnode -f $luksfile
    mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber
