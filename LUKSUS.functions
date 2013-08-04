@@ -119,8 +119,9 @@ LOOPBACKMETHOD()
    then
    echo FreeBSD - Nice...
    echo FreeBSD. Support is coming for FreeBSD. Please hang tight faithful users.
-   ghead -c $luksfilesize /dev/zero > $luksfile
+   ghead /dev/zero -c $luksfilesize > $luksfile
    mdconfig -a -t vnode -f $luksfile
+   mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
@@ -137,12 +138,12 @@ DONTSHREDIFLOOPBACK()
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
     shred -f -v -n1 $device
-  elif [[ $device = *vn* ]]
+  elif [[ $device = !*vn* ]]
   then
     echo On DragonFlyBSD. Okay cool.
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
-    elif [[ $device = *md* ]]
+    elif [[ $device != *md* ]]
   then
     echo On FreeBSD. Okay cool.
     echo in the middle of the shredding.place
@@ -160,7 +161,7 @@ then
 dialog --title "WELCOME TO $programname" \
 --msgbox "\n$programname $version $date on $UNAME\n\n
 Written by \n
-$author
+$author \n
 " 10 30
 
 echo ################################################
@@ -361,7 +362,7 @@ if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]
 then
 # geli create
 echo Initializing $device with $ENCRYPTION
-geli init -s 4096 $device label $name
+geli init -s 4096 $device
 else
 echo ""
 fi
@@ -372,7 +373,7 @@ GELIKEYFILE()
 if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]
 then
 echo Initializing $device with $ENCRYPTION with a keyfile
-geli init -s 4096 -K $keyfile $device label $name
+geli init -s 4096 -K $keyfile $device
 else
 echo ""
 fi
@@ -389,7 +390,7 @@ geli attach -k $keyfile $device
 elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
-geli attach $device $name
+geli attach $device
 else 
 echo ""
 fi
