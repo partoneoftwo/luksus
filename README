@@ -327,6 +327,16 @@ A: LUKSUS is maintained in a Github repository.
 # NetBSD's CGD and OpenBSDs BIOCTL. This would bump the number of
 supported platforms to 5.
 
+# v1.2
+# Fixes some regressions
+
+# v1.1
+# Adds FreeBSD support
+
+# v1.0
+# LUKSUS is stable and mature enough to be called 1.0
+# Tested on Linux and DragonFlyBSD
+
 # v1.0RC4 22.07.2013 15:09
 # +Removed some extra integrity checks. They were redundant and broke
 # Truecrypt support

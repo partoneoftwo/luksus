@@ -16,11 +16,11 @@ OSTEST()
 # OS Checking
   if [[ $UNAME == Linux ]]
   then
-  ENCRYPTION=LUKS
+#  ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
   elif [[ $UNAME == DragonFly ]]
   then
-  ENCRYPTION=LUKS
+#  ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
   elif [[ $UNAME = FreeBSD ]]
   then
@@ -28,7 +28,7 @@ OSTEST()
   echo On $UNAME, Encryption set to $ENCRYPTION
   else
   ENCRYPTION=LUKSUS
-  echo No idea $UNAME, defaulting to $ENCRYPTION
+  echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION
   fi
 }
 
@@ -40,7 +40,7 @@ LOOPBACKTEST()
   elif [[ $device == *vn* ]]
   then
   loopbackdevice=true
-  elif [[ $device = *md* ]]
+  elif [[ $device == *md* ]]
   then
   loopbackdevice=true
   else
@@ -50,7 +50,7 @@ LOOPBACKTEST()
 
 DRAGONFLYHOUSEKEEPING()
 {
-if [ $UNAME == DragonFly ] ;
+if [[ $UNAME == DragonFly ]] ;
 	then 
 	echo We are on DragonFlyBSD here. 
 	# crude way to deal with different binary names
@@ -96,14 +96,14 @@ fi
 
 LOOPBACKMETHOD()
 {
-  if [[ $loopbackdevice = true ]] && [[ $UNAME = Linux ]]
+  if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]
   then
     echo Beginning loopbackmethod on $device
     head -c $luksfilesize /dev/zero > $luksfile
     # block device housekeeping
     losetup -f 1>/dev/null 2>/dev/null
     losetup $device $luksfile
-  elif [[ $loopbackdevice = true ]] && [[ $UNAME = DragonFly ]]
+  elif [[ $loopbackdevice == true ]] && [[ $UNAME == DragonFly ]]
     then
     echo DragonFlyBSD - Nice...
     echo Beginning loopbackmethod on $device
@@ -113,7 +113,7 @@ LOOPBACKMETHOD()
     # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
-   elif [[ $loopbackdevice = true ]] && [[ $UNAME = FreeBSD ]]
+   elif [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD ]]
    then
    echo FreeBSD - Nice...
    ghead /dev/zero -c $luksfilesize > $luksfile
@@ -126,7 +126,8 @@ LOOPBACKMETHOD()
 
 DONTSHREDIFLOOPBACK()
 {
-  if [[ $device != *loop* ]] && [[ $device != *vn* ]] && [[ $device != *md* ]]
+  if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]
+# this test makes little sense now that we are in the future #  if [[ $device != *loop* ]] && [[ $device != *vn* ]] && [[ $device != *md* ]]
   then
     echo "Okay we are using $device ..."
     echo Shredding ...
@@ -135,18 +136,18 @@ DONTSHREDIFLOOPBACK()
     # Good for paranoid and security minded people
     # This takes about 5 hours on a 3TB drive
     shred -f -v -n1 $device || gshred -f -v -n1 $device
-  elif [[ $device = !*vn* ]]
+  elif [[ $loopbackdevice == false ]] && [[ UNAME == DragonFly ]]
   then
     echo On DragonFlyBSD. Okay cool.
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
-    elif [[ $device != *md* ]]
+  elif [[ $loopbackdevice == false ]] && [[ $UNAME == FreeBSD ]]
   then
     echo On FreeBSD. Okay cool.
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
   else
-echo "$device is a loopback device"
+  echo "$device is a loopback device. Not shredding, since its no use."
   fi
 }  
 
