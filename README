@@ -9,8 +9,8 @@
 #
 # LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
 # media as well as a filecontainer.
-# It can use the following encryption facilities: LUKS and Truecrypt (Geli support is coming soon). 
-# It works on Linux, DragonflyBSD (FreeBSD is coming soon).
+# It can use the following encryption facilities: LUKS, Truecrypt and GELI. 
+# It works on Linux, DragonflyBSD and FreeBSD.
 
 # BACKGROUND
 #
@@ -45,7 +45,7 @@
 # AT LEAST TWO FIRST COMMAND LINE ARGUMENTS ARE REQUIRED
 
 # ./LUKSUS DEVICENAME VOLUMENAME optional options
-# ./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER SIZE[M] truecrypt usekey
+# ./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER sizeM truecrypt usekey
 
 # USAGE: Physical drive
 # ./LUKSUS DEVICENAME NICKNAME-of-luks-container
@@ -209,7 +209,8 @@ Truecrypt (tcplay)
 tcplay --create --device=$device --cipher=AES-256-XTS
 
 Geli (FreeBSD)
-# coming soon
+geli init -s 4096 $device
+
 
 Q: Why are we using the AES-256 cipher?
 A: http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html

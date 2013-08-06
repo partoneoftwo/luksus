@@ -1,6 +1,5 @@
 
- ERROR: NO ARGUMENTS SPECIFIED
- AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED
+ ERROR: NO ARGUMENTS SPECIFIED - AT LEAST TWO COMMAND LINE ARGUMENTS ARE REQUIRED
 
  USAGE: Physical drive
  ./LUKSUS DEVICENAME NICKNAME-of-luks-container
@@ -10,11 +9,7 @@
 
  EXAMPLES: 
  ./LUKSUS /dev/sdb1 rambo1
- ./LUKSUS /dev/sdb1 rambo1 usekey
  ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
- ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 100M usekey 
- ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
 
- Please refer to README for a further explanation of commandline options
- and examples.
+ Please refer to the README for further documentation.
 
