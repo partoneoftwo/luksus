@@ -1,6 +1,6 @@
 programname=LUKSUS
-version=v1.2
-date=05.08.2013
+version=v1.2.1
+date=07.08.2013
 author="Thomas J. Frivold"
 time1="$(date +%s.%N)"
 # $1, %2, %3, %4 are command line arguments
