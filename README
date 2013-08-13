@@ -5,14 +5,14 @@
 /_____/   \____/  /_/ |_|   /____/   \____/   /____/  
 
 
-#SYNOPSIS
+# SYNOPSIS
 
 LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
 media as well as a filecontainer.
 It can use the following encryption facilities: LUKS, Truecrypt and GELI. 
 It works on Linux, DragonflyBSD and FreeBSD.
 
-#BACKGROUND
+# BACKGROUND
 
 The purpose of this script is to provide to myself, an easy eay to encrypt
 storage media in Linux, FreeBSD and DragonflyBSD, such as hardrives, usb sticks,
@@ -23,7 +23,7 @@ This is thus a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
 Instead of having to read up on the documentation for these
 wonderful tools, I wrote this wrapper script to handle the dirtywork.
 
-#USAGE
+# USAGE
 
 USAGE: Physical drive
 ./LUKSUS DEVICENAME VOLUMENAME
@@ -72,9 +72,8 @@ and can be activated by using the commandline option: usekey
 as mentioned earlier.
 
 optional commandline arguments are: usekey nodialog
-#
-usekey will enable the use of a keyfile instead of a passphrase
-nodialog will disable dialog prompts. Some people wants this.
+usekey - will enable the use of a keyfile instead of a passphrase
+nodialog - will disable dialog prompts. Some people wants this.
 
 
 ENCRYPTED FILECONTAINER
@@ -105,20 +104,20 @@ EXT4 support is currently not available in a workable state;
 The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
 loopback device, and I have not yet managed to get it to work.
 Therefore the user will get a UFS filesystem instead.
-#
+
 TRUECRYPT NOTES:
-#
+
 Truecrypt defaults to using passphrase for volume security.
 A keyfile can be added by using the commandline argument: usekey
 This will add a key to the keychain in the volume, but TrueCrypt will
 also ask for a password. 
-#
+
 Applies to both on Linux and DragonflyBSD
 Truecrypt / tcplay is slow when it is creating encrypted
 filecontainers on Linux. Once the volume has been created
 speeds are nominal. This has at least been the case in my 
 testing on Virtualbox instances of various Linux distributions.
-#
+
 For some reason the cryptsetup tool in Dfly takes a very long time
 to do its work when it is manipulating loopback LUKS volumes, ie.
 file containers... I do not know the reason to this strange behaviour, 
@@ -126,10 +125,10 @@ but once it has created the volume, file transfer speeds are nominal and fast.
 In my experience it takes 15 minutes to finish the process of creating
 an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
 loopback devices:)
-#
 
 
-FAQ:
+
+# FAQ:
 Q: Why should I use this script? 
 A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
    Because doing all these tasks manually is 
