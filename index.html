@@ -20,8 +20,8 @@
         <p class="header">LUKSUS</p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/thomasfrivold/luksus/archive/v1.2.1.zip">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/thomasfrivold/luksus/archive/v1.2.1.tar.gz">Download TAR</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/thomasfrivold/luksus/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/thomasfrivold/luksus/tarball/master">Download TAR</a></li>
           <li><a class="buttons github" href="https://github.com/thomasfrivold/luksus">View On GitHub</a></li>
         </ul>
 
@@ -49,48 +49,33 @@ It works on Linux, DragonflyBSD and FreeBSD.</p>
 <a name="background" class="anchor" href="#background"><span class="octicon octicon-link"></span></a>BACKGROUND</h1>
 
 <p>The purpose of this script is to provide to myself, an easy eay to encrypt
-storage media in Linux and DragonflyBSD, such as hardrives, usb sticks,
+storage media in Linux, FreeBSD and DragonflyBSD, such as hardrives, usb sticks,
 sd cards or external hardrives. It uses the LUKS and cryptsetup
 crypto subsystem internal to the Linux Kernel. It can also use
 Truecrypt encryption with the tcplay command.
-This is thus a wrapper script for cryptsetup, shred and mkfs.
+This is thus a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
 Instead of having to read up on the documentation for these
 wonderful tools, I wrote this wrapper script to handle the dirtywork.</p>
 
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>USAGE</h1>
 
+<p>USAGE: Physical drive
+./LUKSUS DEVICENAME VOLUMENAME</p>
+
+<p>USAGE: File container
+./LUKSUS loopback-DEVICENAME VOLUMENAME filename filesize-in-megabytesM</p>
+
 <p>The usage of LUKSUS can take two different forms, 
 mainly whether you are using LUKSUS on a physical device or a
 virtual file. These two requires somewhat different commandline
-arguments.
-As of version 1.0, LUKSUS defaults to passphrase
-for securing the volume. Using a keyfile is optional
-and can be activated by using the commandline option: usekey</p>
-
-<p>Command line arguments are: devicename volumename size truecrypt </p>
-
-<h1>
-<a name="explanations" class="anchor" href="#explanations"><span class="octicon octicon-link"></span></a>Explanations:</h1>
-
-<p>If creating a filecontainer, then the argument size is needed (examples: 1000M 5G)
-See further description below.</p>
-
-<p>optional commandline arguments are: usekey nodialog
-usekey will enable the use of a keyfile instead of a passphrase
-nodialog will disable dialog prompts. Some people wants this.</p>
-
-<p>AT LEAST TWO FIRST COMMAND LINE ARGUMENTS ARE REQUIRED</p>
-
-<p>./LUKSUS DEVICENAME VOLUMENAME optional options
-./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER sizeM truecrypt usekey</p>
-
-<p>USAGE: Physical drive
-./LUKSUS DEVICENAME NICKNAME-of-luks-container
-./LUKSUS DEVICENAME VOLUMENAME truecrypt</p>
-
-<p>USAGE: File container
-./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes</p>
+arguments. Volumename simply means nickname for the encrypted
+drive/media. Optional parameters are: 
+truecrypt - which enables truecrypt instead of using LUKS (Linux and
+DragonFlyBSD only)
+usekey - which uses a keyfile instead of a passphrase, which will be
+placed in /keys (LUKS only, works on truecrypt as well, but it will
+ask for a passphrase anyhow so this will add a keyfile to the volume)</p>
 
 <p>EXAMPLES: 
 ENCRYPT PHYSICAL MEDIA: Using password
@@ -101,7 +86,8 @@ ENCRYPT PHYSICAL MEDIA: Using password
 
 <p>CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
 ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
-./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M</p>
+./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+./LUKSUS /dev/md0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M</p>
 
 <p>To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
 ./LUKSUS /dev/sdc1 library truecrypt
@@ -112,10 +98,17 @@ filecontainer using truecrypt with a passphrase as well as with a keyfile.
 That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
 ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey</p>
 
-<h1>
-<a name="encrypted-filecontainer" class="anchor" href="#encrypted-filecontainer"><span class="octicon octicon-link"></span></a>ENCRYPTED FILECONTAINER</h1>
+<p>As of version 1.0, LUKSUS defaults to passphrase
+for securing the volume. Using a keyfile is optional
+and can be activated by using the commandline option: usekey
+as mentioned earlier.</p>
 
-<p>It is possible to create an encrypted file container
+<p>optional commandline arguments are: usekey nodialog
+usekey - will enable the use of a keyfile instead of a passphrase
+nodialog - will disable dialog prompts. Some people wants this.</p>
+
+<p>ENCRYPTED FILECONTAINER
+It is possible to create an encrypted file container
 The usage then changes a little as the script then needs to
 know which loopbackdevice you wish to use, where the encrypted
 filecontainer should be located, and how large it should be.
@@ -130,26 +123,25 @@ gigabyte appended to the size.</p>
 <p>For creating an encrypted filecontainer on DragonFlyBSD
 ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M</p>
 
-<h1>
-<a name="dragonflybsd-notes" class="anchor" href="#dragonflybsd-notes"><span class="octicon octicon-link"></span></a>DRAGONFLYBSD NOTES:</h1>
+<p>DRAGONFLYBSD NOTES:
+There are a few things to note about running this on DragonflyBSD...</p>
 
-<p>There are a few things to note about running this on DragonflyBSD...</p>
+<p>DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
+from the repositories. "pkg_radd bash" "pkg_radd dialog" pkg_radd
+coreutils" will do the trick</p>
 
-<p>DragonFlyBSD does not ship with bash by default, so you have to install it
-from the repositories. "pkg_radd bash" will do the trick
-NO EXT4, UFS IS USED 
-The scripts does the same things as under Linux, but with one major
-exception.
-It does not create EXT4 filesystems, but UFS filesystems. 
+<p>NO EXT4, UFS IS USED 
+EXT4 support is currently not available in a workable state;
 The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
 loopback device, and I have not yet managed to get it to work.
 Therefore the user will get a UFS filesystem instead.</p>
 
-<h1>
-<a name="truecrypt-notes" class="anchor" href="#truecrypt-notes"><span class="octicon octicon-link"></span></a>TRUECRYPT NOTES:</h1>
+<p>TRUECRYPT NOTES:</p>
 
 <p>Truecrypt defaults to using passphrase for volume security.
-A keyfile can be added by using the commandline argument: usekey</p>
+A keyfile can be added by using the commandline argument: usekey
+This will add a key to the keychain in the volume, but TrueCrypt will
+also ask for a password. </p>
 
 <p>Applies to both on Linux and DragonflyBSD
 Truecrypt / tcplay is slow when it is creating encrypted
@@ -178,26 +170,21 @@ A: I wrote this script because I wanted to have a way to easily and casually cre
 
 <p>Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
-   license.</p>
+   license. Please let me know if this makes it hard for you to use it, and I
+   will consider adding an extra license.</p>
 
 <p>Q: Why should I encrypt?
 A: It is beyond the scope of this README to go indepth, but let me
    give you a primer with 3 different scenarios. Please
    google/duckduckgo for more info. Read some of Bruce Schneier's excellent articles and essays.</p>
 
-<p>At university I have met many wonderful people. Among them are
-   exchange students who come from repressive regimes. These students,
-   say they are studying political science and get fairly deeply into
-   studies of democracy. When they bring their laptop back home, and it
-   for whichever reason gets seized by the government, that person will
-   be in trouble. The solution to that would be to encrypt the
-   files/drives.</p>
-
 <p>You are working for a top notch startup. You have written a bunch
    of amazing code, and created some fantastic technical charts and your
    competitors are envious. Then one day, at a cafe, your laptop gets
    stolen. You loose all your files. You had a backup, sure, but the
    thief might sell your data. The solution is to encrypt the drive.</p>
+
+<p>It is your data, you deserve to decide who gets access.</p>
 
 <p>Q: What have you based this on?
 A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
@@ -251,7 +238,10 @@ tcplay --create --device=$device --cipher=AES-256-XTS</p>
 geli init -s 4096 $device</p>
 
 <p>Q: Why are we using the AES-256 cipher?
-A: <a href="http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html">http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html</a></p>
+A: 
+It is thoroughly vetted and impossible to crack unless Quantum
+Computers become a reality.
+<a href="http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html">http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html</a></p>
 
 <p>Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
 A: -
@@ -263,7 +253,10 @@ them. Considering you also need access to the appropriate filesystem,
 they'd be more secure, if just by a little bit.
 If you're talking about plaintext keyfiles, they're one-factor secure
 (something you have). It's not so obvious whether a plaintext is more
-or less secure than a passphrase. It would depend on the context, I guess.</p>
+or less secure than a passphrase. It would depend on the context, I</p>
+
+<h2>
+<a name="guess" class="anchor" href="#guess"><span class="octicon octicon-link"></span></a>guess.</h2>
 
 <p>Keyfiles are possession factors (something you have). Possession
 factors are threatened by theft and duplication. Since a keyfile is
@@ -272,8 +265,10 @@ strong factor. In theory, a possession factor can be destroyed -- but
 not if it's been duplicated or stolen!
 Passphrases are knowledge factors (something you know). Knowledge
 factors are threatened by guessing and discovery. A strong passphrase
-that's not stored anywhere but your head is still weak against
-compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).</p>
+that's not stored anywhere but your head is still weak against</p>
+
+<h2>
+<a name="compulsive-discovery-the-cyrpto-wrench-attack-legal-compulsion-etc" class="anchor" href="#compulsive-discovery-the-cyrpto-wrench-attack-legal-compulsion-etc"><span class="octicon octicon-link"></span></a>compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).</h2>
 
 <p>Source: Reddit discussion
 <a href="http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/">http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/</a></p>
@@ -287,17 +282,21 @@ A: an empty hardrive or storage media
    coreutils </p>
 
 <ul>
-<li>GNU coreutils
+<li>
+<p>GNU coreutils
 bash
 optional requirements:
 dialog - If you want a nice dialog box, then make sure you have 
 dialog installed. This is not required anymore though. Some nutty
-puritans dislike dialog.
-tcplay - If you want to encrypt using truecrypt, then install the
-tcplay package.</li>
+puritans dislike dialog.</p>
+
+<p>tcplay - If you want to encrypt using truecrypt, then install the
+tcplay package.</p>
+</li>
 </ul><p>Q: On what platforms and distributions has LUKSUS been tested?
-A: LUKSUS works on Linux and DragonFlyBSD.
-   Tested on the distros: Debian, Ubuntu, ArchLinux and DragonFlyBSD</p>
+A: LUKSUS works on Linux, FreeBSD and DragonFlyBSD.
+   Tested on the distros: Debian, Ubuntu, ArchLinux, DragonFlyBSD and
+   FreeBSD. Very possibly all derivatives of FreeBSD also.</p>
 
 <p>Q: What license is LUKSUS released under?
 A: Luksus is released under GNU GPLv2 License
@@ -313,18 +312,23 @@ A: Any issues can be reported to the Github issue tracker for
 <p>Q: What is the LUKSUS homepage?
 A: LUKSUS is maintained in a Github repository.
    The latest version can always be downloaded
-   from <a href="http://github.com/thomasfrivold/luksus">http://github.com/thomasfrivold/luksus</a></p>
+   from GITHUB page, see the TAGS to download latest release
+   <a href="http://github.com/thomasfrivold/luksus">http://github.com/thomasfrivold/luksus</a>
+   or just go to the shiny fancy page:
+   <a href="http://thomasfrivold.github.io/luksus">http://thomasfrivold.github.io/luksus</a></p>
 
-<h1>
-<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h1>
+<h6>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>#############TODO</h6>
 
-<ul>
-<li>Add NetBSD and OpenBSD</li>
-</ul><h1>
-<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>CHANGELOG</h1>
+<p>Add NetBSD support
+Add OpenBSD support
+Test LUKSUS on FreeBSD derivatives</p>
+
+<h6>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>#############CHANGELOG</h6>
 
 <p>v1.2.1
-Small regression fix - fixed a small mistake.</p>
+Fixed a tiny mistake.</p>
 
 <p>v1.2
 Fixes some regressions</p>
@@ -403,10 +407,8 @@ Hello World</p>
 
 <p>v0.8.4 26.02.2013 10:00
 Added a routine to check the screensize, and display
-a logo according to which screensize the user has.</p>
-
-<h1>
-<a name="cleaned-up-a-little-bit-here-and-there" class="anchor" href="#cleaned-up-a-little-bit-here-and-there"><span class="octicon octicon-link"></span></a>Cleaned up a little bit here and there</h1>
+a logo according to which screensize the user has.
+Cleaned up a little bit here and there</p>
 
 <p>v0.8.3 25.02.2013 20:00
 Tweaks </p>
@@ -428,8 +430,10 @@ Added missing apostrophe</p>
 <li>Added support for loopback devices 
 creating an encrypted container is now possible with LUKSUS</li>
 <li>Began work on implementing functions throughout</li>
-<li>Added some conditional checks with regex
-v0.6 02.01.2013 01:35</li>
+<li>Added some conditional checks with regex</li>
+</ul><p>v0.6 02.01.2013 01:35</p>
+
+<ul>
 <li>improved documentation (README file)</li>
 <li>Added some nice sanity checks</li>
 <li>Further cleaned up the code</li>
