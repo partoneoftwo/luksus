@@ -5,124 +5,127 @@
 /_____/   \____/  /_/ |_|   /____/   \____/   /____/  
 
 
-# SYNOPSIS
-#
-# LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
-# media as well as a filecontainer.
-# It can use the following encryption facilities: LUKS, Truecrypt and GELI. 
-# It works on Linux, DragonflyBSD and FreeBSD.
+#SYNOPSIS
 
-# BACKGROUND
-#
-# The purpose of this script is to provide to myself, an easy eay to encrypt
-# storage media in Linux and DragonflyBSD, such as hardrives, usb sticks,
-# sd cards or external hardrives. It uses the LUKS and cryptsetup
-# crypto subsystem internal to the Linux Kernel. It can also use
-# Truecrypt encryption with the tcplay command.
-# This is thus a wrapper script for cryptsetup, shred and mkfs.
-# Instead of having to read up on the documentation for these
-# wonderful tools, I wrote this wrapper script to handle the dirtywork.
+LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
+media as well as a filecontainer.
+It can use the following encryption facilities: LUKS, Truecrypt and GELI. 
+It works on Linux, DragonflyBSD and FreeBSD.
 
-# USAGE
-# The usage of LUKSUS can take two different forms, 
-# mainly whether you are using LUKSUS on a physical device or a
-# virtual file. These two requires somewhat different commandline
-# arguments.
-# As of version 1.0, LUKSUS defaults to passphrase
-# for securing the volume. Using a keyfile is optional
-# and can be activated by using the commandline option: usekey
-#
-# Command line arguments are: devicename volumename size truecrypt 
+#BACKGROUND
 
-# Explanations:
-# If creating a filecontainer, then the argument size is needed (examples: 1000M 5G)
-# See further description below.
+The purpose of this script is to provide to myself, an easy eay to encrypt
+storage media in Linux, FreeBSD and DragonflyBSD, such as hardrives, usb sticks,
+sd cards or external hardrives. It uses the LUKS and cryptsetup
+crypto subsystem internal to the Linux Kernel. It can also use
+Truecrypt encryption with the tcplay command.
+This is thus a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
+Instead of having to read up on the documentation for these
+wonderful tools, I wrote this wrapper script to handle the dirtywork.
 
-# optional commandline arguments are: usekey nodialog
-# usekey will enable the use of a keyfile instead of a passphrase
-# nodialog will disable dialog prompts. Some people wants this.
+#USAGE
 
-# AT LEAST TWO FIRST COMMAND LINE ARGUMENTS ARE REQUIRED
+USAGE: Physical drive
+./LUKSUS DEVICENAME VOLUMENAME
 
-# ./LUKSUS DEVICENAME VOLUMENAME optional options
-# ./LUKSUS DEVICENAME VOLUMENAME LOCATION-OF-ENCRYTED-VOLUME-CONTAINER sizeM truecrypt usekey
+USAGE: File container
+./LUKSUS loopback-DEVICENAME VOLUMENAME filename filesize-in-megabytesM
 
-# USAGE: Physical drive
-# ./LUKSUS DEVICENAME NICKNAME-of-luks-container
-# ./LUKSUS DEVICENAME VOLUMENAME truecrypt
 
-# USAGE: File container
-# ./LUKSUS loopback-DEVICENAME nickname-of-lukscontainer filename filesize-in-megabytes
+The usage of LUKSUS can take two different forms, 
+mainly whether you are using LUKSUS on a physical device or a
+virtual file. These two requires somewhat different commandline
+arguments. Volumename simply means nickname for the encrypted
+drive/media. Optional parameters are: 
+truecrypt - which enables truecrypt instead of using LUKS (Linux and
+DragonFlyBSD only)
+usekey - which uses a keyfile instead of a passphrase, which will be
+placed in /keys (LUKS only, works on truecrypt as well, but it will
+ask for a passphrase anyhow so this will add a keyfile to the volume)
 
-# EXAMPLES: 
-# ENCRYPT PHYSICAL MEDIA: Using password
-# ./LUKSUS /dev/sdb1 rambo1
+EXAMPLES: 
+ENCRYPT PHYSICAL MEDIA: Using password
+./LUKSUS /dev/sdb1 rambo1
  
-# ENCRYPT PHYSICAL MEDIA: Using keyfile
-# ./LUKSUS /dev/sdb1 rambo1 usekey
+ENCRYPT PHYSICAL MEDIA: Using keyfile
+./LUKSUS /dev/sdb1 rambo1 usekey
 
-# CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
-# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
-# ./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
-
-# To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
-# ./LUKSUS /dev/sdc1 library truecrypt
-# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
-
-# This last example is a corner case. This would create an encrypted
-# filecontainer using truecrypt with a passphrase as well as with a keyfile.
-# That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
-# ./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey
+CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
+./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+./LUKSUS /dev/md0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
 
 
-# ENCRYPTED FILECONTAINER
-# It is possible to create an encrypted file container
-# The usage then changes a little as the script then needs to
-# know which loopbackdevice you wish to use, where the encrypted
-# filecontainer should be located, and how large it should be.
-# Please note that the size must have M for megabytes or G for
-# gigabyte appended to the size.
+To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
+./LUKSUS /dev/sdc1 library truecrypt
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
 
-# The following will use loop0, and place the encrypted container in
-# /usr and will have 1000MiB as space.
-#
-# ./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
-#
-# For creating an encrypted filecontainer on DragonFlyBSD
-# ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+This last example is a corner case. This would create an encrypted
+filecontainer using truecrypt with a passphrase as well as with a keyfile.
+That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey
 
-# DRAGONFLYBSD NOTES:
-# There are a few things to note about running this on DragonflyBSD...
+
+As of version 1.0, LUKSUS defaults to passphrase
+for securing the volume. Using a keyfile is optional
+and can be activated by using the commandline option: usekey
+as mentioned earlier.
+
+optional commandline arguments are: usekey nodialog
 #
-# DragonFlyBSD does not ship with bash by default, so you have to install it
-# from the repositories. "pkg_radd bash" will do the trick
+usekey will enable the use of a keyfile instead of a passphrase
+nodialog will disable dialog prompts. Some people wants this.
+
+
+ENCRYPTED FILECONTAINER
+It is possible to create an encrypted file container
+The usage then changes a little as the script then needs to
+know which loopbackdevice you wish to use, where the encrypted
+filecontainer should be located, and how large it should be.
+Please note that the size must have M for megabytes or G for
+gigabyte appended to the size.
+
+The following will use loop0, and place the encrypted container in
+/usr and will have 1000MiB as space.
+
+./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
+For creating an encrypted filecontainer on DragonFlyBSD
+./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
+DRAGONFLYBSD NOTES:
+There are a few things to note about running this on DragonflyBSD...
 #
-# NO EXT4, UFS IS USED 
-# The scripts does the same things as under Linux, but with one major
-# exception.
-# It does not create EXT4 filesystems, but UFS filesystems. 
-# The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
-# loopback device, and I have not yet managed to get it to work.
-# Therefore the user will get a UFS filesystem instead.
+DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
+from the repositories. "pkg_radd bash" "pkg_radd dialog" pkg_radd
+coreutils" will do the trick
 #
-# TRUECRYPT NOTES:
+NO EXT4, UFS IS USED 
+EXT4 support is currently not available in a workable state;
+The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
+loopback device, and I have not yet managed to get it to work.
+Therefore the user will get a UFS filesystem instead.
 #
-# Truecrypt defaults to using passphrase for volume security.
-# A keyfile can be added by using the commandline argument: usekey
+TRUECRYPT NOTES:
 #
-# Applies to both on Linux and DragonflyBSD
-# Truecrypt / tcplay is slow when it is creating encrypted
-# filecontainers on Linux. Once the volume has been created
-# speeds are nominal. This has at least been the case in my 
-# testing on Virtualbox instances of various Linux distributions.
+Truecrypt defaults to using passphrase for volume security.
+A keyfile can be added by using the commandline argument: usekey
+This will add a key to the keychain in the volume, but TrueCrypt will
+also ask for a password. 
 #
-# For some reason the cryptsetup tool in Dfly takes a very long time
-# to do its work when it is manipulating loopback LUKS volumes, ie.
-# file containers... I do not know the reason to this strange behaviour, 
-# but once it has created the volume, file transfer speeds are nominal and fast.
-# In my experience it takes 15 minutes to finish the process of creating
-# an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
-# loopback devices:)
+Applies to both on Linux and DragonflyBSD
+Truecrypt / tcplay is slow when it is creating encrypted
+filecontainers on Linux. Once the volume has been created
+speeds are nominal. This has at least been the case in my 
+testing on Virtualbox instances of various Linux distributions.
+#
+For some reason the cryptsetup tool in Dfly takes a very long time
+to do its work when it is manipulating loopback LUKS volumes, ie.
+file containers... I do not know the reason to this strange behaviour, 
+but once it has created the volume, file transfer speeds are nominal and fast.
+In my experience it takes 15 minutes to finish the process of creating
+an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
+loopback devices:)
 #
 
 
@@ -137,26 +140,21 @@ A: I wrote this script because I wanted to have a way to easily and casually cre
 
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
-   license.
+   license. Please let me know if this makes it hard for you to use it, and I
+   will consider adding an extra license.
 
 Q: Why should I encrypt?
 A: It is beyond the scope of this README to go indepth, but let me
    give you a primer with 3 different scenarios. Please
    google/duckduckgo for more info. Read some of Bruce Schneier's excellent articles and essays.
     
-   At university I have met many wonderful people. Among them are
-   exchange students who come from repressive regimes. These students,
-   say they are studying political science and get fairly deeply into
-   studies of democracy. When they bring their laptop back home, and it
-   for whichever reason gets seized by the government, that person will
-   be in trouble. The solution to that would be to encrypt the
-   files/drives.
-
    You are working for a top notch startup. You have written a bunch
    of amazing code, and created some fantastic technical charts and your
    competitors are envious. Then one day, at a cafe, your laptop gets
    stolen. You loose all your files. You had a backup, sure, but the
    thief might sell your data. The solution is to encrypt the drive.
+
+   It is your data, you deserve to decide who gets access.
 
 Q: What have you based this on?
 A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
@@ -213,7 +211,10 @@ geli init -s 4096 $device
 
 
 Q: Why are we using the AES-256 cipher?
-A: http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
+A: 
+It is thoroughly vetted and impossible to crack unless Quantum
+Computers become a reality.
+http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
 
 Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
 A: -
@@ -255,12 +256,14 @@ A: an empty hardrive or storage media
    dialog - If you want a nice dialog box, then make sure you have 
    dialog installed. This is not required anymore though. Some nutty
    puritans dislike dialog.
+
    tcplay - If you want to encrypt using truecrypt, then install the
    tcplay package.
 
 Q: On what platforms and distributions has LUKSUS been tested?
-A: LUKSUS works on Linux and DragonFlyBSD.
-   Tested on the distros: Debian, Ubuntu, ArchLinux and DragonFlyBSD
+A: LUKSUS works on Linux, FreeBSD and DragonFlyBSD.
+   Tested on the distros: Debian, Ubuntu, ArchLinux, DragonFlyBSD and
+   FreeBSD. Very possibly all derivatives of FreeBSD also.
 
 Q: What license is LUKSUS released under?
 A: Luksus is released under GNU GPLv2 License
@@ -276,173 +279,169 @@ A: Any issues can be reported to the Github issue tracker for
 Q: What is the LUKSUS homepage?
 A: LUKSUS is maintained in a Github repository.
    The latest version can always be downloaded
-   from http://github.com/thomasfrivold/luksus
-
+   from GITHUB page, see the TAGS to download latest release
+   http://github.com/thomasfrivold/luksus
+   or just go to the shiny fancy page:
+   http://thomasfrivold.github.io/luksus
+   
 ########################################################
-#################### TODO ##############################
-########################################################
-
-# Another round of extensive testing on several 
-# Linux distros and Dragonfly BSD with
-# DM-LUKS and Truecrypt
-# + better support command line options in a nice POSIX manner
-# + add the commandline option to use with or without dialog *or forget it*
-# +Properly works on Truecrypt and LUKS
-# +Properly tested on Linux: Debian, Ubuntu, Arch, Fedora, CentOS
-# +Properly tested on DragonFlyBSD
-# +Attemps to work on default installations:
-# +Properly tested across Linux and DragonflyBSD (all features tested
-# on 3 linux distros and on Dfly.
-
-
-
-########################################################
-#################### CHANGELOG #########################
+###################TODO ##############################
 ########################################################
 
-# v1.2
-# Fixes some regressions
+Add NetBSD support
+Add OpenBSD support
+Test LUKSUS on FreeBSD derivatives
 
-# v1.1
-# Adds FreeBSD support
+########################################################
+###################CHANGELOG #########################
+########################################################
 
-# v1.0
-# LUKSUS is stable and mature enough to be called 1.0
-# Tested on Linux and DragonFlyBSD
+v1.2.1
+Fixed a tiny mistake.
 
+v1.2
+Fixes some regressions
 
-# v1.0RC9 03.08.2013
-# The testing phase of LUKSUS has really forced a lot of 
-# improvements all over. The code is now completely modular, and
-# adding further encryption engines and operating systems should
-# be a walk in the park.
-# Now executes flawlessly in all operating modes on Linux and DragonFlyBSD
+v1.1
+Adds FreeBSD support
 
-# v1.0RC8 02.08.2013
-# + added nodialog option and FreeBSD support
-# + Dialog use is not enforced anymore. If package is not installed,
-# +  then the script will skip fancy dialog use. Dialog is not shipped
-# +  with all distros by default. Less headache for the user.
+v1.0
+LUKSUS is stable and mature enough to be called 1.0
+Tested on Linux and DragonFlyBSD
 
 
-# v1.0RC7 30.07.2013
-# +Cleanup
+v1.0RC9 03.08.2013
+The testing phase of LUKSUS has really forced a lot of 
+improvements all over. The code is now completely modular, and
+adding further encryption engines and operating systems should
+be a walk in the park.
+Now executes flawlessly in all operating modes on Linux and DragonFlyBSD
 
-# v1.0RC5 29.07.2013 12:30
+v1.0RC8 02.08.2013
++ added nodialog option and FreeBSD support
++ Dialog use is not enforced anymore. If package is not installed,
++  then the script will skip fancy dialog use. Dialog is not shipped
++  with all distros by default. Less headache for the user.
 
-# +LUKSUS now defaults to passphrase. Using a keyfile is 
-# optional. User feedback suggested that many users preferred
-# to use passphrase instead of keys. Therefore the default
-# has been set to passphrase, with using keyfiles being optional.
-# +The dawn of modularization of the encryption engine code.
-# I am hoping to be able to add support for FreeBSDs GBDE and GELI,
-# NetBSD's CGD and OpenBSDs BIOCTL. This would bump the number of
+
+v1.0RC7 30.07.2013
++Cleanup
+
+v1.0RC5 29.07.2013 12:30
+
++LUKSUS now defaults to passphrase. Using a keyfile is 
+optional. User feedback suggested that many users preferred
+to use passphrase instead of keys. Therefore the default
+has been set to passphrase, with using keyfiles being optional.
++The dawn of modularization of the encryption engine code.
+I am hoping to be able to add support for FreeBSDs GBDE and GELI,
+NetBSD's CGD and OpenBSDs BIOCTL. This would bump the number of
 supported platforms to 5.
 
-# v1.0RC4 22.07.2013 15:09
-# +Removed some extra integrity checks. They were redundant and broke
-# Truecrypt support
-# Feature freeze, and all that is required now is more testing.
-# Fixed some regressions. Testing is a good idea.
+v1.0RC4 22.07.2013 15:09
++Removed some extra integrity checks. They were redundant and broke
+Truecrypt support
+Feature freeze, and all that is required now is more testing.
+Fixed some regressions. Testing is a good idea.
 
-# v1.0RC3 22.07.2013 12:00
-# +Better dialog - yesno now works
-# I like where this is going
+v1.0RC3 22.07.2013 12:00
++Better dialog - yesno now works
+I like where this is going
 
-# v1.0RC2 18.07.2013 19:00
+v1.0RC2 18.07.2013 19:00
 
-# +Improved logging and reporting further
-# +Cleaner OS Detection
++Improved logging and reporting further
++Cleaner OS Detection
 
-# v0.99
-# Truecrypt command line option added
-# Usage cleanup
-# Readme testing
+v0.99
+Truecrypt command line option added
+Usage cleanup
+Readme testing
 
-# v0.95 06.03.2013 15:13
-# +Truecrypt support
+v0.95 06.03.2013 15:13
++Truecrypt support
 
-# v0.8.91 05.03.2013 20:00
-# Small bugfixes
+v0.8.91 05.03.2013 20:00
+Small bugfixes
 
-# v0.8.9 05.03.2013 13:28
-# +DragonFlyBSD support is now fully supported.
-# Cryptsetup / dm-luks spends a lot of time with its operation, 
-# 10-15 minutes, but apart from that, LUKSUS runs on DragonFlyBSD.
-# Functions need more attention and cleanup, but everything is working
-# quite well now.
-
-
-# v0.8.5 26.02.2013 12:00
-# Cleanup before public release on Freecode.com!
-# Hello World
-
-# v0.8.4 26.02.2013 10:00
-# Added a routine to check the screensize, and display
-# a logo according to which screensize the user has.
-# Cleaned up a little bit here and there
-
-# v0.8.3 25.02.2013 20:00
-# Tweaks 
-
-# v0.8.2 25.02.2013 15:00
-# Added a welcome sequence
-# Added a logo! (yay)
-
-# v0.8.1 25.02.2013 14:30
-# Added missing apostrophe
-
-# v0.8 24.02.2013 10:15
-# + Improved code quality, implemented simple modularization.
+v0.8.9 05.03.2013 13:28
++DragonFlyBSD support is now fully supported.
+Cryptsetup / dm-luks spends a lot of time with its operation, 
+10-15 minutes, but apart from that, LUKSUS runs on DragonFlyBSD.
+Functions need more attention and cleanup, but everything is working
+quite well now.
 
 
+v0.8.5 26.02.2013 12:00
+Cleanup before public release on Freecode.com!
+Hello World
 
-# v0.7 02.01.2013 13:20
-# + Added support for loopback devices 
-#   creating an encrypted container is now possible with LUKSUS
-# + Began work on implementing functions throughout
-# + Added some conditional checks with regex
+v0.8.4 26.02.2013 10:00
+Added a routine to check the screensize, and display
+a logo according to which screensize the user has.
+Cleaned up a little bit here and there
 
-# v0.6 02.01.2013 01:35
-# + improved documentation (README file)
-# + Added some nice sanity checks
-# + Further cleaned up the code
-# + Added a definite CTRL+C to cancel now
-# + Added dependency checks
+v0.8.3 25.02.2013 20:00
+Tweaks 
 
-# v0.5 25.04.2012 12:30
-# + initial public release
-#   live on github here: https://github.com/thomasfrivold/luksus
-#   (yay)
-# + massive cleanup
-# + added a conditional check to verify that user is root
-# + added a conditional check in the middle of the procedure to
-#   verify that a LUKS container has been created on the device
-#   good for integrity 
-# + added a routine to hackup the luks header with a conditional
-#   check as suggested by the luks FAQ
-#   here: http://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions#6._Backup_and_Data_Recovery
-# + fixed mounting procedure
-#   changed name of the script from cryptcreate to luksus
-#   the luksus name is more a pun than a functional name
-#   luksus means luxury in Norwegian and coincidentally it includes the main technology
-#   used to encrypt hardrives in Linux since the 2.6 kernels - Linux Unified Key Setup
-#   on a celebratory note, the script can now be considered stable. Even though
-#   it lacks some niceties such as a fully fledged ncurses dialog menu system
-#   which is aimed at version v1.0
-#   - Thomas Frivold 
+v0.8.2 25.02.2013 15:00
+Added a welcome sequence
+Added a logo! (yay)
 
-# v0.4
-# + cleaned up script
-# + added required runtime arguments
+v0.8.1 25.02.2013 14:30
+Added missing apostrophe
 
-# v0.3
-# + added command line input
+v0.8 24.02.2013 10:15
++ Improved code quality, implemented simple modularization.
 
-# v0.2
-# + cosmetic fixes
-# + did some nice thinking about dialog
 
-# v0.1 16.04.2012 GMT+1 1320
-# + initial release
+
+v0.7 02.01.2013 13:20
++ Added support for loopback devices 
+  creating an encrypted container is now possible with LUKSUS
++ Began work on implementing functions throughout
++ Added some conditional checks with regex
+
+v0.6 02.01.2013 01:35
++ improved documentation (README file)
++ Added some nice sanity checks
++ Further cleaned up the code
++ Added a definite CTRL+C to cancel now
++ Added dependency checks
+
+v0.5 25.04.2012 12:30
++ initial public release
+  live on github here: https://github.com/thomasfrivold/luksus
+  (yay)
++ massive cleanup
++ added a conditional check to verify that user is root
++ added a conditional check in the middle of the procedure to
+  verify that a LUKS container has been created on the device
+  good for integrity 
++ added a routine to hackup the luks header with a conditional
+  check as suggested by the luks FAQ
+  here: http://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions#6._Backup_and_Data_Recovery
++ fixed mounting procedure
+  changed name of the script from cryptcreate to luksus
+  the luksus name is more a pun than a functional name
+  luksus means luxury in Norwegian and coincidentally it includes the main technology
+  used to encrypt hardrives in Linux since the 2.6 kernels - Linux Unified Key Setup
+  on a celebratory note, the script can now be considered stable. Even though
+  it lacks some niceties such as a fully fledged ncurses dialog menu system
+  which is aimed at version v1.0
+  - Thomas Frivold 
+
+v0.4
++ cleaned up script
++ added required runtime arguments
+
+v0.3
++ added command line input
+
+v0.2
++ cosmetic fixes
++ did some nice thinking about dialog
+
+v0.1 16.04.2012 GMT+1 1320
++ initial release
 
