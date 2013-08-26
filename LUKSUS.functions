@@ -103,6 +103,7 @@ LOOPBACKMETHOD()
     # block device housekeeping
     losetup -f 1>/dev/null 2>/dev/null
     losetup $device $luksfile
+    loopbackhelp="losetup $device $luksfile"
   elif [[ $loopbackdevice == true ]] && [[ $UNAME == DragonFly ]]
     then
     echo DragonFlyBSD - Nice...
@@ -113,12 +114,14 @@ LOOPBACKMETHOD()
     # is initializing something on first run. Then it must run again.
     vnconfig 1>/dev/null 2>/dev/null
     vnconfig $device $luksfile
+    loopbackhelp="vnconfig $device $luksfile"
    elif [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD ]]
    then
    echo FreeBSD - Nice...
    ghead /dev/zero -c $luksfilesize > $luksfile
 #  vanilla, but needs the devicenumber also #  mdconfig -a -t vnode -f $luksfile
    mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber
+   loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber"
   else
     echo "Okay, not using a loopback device, proceeding in normal mode"
   fi
@@ -147,7 +150,7 @@ DONTSHREDIFLOOPBACK()
     echo in the middle of the shredding.place
     gshred -f -v -n1 $device
   else
-  echo "$device is a loopback device. Not shredding, since its no use."
+  echo "$device is a loopback device. OK."
   fi
 }  
 
@@ -271,10 +274,12 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open and mount the newly created Truecrypt encrypted volume
 tcplay -m $name -d $device
+mounthelp="tcplay -m $name -d $device"
 elif [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
 then
 echo Attempting to open newly created Truecrypt volume $name
 tcplay -m $name -d $device -k $keyfile
+mounthelp="tcplay -m $name -d $device -k $keyfile"
 else 
 echo ""
 fi
@@ -345,10 +350,12 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 cryptsetup luksOpen $device $name --key-file=$keyfile
+mounthelp="cryptsetup luksOpen $device $name --key-file=$keyfile"
 elif [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 cryptsetup luksOpen $device $name
+mounthelp="cryptsetup luksOpen $device $name"
 else 
 echo ""
 fi
@@ -386,10 +393,12 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 geli attach -k $keyfile $device
+mounthelp="geli attach -k $keyfile $device"
 elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 geli attach $device
+mounthelp="geli attach $device"
 else 
 echo ""
 fi
@@ -439,6 +448,10 @@ echo CONTAINER $luksfile $luksfilesize
 echo MOUNTPOINT: `mount | grep $name`
 echo `df -h | head -n 1`
 echo `df -h | grep $name`
+echo ""
+echo "In order to mount your newly encrypted volume, run the following" 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo ################################################
 time2="$(date +%s.%N)"
 # This time taken needs attention - does not work anymore
@@ -453,4 +466,8 @@ WRITEINFORMATIONFILE()
 DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
 DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
 ls -l $keydir/$name* 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo ""
+echo "In order to mount your newly encrypted volume, run the following" 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 }

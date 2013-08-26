@@ -288,10 +288,17 @@ A: LUKSUS is maintained in a Github repository.
    http://github.com/thomasfrivold/luksus
    or just go to the shiny fancy page:
    http://thomasfrivold.github.io/luksus
-   
+
+Q: I want to improve my information security beyond encrypting files,
+where can I learn more?
+A: This very well made blog post provides a very good guide into
+user-cryptography:
+http://blog.sanctum.geek.nz/series/linux-crypto/
+
 ########################################################
 ###################TODO ##############################
 ########################################################
+
 Engines todo:
 Add NetBSD support, cgd
 Add OpenBSD , svnd support
@@ -326,6 +333,7 @@ list, FreeBSD users list
 
 v1.2.2
 Create a label to newly created filesystem, based on $name (Linux only)
+Better usability of the information file of each volume.
 
 
 v1.2.1
