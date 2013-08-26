@@ -305,7 +305,7 @@ http://blog.sanctum.geek.nz/series/linux-crypto/
 
 Engines todo:
 Add NetBSD support, cgd
-Add OpenBSD , svnd support
+Add OpenBSD , bioctl support
 Add PGP / OpenPGP container support (maybe, if feasible)
 Add ecryptfs container support (maybe, if feasible)
 
@@ -320,10 +320,11 @@ Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
 Add mount command and losetup/vnconfig to key.information for added usability
+Improve the actual output, if not using keyfile, then don't show
+the empty variables to the dialog screen... 
 
 New features todo:
-Add keyvault option
-Debate whether to call it strongbox or keyvault
+Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
 
 Project overall todo:
 Get user feedback, feature requests

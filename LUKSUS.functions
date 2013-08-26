@@ -274,13 +274,13 @@ then
 echo Attempting to open and mount the newly created Truecrypt encrypted volume
 tcplay -m $name -d $device
 cryptoinithelp="tcplay -m $name -d $device"
-CRYPTSETUPSTATUS=$(cryptsetup status $name)
+VOLUMESTATUS=$(cryptsetup status $name)
 elif [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
 then
 echo Attempting to open newly created Truecrypt volume $name
 tcplay -m $name -d $device -k $keyfile
 cryptoinithelp="tcplay -m $name -d $device -k $keyfile"
-CRYPTSETUPSTATUS=$(cryptsetup status $name)
+VOLUMESTATUS=$(cryptsetup status $name)
 else 
 echo ""
 fi
@@ -352,13 +352,13 @@ then
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 cryptsetup luksOpen $device $name --key-file=$keyfile
 cryptoinithelp="cryptsetup luksOpen $device $name --key-file=$keyfile"
-CRYPTSETUPSTATUS=$(cryptsetup status $name)
+VOLUMESTATUS=$(cryptsetup status $name)
 elif [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 cryptsetup luksOpen $device $name
 cryptoinithelp="cryptsetup luksOpen $device $name"
-CRYPTSETUPSTATUS=$(cryptsetup status $name)
+VOLUMESTATUS=$(cryptsetup status $name)
 else 
 echo ""
 fi
@@ -398,11 +398,13 @@ then
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 geli attach -k $keyfile $device
 cryptoinithelp="geli attach -k $keyfile $device"
+VOLUMESTATUS=$(geli dump $name)
 elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 geli attach $device
 cryptoinithelp="geli attach $device"
+VOLUMESTATUS=$(geli dump $device)
 else 
 echo ""
 fi
@@ -460,7 +462,7 @@ echo "In order to mount your newly encrypted volume, run the following:" 1>>$key
 echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $cryptoinithelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $CRYPTSETUPSTATUS 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $VOLUMESTATUS 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo ################################################
 time2="$(date +%s.%N)"
 # This time taken needs attention - does not work anymore
