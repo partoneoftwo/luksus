@@ -371,8 +371,6 @@ then
 # geli create
 echo Initializing $device with $ENCRYPTION
 geli init -B $headerbackup -s 4096 $device
-cp /var/backups/md$freebsdloopnumber.eli $keydir/$name.headerbackup
-cp /var/backups/da$freebsdloopnumber.eli $keydir/$name.headerbackup
 else
 echo ""
 fi
