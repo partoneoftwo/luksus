@@ -69,6 +69,7 @@ if [[ "$3" = "luks" ]] || [[ "$4" = "luks" ]] || [[ "$5" = "luks" ]] || [[ "$6" 
 then
 echo "LUKS encryption enabled"
 ENCRYPTION=LUKS
+if [ -z `which cryptsetup` ] ;then echo "Missing cryptsetup. Cannot continue. Please install cryptsetup" && exit; fi
 else
 echo ""
 fi

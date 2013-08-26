@@ -345,10 +345,12 @@ list, FreeBSD users list
 ###################CHANGELOG #########################
 ########################################################
 
+v1.2.3
+Attempts were made to add crude NetBSD support
+
 v1.2.2
 Create a label to newly created filesystem, based on $name (Linux only)
 Better usability of the information file of each volume.
-
 Improvements to output 
 
 v1.2.1

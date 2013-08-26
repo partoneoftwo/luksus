@@ -26,6 +26,9 @@ OSTEST()
   then
   ENCRYPTION=GELI
   echo On $UNAME, Encryption set to $ENCRYPTION
+  elif [[ $UNNAME = NetBSD ]]
+  then
+  ENCRYPTION=CGD
   else
   ENCRYPTION=LUKSUS
   echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION
@@ -41,6 +44,9 @@ LOOPBACKTEST()
   then
   loopbackdevice=true
   elif [[ $device == *md* ]]
+  then
+  loopbackdevice=true
+  elif [[ $device == *vnd* ]]
   then
   loopbackdevice=true
   else
@@ -81,6 +87,22 @@ if [ $UNAME == FreeBSD ] ;
 	echo ""
 fi
 }
+
+NETBSDHOUSEKEEPING()
+{
+if [ $UNAME == NetBSD ] ;
+	then 
+	echo We are on NetBSD here. Cool.
+	# crude way to deal with different binary names
+	alias ghead=head
+        alias gshred=shred
+# loading dm kernel module in NetBSD
+# not necessary	kldload geom_eli
+        else 
+	echo ""
+fi
+}
+
 
 DEVICEEXISTS()
 {
@@ -410,6 +432,14 @@ fi
 
 CGD()
 {
+if [[ $ENCRYPTION == CGD ]] && [[ $USEKEY == false ]]
+then
+# CGD create
+echo Initializing $device with $ENCRYPTION
+cgdconfig -g -o /keys/$name.configfile aes-cbc 256
+cgdconfig $name $device
+echo ""
+fi
 }
 
 CGDKEYFILE()
@@ -419,6 +449,7 @@ CGDKEYFILE()
 CGDOPEN()
 {
 }
+
 CREATEANDMOUNTFS()
 {
 mkdir -p $mountpoint
@@ -436,6 +467,11 @@ then
 newfs $device.eli
 mount $device.eli /mnt/$name
 mounthelp="mount $device.eli /mnt/$name"
+elif [[ $UNAME == NetBSD ]]
+then
+newfs -O 2 $device
+mount $device /mnt/$name
+mounthelp="mount $device /mnt/$name"
 elif [[ $UNAME == Linux ]]
 then
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
