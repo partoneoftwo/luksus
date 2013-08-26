@@ -97,10 +97,6 @@ For creating an encrypted filecontainer on DragonFlyBSD
 DRAGONFLYBSD NOTES:
 There are a few things to note about running this on DragonflyBSD...
 #
-DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
-from the repositories. "pkg_radd bash" "pkg_radd dialog" pkg_radd
-coreutils" will do the trick
-#
 NO EXT4, UFS IS USED 
 EXT4 support is currently not available in a workable state;
 The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
@@ -142,7 +138,7 @@ A: I wrote this script because I wanted to have a way to easily and casually cre
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
    license. Please let me know if this makes it hard for you to use it, and I
-   will consider adding an extra license.
+   will consider adding an extra license or changing it.
 
 Q: Why should I encrypt?
 A: It is beyond the scope of this README to go indepth. 
@@ -183,7 +179,7 @@ The script works like this:
 
 
 Q: Is there a Disclaimer? 
-A: Oh yes there is.
+A: Yes:
     As with all security measures: Think them through, use with caution.
     I, the author, take no responsibility if a black hole appears,
     and implodes your house, your town and the entire planet earth as an
@@ -257,17 +253,29 @@ A: an empty hardrive or storage media
    knowledge about which device the hardrive or storage
    (blkid or dmesg will provide this)
    
-   On BSD:
-   coreutils 
-   - GNU coreutils
+   On Linux:
    bash
-   optional requirements:
-   dialog - If you want a nice dialog box, then make sure you have 
-   dialog installed. This is not required anymore though. Some nutty
-   puritans dislike dialog.
-
+   dialog
+   cryptsetup
+   tcplay
+   
+   On *BSD:
+   bash
+   coreutils
+   dialog
+   
    tcplay - If you want to encrypt using truecrypt, then install the
    tcplay package.
+
+   dialog - If you want to get a nice dialog interface giving you some
+   options and runtime information. Puritans say NO here, dialog is
+   optional.
+
+DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
+from the repositories. "pkg_radd bash dialog coreutils tcplay" 
+FreeBSD: pkg_add -r bash dialog coreutils
+NetBSD: pkg_add -v bash dialog coreutils
+
 
 Q: On what platforms and distributions has LUKSUS been tested?
 A: LUKSUS works on Linux, FreeBSD and DragonFlyBSD.
