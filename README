@@ -307,6 +307,16 @@ A: This very well made blog post provides a very good guide into
 user-cryptography:
 http://blog.sanctum.geek.nz/series/linux-crypto/
 
+Q: How do I add another encryption engine?
+A: After having made the script more or less modular, this is the
+steps necessary to add another engine to LUKSUS
+
+ADD OS UNAME TO OSTEST()
+Add loopbackdevice to LOOPBACKTEST()
+Write HOUSEKEEPING() function for the new OS if necessary
+Create engine() enginekeyfile() and engineopen() functions
+TEST TEST TEST!
+
 ########################################################
 ###################TODO ##############################
 ########################################################
