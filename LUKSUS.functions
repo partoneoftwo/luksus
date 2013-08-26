@@ -370,7 +370,7 @@ if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]
 then
 # geli create
 echo Initializing $device with $ENCRYPTION
-geli init -s 4096 $device
+geli init -B $headerbackup -s 4096 $device
 cp /var/backups/md$freebsdloopnumber.eli $keydir/$name.headerbackup
 cp /var/backups/da$freebsdloopnumber.eli $keydir/$name.headerbackup
 else
@@ -383,7 +383,7 @@ GELIKEYFILE()
 if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]
 then
 echo Initializing $device with $ENCRYPTION with a keyfile
-geli init -s 4096 -K $keyfile $device
+geli init -B $headerfile -p -s 4096 -K $keyfile $device
 else
 echo ""
 fi
