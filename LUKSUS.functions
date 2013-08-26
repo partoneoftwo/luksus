@@ -408,6 +408,17 @@ echo ""
 fi
 }
 
+CGD()
+{
+}
+
+CGDKEYFILE()
+{
+}
+
+CGDOPEN()
+{
+}
 CREATEANDMOUNTFS()
 {
 mkdir -p $mountpoint
@@ -472,7 +483,7 @@ WRITEINFORMATIONFILE()
 DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
 DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
 ls -l $keydir/$name* 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo ""
+echo "" 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo "In order to mount your newly encrypted volume, run the following:" 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo "###" 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
