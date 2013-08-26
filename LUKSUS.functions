@@ -459,11 +459,14 @@ echo `df -h | head -n 1`
 echo `df -h | grep $name`
 echo ""
 echo "In order to mount your newly encrypted volume, run the following:" 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo "###"
 echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $cryptoinithelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo "###"
+echo Volumestatus:
 echo $VOLUMESTATUS 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo ################################################
+echo "################################################"
 time2="$(date +%s.%N)"
 # This time taken needs attention - does not work anymore
 # for some reason
