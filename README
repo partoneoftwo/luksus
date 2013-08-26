@@ -163,9 +163,11 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
    OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
    OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
+   NetBSD disk encryption guide: http://julipedia.meroh.net/2012/02/encrypted-disk-images-in-netbsd.html
 
 Q: How is the script designed?
-A: The script works like this:
+A: The script reuses code wherever possible and is heavily built around reusable variables.
+The script works like this:
    all existing data will be brutally removed beyond reconstruction (forensically)
    then it writes random data to the drive
    then creates a keyfile
@@ -242,6 +244,10 @@ Source: Reddit discussion
 http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
 
 
+So let's take the case of David Miranda, for him it was very useful
+not to have the keys: 
+http://www.theatlantic.com/international/archive/2013/08/the-real-terrifying-reason-why-british-authorities-detained-david-miranda/278952/
+
 Q: What are the requirements of using LUKSUS:
 A: an empty hardrive or storage media
    knowledge about which device the hardrive or storage
@@ -286,14 +292,41 @@ A: LUKSUS is maintained in a Github repository.
 ########################################################
 ###################TODO ##############################
 ########################################################
+Engines todo:
+Add NetBSD support, cgd
+Add OpenBSD , svnd support
+Add PGP / OpenPGP container support (maybe, if feasible)
+Add ecryptfs container support (maybe, if feasible)
 
-Add NetBSD support
-Add OpenBSD support
+FreeBSD todo: 
 Test LUKSUS on FreeBSD derivatives
+Implement headerbackup in the geli encryption routine
+Fix keyfile handling with GELI - Skip passphrase, and use key
+Test keyfile handling properly with GELI
+
+LUKSUS improvements todo:
+Attempt to improve overall code, eliminate and kill laughable hacks
+Add LUKSUS status to key.information
+Add mount command and losetup/vnconfig to key.information for added usability
+
+New features todo:
+Add keyvault option
+Debate whether to call it strongbox or keyvault
+
+Project overall todo:
+Get user feedback, feature requests
+Dare to post it to "Show Hackernews" (news.ycombinator.com)
+Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
+list, FreeBSD users list 
+
 
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
+
+v1.2.2
+Create a label to newly created filesystem, based on $name (Linux only)
+
 
 v1.2.1
 Fixed a tiny mistake.

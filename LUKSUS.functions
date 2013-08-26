@@ -415,6 +415,7 @@ then
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
 mkfs.ext4 /dev/mapper/$name
 # mounting the newly created drive
+e2label /dev/mapper/$name $name
 mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
 else
 echo No Idea What To Do
