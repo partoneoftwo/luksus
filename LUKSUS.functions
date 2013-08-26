@@ -186,8 +186,7 @@ FILECONTAINER SIZE: $luksfilesize\n
 ENCRYPTION USED: $ENCRYPTION\n
 USING KEYFILE: $USEKEY\n
 LOOPBACKDEVICE: $loopbackdevice\n
-OS: $UNAME\n
-\n\n\n
+OS: $UNAME\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 " 30 50
 
@@ -274,12 +273,14 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open and mount the newly created Truecrypt encrypted volume
 tcplay -m $name -d $device
-mounthelp="tcplay -m $name -d $device"
+cryptoinithelp="tcplay -m $name -d $device"
+CRYPTSETUPSTATUS=$(cryptsetup status $name)
 elif [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
 then
 echo Attempting to open newly created Truecrypt volume $name
 tcplay -m $name -d $device -k $keyfile
-mounthelp="tcplay -m $name -d $device -k $keyfile"
+cryptoinithelp="tcplay -m $name -d $device -k $keyfile"
+CRYPTSETUPSTATUS=$(cryptsetup status $name)
 else 
 echo ""
 fi
@@ -350,12 +351,14 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 cryptsetup luksOpen $device $name --key-file=$keyfile
-mounthelp="cryptsetup luksOpen $device $name --key-file=$keyfile"
+cryptoinithelp="cryptsetup luksOpen $device $name --key-file=$keyfile"
+CRYPTSETUPSTATUS=$(cryptsetup status $name)
 elif [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 cryptsetup luksOpen $device $name
-mounthelp="cryptsetup luksOpen $device $name"
+cryptoinithelp="cryptsetup luksOpen $device $name"
+CRYPTSETUPSTATUS=$(cryptsetup status $name)
 else 
 echo ""
 fi
@@ -369,6 +372,7 @@ then
 echo Initializing $device with $ENCRYPTION
 geli init -s 4096 $device
 cp /var/backups/md$freebsdloopnumber.eli $keydir/$name.headerbackup
+cp /var/backups/da$freebsdloopnumber.eli $keydir/$name.headerbackup
 else
 echo ""
 fi
@@ -393,12 +397,12 @@ then
 # mount the encrypted drive using a keyfile
 echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
 geli attach -k $keyfile $device
-mounthelp="geli attach -k $keyfile $device"
+cryptoinithelp="geli attach -k $keyfile $device"
 elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
 then
 echo Attempting to open the newly created $ENCRYPTION volume $name
 geli attach $device
-mounthelp="geli attach $device"
+cryptoinithelp="geli attach $device"
 else 
 echo ""
 fi
@@ -415,10 +419,12 @@ echo DragonFlyBSD mode
 newfs /dev/mapper/$name
 # mounting
 mount /dev/mapper/$name /mnt/$name
+mounthelp="mount /dev/mapper/$name /mnt/$name"
 elif [[ $UNAME == FreeBSD ]]
 then
 newfs $device.eli
 mount $device.eli /mnt/$name
+mounthelp="mount $device.eli /mnt/$name"
 elif [[ $UNAME == Linux ]]
 then
 # mkfs.ext4 - create a filesystem on top of the encrypted drive
@@ -426,6 +432,7 @@ mkfs.ext4 /dev/mapper/$name
 # mounting the newly created drive
 e2label /dev/mapper/$name $name
 mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
+mounthelp="mount -t ext4 /dev/mapper/$name $mountpoint"
 else
 echo No Idea What To Do
 fi
@@ -449,9 +456,11 @@ echo MOUNTPOINT: `mount | grep $name`
 echo `df -h | head -n 1`
 echo `df -h | grep $name`
 echo ""
-echo "In order to mount your newly encrypted volume, run the following" 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo "In order to mount your newly encrypted volume, run the following:" 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $cryptoinithelp 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+echo $CRYPTSETUPSTATUS 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo ################################################
 time2="$(date +%s.%N)"
 # This time taken needs attention - does not work anymore
@@ -467,7 +476,5 @@ DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
 DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
 ls -l $keydir/$name* 1>>$keydir/$name.information 2>>$keydir/$name.information
 echo ""
-echo "In order to mount your newly encrypted volume, run the following" 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
+cp $keydir/$name.information $mountpoint
 }
