@@ -14,19 +14,19 @@ fi
 OSTEST()
 {
 # OS Checking
-  if [[ $UNAME == Linux ]]
+  if [[ $UNAME = Linux ]]
   then
-#  ENCRYPTION=LUKS
+  ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
-  elif [[ $UNAME == DragonFly ]]
+  elif [[ $UNAME = DragonFly ]]
   then
-#  ENCRYPTION=LUKS
+  ENCRYPTION=LUKS
   echo On $UNAME, defaulting to $ENCRYPTION
   elif [[ $UNAME = FreeBSD ]]
   then
   ENCRYPTION=GELI
   echo On $UNAME, Encryption set to $ENCRYPTION
-  elif [[ $UNNAME = NetBSD ]]
+  elif [[ $UNAME = NetBSD ]]
   then
   ENCRYPTION=CGD
   else
@@ -205,7 +205,6 @@ KEYFILE:       $keyfile \n
 HEADER BACKUP: $headerbackup\n
 FILECONTAINER LOCATION: $luksfile\n
 FILECONTAINER SIZE: $luksfilesize\n
-ENCRYPTION USED: $ENCRYPTION\n
 USING KEYFILE: $USEKEY\n
 LOOPBACKDEVICE: $loopbackdevice\n
 OS: $UNAME\n\n
@@ -436,19 +435,22 @@ if [[ $ENCRYPTION == CGD ]] && [[ $USEKEY == false ]]
 then
 # CGD create
 echo Initializing $device with $ENCRYPTION
-cgdconfig -g -o /keys/$name.configfile aes-cbc 256
+cgdconfig -g -V $name -o $keydir/$name aes-cbc 256
+cgdconfig -g -o $keydir/$name aes-cbc 256
 cgdconfig $name $device
+cgdconfig -V re-enter $name $device
+else
 echo ""
 fi
 }
 
-CGDKEYFILE()
-{
-}
+#CGDKEYFILE()
+#{
+#}
 
-CGDOPEN()
-{
-}
+#CGDOPEN()
+#{
+#}
 
 CREATEANDMOUNTFS()
 {

@@ -37,6 +37,16 @@ else
 echo ""
 fi
 
+# test to see if the user wants cgd (NetBSD)
+if [[ "$3" = "cgd" ]] || [[ "$4" = "cgd" ]] || [[ "$5" = "cgd" ]] || [[ "$6" = "cgd" ]] || [[ "$7" = "cgd" ]] || [[ "$8" = "cgd" ]] || [[ "$9" = "cgd" ]];
+then
+echo "Using CGD"
+ENCRYPTION=CGD
+if [ -z `which cgdconfig` ] ;then echo "Missing cgdconfig. Cannot continue. Please install cgdconfig and cgd tools" && exit; fi
+else
+echo ""
+fi
+
 
 
 # Dialog checks

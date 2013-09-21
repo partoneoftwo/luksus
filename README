@@ -116,6 +116,7 @@ filecontainers on Linux. Once the volume has been created
 speeds are nominal. This has at least been the case in my 
 testing on Virtualbox instances of various Linux distributions.
 
+Really slow loopback device encryption in DragonFlyBSD:
 For some reason the cryptsetup tool in Dfly takes a very long time
 to do its work when it is manipulating loopback LUKS volumes, ie.
 file containers... I do not know the reason to this strange behaviour, 
@@ -127,6 +128,18 @@ loopback devices:)
 
 
 # FAQ:
+Q: I really want to learn more about crypto in Linux. Where should I start?
+A: This Kiwi guy wrote a series of excellent blog posts covering Linux
+crypto software and usage of these. I highly recommend reading through them:
+http://blog.sanctum.geek.nz/series/linux-crypto/
+Thanks a lot Tom Ryder, for these very thorough and awesome posts.
+
+Q: What are some alternatives to LUKSUS?
+The QT-based graphical zulucrypt is a graphical option:
+http://code.google.com/p/zulucrypt/
+
+
+
 Q: Why should I use this script? 
 A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
    Because doing all these tasks manually is 
@@ -164,6 +177,9 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
    OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
    NetBSD disk encryption guide: http://julipedia.meroh.net/2012/02/encrypted-disk-images-in-netbsd.html
+   NetBSD disk encryption guide: http://gilbert.fernandes.pagesperso-orange.fr/fullcgd.txt
+   NetBSD disk encryption description: http://www.imrryr.org/~elric/cgd/cgd.pdf
+   NetBSD cgd author interview: http://www.onlamp.com/pub/a/bsd/2005/12/21/netbsd_cgd.html
 
 Q: How is the script designed?
 A: The script reuses code wherever possible and is heavily built around reusable variables.
@@ -343,15 +359,60 @@ Add LUKSUS status to key.information
 Add mount command and losetup/vnconfig to key.information for added usability
 Improve the actual output, if not using keyfile, then don't show
 the empty variables to the dialog screen... 
+Write a proper Jekyll Markdown Github page for the readme.
 
 New features todo:
 Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
 
 Project overall todo:
+Try to overhaul the README again, and create a section that this is
+opinionated software. There are some critical requirements.
 Get user feedback, feature requests
 Dare to post it to "Show Hackernews" (news.ycombinator.com)
 Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
+
+Improve this script to make it working (NetBSD cgdconfig)
+#!/usr/pkg/bin/bash -x
+#### The netbsd CGD drive encryption method is really arcane.
+
+# create cgd partition
+disklabel -i sd1
+
+# scrub partition with random data
+cgdconfig -s cgd0 /dev/sd1a aes-cbc 128 < /dev/urandom
+
+
+# scrub partition with zero ... however it will be converted into random
+# data using aes-cbc with a random key and cbc mode for XORing with previous
+# sectors.
+dd if=/dev/zero of=/dev/rcgd0a bs=32k
+
+
+# destroying the random key
+cgdconfig -u cgd0
+
+
+# build the cgd config file
+# skip the -V if you want data to be destroyed at first attempt of access with wrong key. For the truly paranoid.
+cgdconfig -g -V disklabel -o /etc/cgd/sd1a aes-cbc 256
+
+
+# specify the password
+cgdconfig -V re-enter cgd0 /dev/sd1a
+
+
+# create a disklabel (I don't really understand why we do this at this particular point in the process)
+disklabel -I -i /dev/cgd0
+
+
+# create filesystem
+newfs /dev/rcgd0a
+
+
+# configure cgdconfig - is this necessary???
+echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
+
 
 
 ########################################################
