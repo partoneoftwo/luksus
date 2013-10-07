@@ -421,6 +421,34 @@ echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
 
 
 
+
+---
+some code for improvement of the menu system
+
+#!/usr/bin/env bash
+t(){ type "$1"&>/dev/null;}
+function Menu.Show {
+   local DIA DIA_ESC; while :; do
+      t whiptail && DIA=whiptail && break
+      t dialog && DIA=dialog && DIA_ESC=-- && break
+      exec date +s"No dialog program found"
+   done; declare -A o="$1"; shift
+   $DIA --backtitle "${o[backtitle]}" --title "${o[title]}" \
+      --menu "${o[text]}" 0 0 0 $DIA_ESC "$@"; }
+
+
+
+Menu.Show '([backtitle]="Backtitle"
+            [title]="Title"
+            [question]="Please choose encryption ENGINE:")'          \
+                                                   \
+            "LUKS"  "LINUX NATIVE"                \
+            "TRUECRYPT"  "TRUECRYPT (TCPLAY)"                \
+            "GELI"  "FREEBSD NATIVE"                \
+            "CGD"  "NETBSD NATIVE"    
+
+
+
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
