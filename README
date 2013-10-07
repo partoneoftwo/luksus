@@ -352,6 +352,8 @@ Fix keyfile handling with GELI - Skip passphrase, and use key
 Test keyfile handling properly with GELI
 
 LUKSUS improvements todo:
+Make LUKSUS entirely interactive. No commandline options
+
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
@@ -423,6 +425,19 @@ echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
 
 
 ---
+some pragmatic snippets of code, that probably will
+be implemented:
+#!/bin/bash
+device=$(dialog --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
+name=$(dialog --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
+luksfile=$(dialog --inputbox "Full path of encrypted volume" 10 30 3>&1 1>&2 2>&3)
+luksfilesize=$(dialog --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
+echo $device
+echo $name
+echo $luksfile
+echo $luksfilesize
+
+
 some code for improvement of the menu system
 
 #!/usr/bin/env bash
@@ -447,7 +462,22 @@ Menu.Show '([backtitle]="Backtitle"
             "GELI"  "FREEBSD NATIVE"                \
             "CGD"  "NETBSD NATIVE"    
 
+source: http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
 
+whiptail implementation
+foobar=$(whiptail --inputbox "Enter some text" 10 30 3>&1 1>&2 2>&3)
+http://stackoverflow.com/questions/1970180/whiptail-how-to-redirect-output-to-environment-variable
+
+whiptail tutorial
+
+whiptail --menu "Choose encryption engine" 10 40 4 \
+               LUKS "" off  \
+               TRUECRYPT "Popular Ubuntu"   on   \
+               GELI "Hackish Fedora"   off  \
+               CGD "Stable Centos"    off  \
+               PGP "Rising Star Mint"   off  2>ENCRYPTION
+
+source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
 
 ########################################################
 ###################CHANGELOG #########################
