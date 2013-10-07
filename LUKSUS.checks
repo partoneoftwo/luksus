@@ -74,6 +74,19 @@ echo Using passphrase
 USEKEY=false
 fi
 
+# check whether whiptail or dialog is installed
+read dialogapp <<< "$(which whiptail dialog 2> /dev/null)"
+
+# exit if none found
+[[ "$dialogapp" ]] || {
+  echo 'neither whiptail nor dialog found' >&2
+  exit 1
+}
+
+# just use whichever was found
+"$dialogapp" --msgbox "Message displayed with $dialogapp" 0 0
+
+
 # user wants to force LUKS
 if [[ "$3" = "luks" ]] || [[ "$4" = "luks" ]] || [[ "$5" = "luks" ]] || [[ "$6" = "luks" ]] || [[ "$7" = "luks" ]] || [[ "$8" = "luks" ]] 
 then

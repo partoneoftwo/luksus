@@ -98,7 +98,7 @@ DRAGONFLYBSD NOTES:
 There are a few things to note about running this on DragonflyBSD...
 #
 NO EXT4, UFS IS USED 
-EXT4 support is currently not available in a workable state;
+EXT4 support is currently not available in a workable state in DFlyBSD;
 The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
 loopback device, and I have not yet managed to get it to work.
 Therefore the user will get a UFS filesystem instead.
@@ -135,10 +135,8 @@ http://blog.sanctum.geek.nz/series/linux-crypto/
 Thanks a lot Tom Ryder, for these very thorough and awesome posts.
 
 Q: What are some alternatives to LUKSUS?
-The QT-based graphical zulucrypt is a graphical option:
+The QT-based zulucrypt is a graphical option - and a good one too!:
 http://code.google.com/p/zulucrypt/
-
-
 
 Q: Why should I use this script? 
 A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
@@ -162,7 +160,8 @@ A: It is beyond the scope of this README to go indepth.
    of amazing code, and created some fantastic technical charts and your
    competitors are envious. Then one day, at a cafe, your laptop gets
    stolen. You loose all your files. You had a backup, sure, but the
-   thief might sell your data. The solution is to encrypt the drive.
+   thief might sell your data. The solution is to encrypt the drive
+   and protect your data.
 
    real scenario:
    Your data is at risk, and you want to protect it.
@@ -356,13 +355,20 @@ LUKSUS improvements todo:
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
+Improve LUKSUS output in Dialog window, remove keyfile information
+if the user is not using a keyfile.
+
 Add mount command and losetup/vnconfig to key.information for added usability
 Improve the actual output, if not using keyfile, then don't show
 the empty variables to the dialog screen... 
+
 Write a proper Jekyll Markdown Github page for the readme.
 
 New features todo:
 Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
+(this might not be necessary since the user can simply use LUKSUS to
+create a stronbox, this should rather become a part of the README
+file. And it should become a suggestion)
 
 Project overall todo:
 Try to overhaul the README again, and create a section that this is
@@ -420,7 +426,10 @@ echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
 ########################################################
 
 v1.2.3
-Attempts were made to add crude NetBSD support
++Attempts were made to add crude NetBSD support
++Added whiptail support, which will not require dialog on Debian based
+systems. Thanks Stackexchange! 
+http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
 
 v1.2.2
 Create a label to newly created filesystem, based on $name (Linux only)
