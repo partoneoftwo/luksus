@@ -5,14 +5,14 @@
 # now. Will fix later, maybe, one day.
 if [ -z "$1" ]
 then
-    cat LUKSUS.usage
-exit 1
+   GOGRAPHICAL=1
+   echo ""
 fi
 
 if [ -z "$2" ]
 then
-    cat LUKSUS.usage
-exit 1
+   GOGRAPHICAL=1
+   echo ""
 fi
 
 # Runtime Arguments Checking
