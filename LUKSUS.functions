@@ -12,18 +12,6 @@ then
 fi
 }
 
-
-GRAPHICAL()
-{
-if [[ $GOGRAPHICAL = 1 ]]
-then
- device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
- name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
- luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" 10 30 3>&1 1>&2 2>&3)
- luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
-fi
-}
-
 OSTEST()
 {
 # OS Checking
@@ -189,24 +177,38 @@ DONTSHREDIFLOOPBACK()
   fi
 }  
 
+GRAPHICAL()
+{
+if [[ $GOGRAPHICAL = 1 ]]
+then
+ device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
+ name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
+ luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" 10 30 3>&1 1>&2 2>&3)
+ luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
+ # Script needs to reinitilize $1 and $2 to 
+ $1=$device
+ $2=$name
+fi
+}
 
-ASKUSERVERIFYDIALOG()
+
+GRAPHICALWELCOME()
 {
 if [[ $dialog == true ]];
 then
-dialog --title "WELCOME TO $programname" \
+$dialogapp --title "WELCOME TO $programname" \
 --msgbox "\n$programname $version $date on $UNAME\n\n
 Written by \n
 $author \n
 " 10 30
+fi
+}
 
-echo ################################################
-echo DRIVE ENCRYPTION
-echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE
-echo THE DEVICE YOU HAVE SPECIFIED
-echo ################################################
-
-dialog --title "DRIVE ENCRYPTION SCRIPT" \
+GRAPHICALVERIFYCHOICES()
+{
+if [[ $GOGRAPHICAL = 1 ]];
+then
+$dialogapp --title "DRIVE ENCRYPTION SCRIPT" \
 --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
 ENCRYPTION USED: $ENCRYPTION
@@ -240,6 +242,12 @@ fi
 
 ASKUSERVERIFYCONSOLE()
 {
+echo ################################################
+echo DRIVE ENCRYPTION
+echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE
+echo THE DEVICE YOU HAVE SPECIFIED
+echo ################################################
+
 echo ################################################
 echo DETAILS AS SUBMITTED BY THE USER
 echo PLEASE VERIFY THAT THESE ARE CORRECT
