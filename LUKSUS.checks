@@ -74,6 +74,7 @@ echo Using passphrase
 USEKEY=false
 fi
 
+## Dialog/Whiptail test - see which one to use
 # check whether whiptail or dialog is installed
 read dialogapp <<< "$(which whiptail dialog 2> /dev/null)"
 

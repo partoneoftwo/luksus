@@ -1,3 +1,4 @@
+
 #### FUNCTIONS ######
 
 # SHOW LOGO, BUT DO IT OPTIMALLY BY DETERMINING TERMINAL SIZE
@@ -16,10 +17,10 @@ GRAPHICAL()
 {
 if [[ $GOGRAPHICAL = 1 ]]
 then
- device=$(dialog --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
- name=$(dialog --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
- luksfile=$(dialog --inputbox "Full path of encrypted volume" 10 30 3>&1 1>&2 2>&3)
- luksfilesize=$(dialog --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
+ device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
+ name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
+ luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" 10 30 3>&1 1>&2 2>&3)
+ luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
 fi
 }
 

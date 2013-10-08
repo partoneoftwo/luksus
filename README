@@ -484,6 +484,8 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 ########################################################
 
 v1.2.3
++Command line arguments are now optional, a dialog/whiptail will ask the
+user.
 +Attempts were made to add crude NetBSD support
 +Added whiptail support, which will not require dialog on Debian based
 systems. Thanks Stackexchange! 
