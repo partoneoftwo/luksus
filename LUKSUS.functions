@@ -1,215 +1,243 @@
-
 #### FUNCTIONS ######
 
-# SHOW LOGO, BUT DO IT OPTIMALLY BY DETERMINING TERMINAL SIZE
-DISPLAYLOGO()
-{
-if [ $width -gt 119 ] 
-then
-  gtail -n 12 LUKSUS.logo 2>/dev/null || tail -n 12 LUKSUS.logo
-  else
-  ghead -n 6 LUKSUS.logo 2>/dev/null || head -n 6 LUKSUS.logo
-fi
+
+ASKUSERVERIFYCONSOLE () 
+{ 
+    echo;
+    echo DRIVE ENCRYPTION;
+    echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE;
+    echo THE DEVICE YOU HAVE SPECIFIED;
+    echo;
+    echo;
+    echo DETAILS AS SUBMITTED BY THE USER;
+    echo PLEASE VERIFY THAT THESE ARE CORRECT;
+    echo ENCRYPTION USED: $ENCRYPTION;
+    echo DRIVE: $device;
+    echo NAME: $name;
+    echo MOUNTPOINT: $mountpoint;
+    echo HEADER BACKUP: $headerbackup;
+    echo USING KEYFILE: $USEKEY;
+    echo KEYFILE: $keyfile;
+    echo LOOPBACK: $loopbackdevice;
+    echo OS: $UNAME;
+    echo;
+    echo JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE;
+    echo WE ASK AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?;
+    echo YOU WILL NUKE YOUR DRIVE: $device;
+    echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE;
+    echo "";
+    echo SERIOUSLY - LAST CHANCE;
+    read || exit
 }
 
-OSTEST()
-{
-# OS Checking
-  if [[ $UNAME = Linux ]]
-  then
-  ENCRYPTION=LUKS
-  echo On $UNAME, defaulting to $ENCRYPTION
-  elif [[ $UNAME = DragonFly ]]
-  then
-  ENCRYPTION=LUKS
-  echo On $UNAME, defaulting to $ENCRYPTION
-  elif [[ $UNAME = FreeBSD ]]
-  then
-  ENCRYPTION=GELI
-  echo On $UNAME, Encryption set to $ENCRYPTION
-  elif [[ $UNAME = NetBSD ]]
-  then
-  ENCRYPTION=CGD
-  else
-  ENCRYPTION=LUKSUS
-  echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION
-  fi
+CGD () 
+{ 
+    if [[ $ENCRYPTION == CGD ]] && [[ $USEKEY == false ]]; then
+        echo Initializing $device with $ENCRYPTION;
+        cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
+        cgdconfig -g -o $keydir/$name aes-cbc 256;
+        cgdconfig $name $device;
+        cgdconfig -V re-enter $name $device;
+    else
+        echo "";
+    fi
 }
 
-LOOPBACKTEST()
-{
-  if [[ $device == *loop* ]]
-  then
-  loopbackdevice=true
-  elif [[ $device == *vn* ]]
-  then
-  loopbackdevice=true
-  elif [[ $device == *md* ]]
-  then
-  loopbackdevice=true
-  elif [[ $device == *vnd* ]]
-  then
-  loopbackdevice=true
-  else
-  loopbackdevice=false  
-  fi
+CREATEANDMOUNTFS () 
+{ 
+    mkdir -p $mountpoint;
+    mkdir -p $keydir;
+    if [[ $UNAME == DragonFly ]]; then
+        echo DragonFlyBSD mode;
+        newfs /dev/mapper/$name;
+        mount /dev/mapper/$name /mnt/$name;
+        mounthelp="mount /dev/mapper/$name /mnt/$name";
+    else
+        if [[ $UNAME == FreeBSD ]]; then
+            newfs $device.eli;
+            mount $device.eli /mnt/$name;
+            mounthelp="mount $device.eli /mnt/$name";
+        else
+            if [[ $UNAME == NetBSD ]]; then
+                newfs -O 2 $device;
+                mount $device /mnt/$name;
+                mounthelp="mount $device /mnt/$name";
+            else
+                if [[ $UNAME == Linux ]]; then
+                    mkfs.ext4 /dev/mapper/$name;
+                    e2label /dev/mapper/$name $name;
+                    mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1;
+                    mounthelp="mount -t ext4 /dev/mapper/$name $mountpoint";
+                else
+                    echo No Idea What To Do;
+                fi;
+            fi;
+        fi;
+    fi
+}
+CREATEKEYFILE () 
+{ 
+    if [[ $USEKEY == true ]]; then
+        echo Creating key;
+        dd if=/dev/urandom of=$keyfile bs=512 count=256;
+    else
+        echo ...;
+    fi
+}
+DEVICEEXISTS () 
+{ 
+    if [ -e "$device" ]; then
+        echo "OK, $device exists";
+    else
+        echo "$device was not found. $programname is now exiting";
+        exit 1;
+    fi
+}
+DISPLAYLOGO () 
+{ 
+    if [ $width -gt 119 ]; then
+        gtail -n 12 LUKSUS.logo 2> /dev/null || tail -n 12 LUKSUS.logo;
+	gtail -n 12 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || tail -n 12 LUKSUS.logo >welcomelogo.$$
+	dialogsize="17 123"
+   else
+        ghead -n 6 LUKSUS.logo 2> /dev/null || head -n 6 LUKSUS.logo;
+        ghead -n 6 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || head -n 6 LUKSUS.logo >welcomelogo.$$
+        dialogsize="15 60"
+   fi
 }
 
-DRAGONFLYHOUSEKEEPING()
+HOUSECLEANING ()
 {
-if [[ $UNAME == DragonFly ]] ;
-	then 
-	echo We are on DragonFlyBSD here. 
-	# crude way to deal with different binary names
-	alias ghead=head
-        alias gshred=shred
-# loading dm kernel module in DragonflyBSD
-	kldload dm
-	# for some reason vnconfig must be ran once before it will start working
-	# it seems that the DragonFlyBSD kernel is initializing something
-	# so that's exactly what I'm doing here
-	vnconfig 1>/dev/null 2>/dev/null
-	else
-	echo ""
-fi
-}
-
-FREEBSDHOUSEKEEPING()
-{
-if [ $UNAME == FreeBSD ] ;
-	then 
-	echo We are on FreeBSD here. Cool.
-	# crude way to deal with different binary names
-	alias ghead=head
-        alias gshred=shred
-# loading dm kernel module in FreeBSD
-	kldload geom_eli
-        else 
-	echo ""
-fi
-}
-
-NETBSDHOUSEKEEPING()
-{
-if [ $UNAME == NetBSD ] ;
-	then 
-	echo We are on NetBSD here. Cool.
-	# crude way to deal with different binary names
-	alias ghead=head
-        alias gshred=shred
-# loading dm kernel module in NetBSD
-# not necessary	kldload geom_eli
-        else 
-	echo ""
-fi
-}
-
-
-DEVICEEXISTS()
-{
-# Check to see if specified device exists
-if [ -e "$device" ]
-	then 
-	echo "OK, $device exists"
-	else 
-	echo "$device was not found. $programname is now exiting" 
-	exit 1
-fi
-}
-
-LOOPBACKMETHOD()
-{
-  if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]
-  then
-    echo Beginning loopbackmethod on $device
-    head -c $luksfilesize /dev/zero > $luksfile
-    # block device housekeeping
-    losetup -f 1>/dev/null 2>/dev/null
-    losetup $device $luksfile
-    loopbackhelp="losetup $device $luksfile"
-  elif [[ $loopbackdevice == true ]] && [[ $UNAME == DragonFly ]]
-    then
-    echo DragonFlyBSD - Nice...
-    echo Beginning loopbackmethod on $device
-    ghead -c $luksfilesize /dev/zero > $luksfile
-    # block device housekeeping
-    # vnconfig needs to run once first, it seems that the kernel
-    # is initializing something on first run. Then it must run again.
-    vnconfig 1>/dev/null 2>/dev/null
-    vnconfig $device $luksfile
-    loopbackhelp="vnconfig $device $luksfile"
-   elif [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD ]]
-   then
-   echo FreeBSD - Nice...
-   ghead /dev/zero -c $luksfilesize > $luksfile
-#  vanilla, but needs the devicenumber also #  mdconfig -a -t vnode -f $luksfile
-   mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber
-   loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber"
-  else
-    echo "Okay, not using a loopback device, proceeding in normal mode"
-  fi
-}  
-
-DONTSHREDIFLOOPBACK()
-{
-  if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]
-# this test makes little sense now that we are in the future #  if [[ $device != *loop* ]] && [[ $device != *vn* ]] && [[ $device != *md* ]]
-  then
-    echo "Okay we are using $device ..."
-    echo Shredding ...
-    # shred
-    # Totally infuse the drive with random data
-    # Good for paranoid and security minded people
-    # This takes about 5 hours on a 3TB drive
-    shred -f -v -n1 $device || gshred -f -v -n1 $device
-  elif [[ $loopbackdevice == false ]] && [[ UNAME == DragonFly ]]
-  then
-    echo On DragonFlyBSD. Okay cool.
-    echo in the middle of the shredding.place
-    gshred -f -v -n1 $device
-  elif [[ $loopbackdevice == false ]] && [[ $UNAME == FreeBSD ]]
-  then
-    echo On FreeBSD. Okay cool.
-    echo in the middle of the shredding.place
-    gshred -f -v -n1 $device
-  else
-  echo "$device is a loopback device. OK."
-  fi
-}  
-
-GRAPHICAL()
-{
-if [[ $GOGRAPHICAL = 1 ]]
-then
- device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
- name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
- luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" 10 30 3>&1 1>&2 2>&3)
- luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
- # Script needs to reinitilize $1 and $2 to 
- $1=$device
- $2=$name
-fi
+# this will probably grow as I have now caved in, and realize I can't
+# rely on STDERR anymore to push data to variables. I have to write
+# temporary inforamtion to the filesystem in tiny
+rm welcomelogo.$$
 }
 
 
-GRAPHICALWELCOME()
-{
-if [[ $dialog == true ]];
-then
-$dialogapp --title "WELCOME TO $programname" \
---msgbox "\n$programname $version $date on $UNAME\n\n
-Written by \n
-$author \n
-" 10 30
-fi
+DISPLAYSUMMARY () 
+{ 
+    echo;
+    date;
+    echo Results of LUKSUS:;
+    echo DRIVE: $device;
+    echo NAME: $name;
+    echo USED KEYFILE: $USEKEY;
+    echo KEYFILE: $keyfile;
+    echo MOUNTPOINT: $mountpoint;
+    echo HEADER BACKUP: $headerbackup;
+    echo ENCRYPTION USED: $ENCRYPTION;
+    echo CONTAINER $luksfile $luksfilesize;
+    echo MOUNTPOINT: `mount | grep $name`;
+    echo `df -h | head -n 1`;
+    echo `df -h | grep $name`;
+    echo "";
+    echo Volumestatus:;
+    echo $VOLUMESTATUS >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo "################################################";
+    time2="$(date +%s.%N)";
+    ls -l $device
 }
-
-GRAPHICALVERIFYCHOICES()
-{
-if [[ $GOGRAPHICAL = 1 ]];
-then
-$dialogapp --title "DRIVE ENCRYPTION SCRIPT" \
---yesno "\nDETAILS AS SUBMITTED BY THE USER
+DONTSHREDIFLOOPBACK () 
+{ 
+    if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]; then
+        echo "Okay we are using $device ...";
+        echo Shredding ...;
+        shred -f -v -n1 $device || gshred -f -v -n1 $device;
+    else
+        if [[ $loopbackdevice == false ]] && [[ UNAME == DragonFly ]]; then
+            echo On DragonFlyBSD. Okay cool.;
+            echo in the middle of the shredding.place;
+            gshred -f -v -n1 $device;
+        else
+            if [[ $loopbackdevice == false ]] && [[ $UNAME == FreeBSD ]]; then
+                echo On FreeBSD. Okay cool.;
+                echo in the middle of the shredding.place;
+                gshred -f -v -n1 $device;
+            else
+                echo "$device is a loopback device. OK.";
+            fi;
+        fi;
+    fi
+}
+DRAGONFLYHOUSEKEEPING () 
+{ 
+    if [[ $UNAME == DragonFly ]]; then
+        echo We are on DragonFlyBSD here.;
+        alias ghead=head;
+        alias gshred=shred;
+        kldload dm;
+        vnconfig > /dev/null 2> /dev/null;
+    else
+        echo "";
+    fi
+}
+FREEBSDHOUSEKEEPING () 
+{ 
+    if [ $UNAME == FreeBSD ]; then
+        echo We are on FreeBSD here. Cool.;
+        alias ghead=head;
+        alias gshred=shred;
+        kldload geom_eli;
+    else
+        echo "";
+    fi
+}
+GELI () 
+{ 
+    if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]; then
+        echo Initializing $device with $ENCRYPTION;
+        geli init -B $headerbackup -s 4096 $device;
+    else
+        echo "";
+    fi
+}
+GELIKEYFILE () 
+{ 
+    if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]; then
+        echo Initializing $device with $ENCRYPTION with a keyfile;
+        geli init -B $headerbackup -p -s 4096 -K $keyfile $device;
+    else
+        echo "";
+    fi
+}
+GELIOPEN () 
+{ 
+    if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]; then
+        echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
+        geli attach -k $keyfile $device;
+        cryptoinithelp="geli attach -k $keyfile $device";
+        VOLUMESTATUS=$(geli dump $name);
+    else
+        if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]; then
+            echo Attempting to open the newly created $ENCRYPTION volume $name;
+            geli attach $device;
+            cryptoinithelp="geli attach $device";
+            VOLUMESTATUS=$(geli dump $device);
+        else
+            echo "";
+        fi;
+    fi
+}
+GRAPHICAL () 
+{ 
+    if [[ $GOGRAPHICAL = 1 ]]; then
+        device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3);
+        name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3);
+        luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3);
+        luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3);
+        $1="$device";
+        $2="$name";
+	echo $name
+	echo $device
+	echo $keyfile
+	sleep 30s
+    fi
+}
+GRAPHICALVERIFYCHOICES () 
+{ 
+    if [[ $GOGRAPHICAL = 1 ]]; then
+        $dialogapp --title "DRIVE ENCRYPTION SCRIPT" --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
 ENCRYPTION USED: $ENCRYPTION
 \n
@@ -224,330 +252,221 @@ USING KEYFILE: $USEKEY\n
 LOOPBACKDEVICE: $loopbackdevice\n
 OS: $UNAME\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
-" 30 50
+" 30 50;
+        case $? in 
+            0)
 
-case $? in
-0)
-    ;;
-1)
-  echo "You have pressed NO. LUKSUS will now close."  
-  exit 1;;
-255)
-  echo "Box closed"   ;;
-esac
-else
-echo ""
-fi
+            ;;
+            1)
+                echo "You have pressed NO. LUKSUS will now close.";
+                exit 1
+            ;;
+            255)
+                echo "Box closed"
+            ;;
+        esac;
+    else
+        echo "";
+    fi
+}
+GRAPHICALWELCOME () 
+{ 
+    if [[ $dialog == true ]]; then
+       dialog --backtitle "Welcome to $programname" \
+       --title "WELCOME TO LUKSUS $version" \
+       --textbox welcomelogo.$$ $dialogsize;
+
+#        $dialogapp --title "WELCOME TO $programname" --msgbox "\n$programname $version $date on $UNAME\n\n
+#Written by \n
+#$author \n
+#" 10 30;
+    fi
 }
 
-ASKUSERVERIFYCONSOLE()
-{
-echo ################################################
-echo DRIVE ENCRYPTION
-echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE
-echo THE DEVICE YOU HAVE SPECIFIED
-echo ################################################
-
-echo ################################################
-echo DETAILS AS SUBMITTED BY THE USER
-echo PLEASE VERIFY THAT THESE ARE CORRECT
-echo ENCRYPTION USED: $ENCRYPTION
-echo DRIVE: $device
-echo NAME: $name
-echo MOUNTPOINT: $mountpoint
-echo HEADER BACKUP: $headerbackup
-echo USING KEYFILE: $USEKEY
-echo KEYFILE: $keyfile
-echo LOOPBACK: $loopbackdevice
-echo OS: $UNAME
-echo ################################################
-echo JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE
-echo WE ASK AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?
-echo YOU WILL NUKE YOUR DRIVE: $device
-echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE
-echo ""
-echo SERIOUSLY - LAST CHANCE
-read || exit
+LOOPBACKMETHOD () 
+{ 
+    if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]; then
+        echo Beginning loopbackmethod on $device;
+        head -c $luksfilesize /dev/zero > $luksfile;
+        losetup -f > /dev/null 2> /dev/null;
+        losetup $device $luksfile;
+        loopbackhelp="losetup $device $luksfile";
+    else
+        if [[ $loopbackdevice == true ]] && [[ $UNAME == DragonFly ]]; then
+            echo DragonFlyBSD - Nice...;
+            echo Beginning loopbackmethod on $device;
+            ghead -c $luksfilesize /dev/zero > $luksfile;
+            vnconfig > /dev/null 2> /dev/null;
+            vnconfig $device $luksfile;
+            loopbackhelp="vnconfig $device $luksfile";
+        else
+            if [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD ]]; then
+                echo FreeBSD - Nice...;
+                ghead /dev/zero -c $luksfilesize > $luksfile;
+                mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
+                loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
+            else
+                echo "Okay, not using a loopback device, proceeding in normal mode";
+            fi;
+        fi;
+    fi
 }
-
-CREATEKEYFILE()
-{
-if [[ $USEKEY == true ]];
-then
-echo Creating key
-# generate a keyfile using completely random data
-dd if=/dev/urandom of=$keyfile bs=512 count=256
-else 
-echo ...
-fi
+LOOPBACKTEST () 
+{ 
+    if [[ $device == *loop* ]]; then
+        loopbackdevice=true;
+    else
+        if [[ $device == *vn* ]]; then
+            loopbackdevice=true;
+        else
+            if [[ $device == *md* ]]; then
+                loopbackdevice=true;
+            else
+                if [[ $device == *vnd* ]]; then
+                    loopbackdevice=true;
+                else
+                    loopbackdevice=false;
+                fi;
+            fi;
+        fi;
+    fi
 }
-
-TRUECRYPT()
-{
-# Begin the encryption - with TrueCrypt?
-if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]];
-then
-echo TrueCrypt mode
-tcplay --create --device=$device --cipher=AES-256-XTS
-else
-echo ""
-fi
+LUKS () 
+{ 
+    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]]; then
+        echo LUKS with passphrase;
+        echo You will only be prompted for a password once. Type carefully.;
+        cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
+    else
+        echo "";
+    fi
 }
-
-TRUECRYPTKEYFILE()
-{
-# Begin the encryption - with TrueCrypt and with key?
-if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
-then
-echo TrueCrypt mode and adding a keyfile
-# had to remove --map=$name
-tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile
-else
-echo ""
-fi
+LUKSKEYFILE () 
+{ 
+    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY = true ]]; then
+        echo LUKS mode;
+        cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile;
+    else
+        echo "";
+    fi
 }
-
-TRUECRYPTOPEN()
-{
-if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]];
-then
-# tcplay mount
-# mount the encrypted drive using a keyfile
-echo Attempting to open and mount the newly created Truecrypt encrypted volume
-tcplay -m $name -d $device
-cryptoinithelp="tcplay -m $name -d $device"
-VOLUMESTATUS=$(cryptsetup status $name)
-elif [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]];
-then
-echo Attempting to open newly created Truecrypt volume $name
-tcplay -m $name -d $device -k $keyfile
-cryptoinithelp="tcplay -m $name -d $device -k $keyfile"
-VOLUMESTATUS=$(cryptsetup status $name)
-else 
-echo ""
-fi
+LUKSOPEN () 
+{ 
+    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == true ]]; then
+        echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
+        cryptsetup luksOpen $device $name --key-file=$keyfile;
+        cryptoinithelp="cryptsetup luksOpen $device $name --key-file=$keyfile";
+        VOLUMESTATUS=$(cryptsetup status $name);
+    else
+        if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]]; then
+            echo Attempting to open the newly created $ENCRYPTION volume $name;
+            cryptsetup luksOpen $device $name;
+            cryptoinithelp="cryptsetup luksOpen $device $name";
+            VOLUMESTATUS=$(cryptsetup status $name);
+        else
+            echo "";
+        fi;
+    fi
 }
-
-
-LUKS()
-{
-if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
-then
-echo LUKS with passphrase
-echo You will only be prompted for a password once. Type carefully.
-cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device
-else
-echo ""
-fi
+LUKSVERIFY () 
+{ 
+    if [[ $ENCRYPTION = LUKS ]]; then
+        echo "Verifying LUKS volume";
+        cryptsetup isLuks $device || "echo "The device does not contain a LUKS volume. This is a problem since it should have a LUKS volume by now. Please check commandline arguments and try again" && exit 1";
+        echo "The device positively contains a LUKS volume.";
+        echo "Great!";
+        echo "Taking a backup of the LUKS container header";
+        cryptsetup luksHeaderBackup --header-backup-file=$headerbackup $device --verbose || "echo Something went wrong and LUKSUS failed to backup the LUKS header. Please check commandline arguments and try again. && exit 1";
+        echo "The LUKS container header has been backed up successfully";
+        echo "Great!";
+    else
+        echo "";
+    fi
 }
-
-LUKSKEYFILE()
-{
-# Begin the encryption - with LUKS and with a keyfile?
-if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY = true ]];
-then
-# cryptsetup
-# format the drive using encryption
-# create an encrypted drive with aes-xts-plain cipher
-# key size 512
-# remember that the key size will increase the safety of the
-# encryption, but the a stronger keyfile with more entropy (randomness)
-# will produce the best security. 
-echo LUKS mode
-cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
-else
-echo ""
-fi
+NETBSDHOUSEKEEPING () 
+{ 
+    if [ $UNAME == NetBSD ]; then
+        echo We are on NetBSD here. Cool.;
+        alias ghead=head;
+        alias gshred=shred;
+    else
+        echo "";
+    fi
 }
-
-
-LUKSVERIFY()
-{
-if [[ $ENCRYPTION = LUKS ]];
-then
-# cryptsetup isLuks
-# check to see if the device has got a valid LUKS container
-# if it does not, then exit
-echo "Verifying LUKS volume"
-cryptsetup isLuks $device  || "echo "The device does not contain a LUKS volume. This is a problem since it should have a LUKS volume by now. Please check commandline arguments and try again" && exit 1"
-echo "The device positively contains a LUKS volume."
-echo "Great!"
-# cryptsetup luksHeaderBackup
-# backup the header of the luks container
-# as strongly recommended by the luks FAQ
-# if it does not, then exit
-echo "Taking a backup of the LUKS container header"
-cryptsetup luksHeaderBackup --header-backup-file=$headerbackup $device --verbose || "echo Something went wrong and LUKSUS failed to backup the LUKS header. Please check commandline arguments and try again. && exit 1"
-echo "The LUKS container header has been backed up successfully"
-echo "Great!"
-else 
-echo ""
-fi
+OSTEST () 
+{ 
+    if [[ $UNAME = Linux ]]; then
+        ENCRYPTION=LUKS;
+        echo On $UNAME, defaulting to $ENCRYPTION;
+    else
+        if [[ $UNAME = DragonFly ]]; then
+            ENCRYPTION=LUKS;
+            echo On $UNAME, defaulting to $ENCRYPTION;
+        else
+            if [[ $UNAME = FreeBSD ]]; then
+                ENCRYPTION=GELI;
+                echo On $UNAME, Encryption set to $ENCRYPTION;
+            else
+                if [[ $UNAME = NetBSD ]]; then
+                    ENCRYPTION=CGD;
+                else
+                    ENCRYPTION=LUKSUS;
+                    echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION;
+                fi;
+            fi;
+        fi;
+    fi
 }
-
-LUKSOPEN()
-{
-if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == true ]];
-then
-# cryptsetup luksOpen
-# mount the encrypted drive using a keyfile
-echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
-cryptsetup luksOpen $device $name --key-file=$keyfile
-cryptoinithelp="cryptsetup luksOpen $device $name --key-file=$keyfile"
-VOLUMESTATUS=$(cryptsetup status $name)
-elif [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]];
-then
-echo Attempting to open the newly created $ENCRYPTION volume $name
-cryptsetup luksOpen $device $name
-cryptoinithelp="cryptsetup luksOpen $device $name"
-VOLUMESTATUS=$(cryptsetup status $name)
-else 
-echo ""
-fi
+TRUECRYPT () 
+{ 
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
+        echo TrueCrypt mode;
+        tcplay --create --device=$device --cipher=AES-256-XTS;
+    else
+        echo "";
+    fi
 }
-
-GELI()
-{
-if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]
-then
-# geli create
-echo Initializing $device with $ENCRYPTION
-geli init -B $headerbackup -s 4096 $device
-else
-echo ""
-fi
+TRUECRYPTKEYFILE () 
+{ 
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]]; then
+        echo TrueCrypt mode and adding a keyfile;
+        tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile;
+    else
+        echo "";
+    fi
 }
-
-GELIKEYFILE()
-{
-if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]
-then
-echo Initializing $device with $ENCRYPTION with a keyfile
-geli init -B $headerbackup -p -s 4096 -K $keyfile $device
-else
-echo ""
-fi
+TRUECRYPTOPEN () 
+{ 
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
+        echo Attempting to open and mount the newly created Truecrypt encrypted volume;
+        tcplay -m $name -d $device;
+        cryptoinithelp="tcplay -m $name -d $device";
+        VOLUMESTATUS=$(cryptsetup status $name);
+    else
+        if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]]; then
+            echo Attempting to open newly created Truecrypt volume $name;
+            tcplay -m $name -d $device -k $keyfile;
+            cryptoinithelp="tcplay -m $name -d $device -k $keyfile";
+            VOLUMESTATUS=$(cryptsetup status $name);
+        else
+            echo "";
+        fi;
+    fi
 }
-
-GELIOPEN()
-{
-if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == true ]];
-then
-# geli attach
-# mount the encrypted drive using a keyfile
-echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile
-geli attach -k $keyfile $device
-cryptoinithelp="geli attach -k $keyfile $device"
-VOLUMESTATUS=$(geli dump $name)
-elif [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]];
-then
-echo Attempting to open the newly created $ENCRYPTION volume $name
-geli attach $device
-cryptoinithelp="geli attach $device"
-VOLUMESTATUS=$(geli dump $device)
-else 
-echo ""
-fi
-}
-
-CGD()
-{
-if [[ $ENCRYPTION == CGD ]] && [[ $USEKEY == false ]]
-then
-# CGD create
-echo Initializing $device with $ENCRYPTION
-cgdconfig -g -V $name -o $keydir/$name aes-cbc 256
-cgdconfig -g -o $keydir/$name aes-cbc 256
-cgdconfig $name $device
-cgdconfig -V re-enter $name $device
-else
-echo ""
-fi
-}
-
-#CGDKEYFILE()
-#{
-#}
-
-#CGDOPEN()
-#{
-#}
-
-CREATEANDMOUNTFS()
-{
-mkdir -p $mountpoint
-mkdir -p $keydir
-if [[ $UNAME == DragonFly ]] ;
-then
-echo DragonFlyBSD mode
-# ON DRAGONFLY, WE MUST USE THE UFS FILESYSTEM INSTEAD
-newfs /dev/mapper/$name
-# mounting
-mount /dev/mapper/$name /mnt/$name
-mounthelp="mount /dev/mapper/$name /mnt/$name"
-elif [[ $UNAME == FreeBSD ]]
-then
-newfs $device.eli
-mount $device.eli /mnt/$name
-mounthelp="mount $device.eli /mnt/$name"
-elif [[ $UNAME == NetBSD ]]
-then
-newfs -O 2 $device
-mount $device /mnt/$name
-mounthelp="mount $device /mnt/$name"
-elif [[ $UNAME == Linux ]]
-then
-# mkfs.ext4 - create a filesystem on top of the encrypted drive
-mkfs.ext4 /dev/mapper/$name
-# mounting the newly created drive
-e2label /dev/mapper/$name $name
-mount -t ext4 /dev/mapper/$name $mountpoint > /dev/null 2>&1
-mounthelp="mount -t ext4 /dev/mapper/$name $mountpoint"
-else
-echo No Idea What To Do
-fi
+WRITEINFORMATIONFILE () 
+{ 
+    DISPLAYLOGO > $keydir/$name.information 2> $keydir/$name.information;
+    DISPLAYSUMMARY >> $keydir/$name.information 2>> $keydir/$name.information;
+    ls -l $keydir/$name* >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo "" >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo "In order to mount your newly encrypted volume, run the following:" >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo "###" >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo $loopbackhelp >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo $cryptoinithelp >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo $mounthelp >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo "###" >> $keydir/$name.information 2>> $keydir/$name.information;
+    cp $keydir/$name.information $mountpoint
 }
 
 
-DISPLAYSUMMARY()
-{
-echo ################################################
-date
-echo Results of LUKSUS:
-echo DRIVE: $device
-echo NAME: $name
-echo USED KEYFILE: $USEKEY
-echo KEYFILE: $keyfile
-echo MOUNTPOINT: $mountpoint
-echo HEADER BACKUP: $headerbackup
-echo ENCRYPTION USED: $ENCRYPTION
-echo CONTAINER $luksfile $luksfilesize
-echo MOUNTPOINT: `mount | grep $name`
-echo `df -h | head -n 1`
-echo `df -h | grep $name`
-echo ""
-echo Volumestatus:
-echo $VOLUMESTATUS 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo "################################################"
-time2="$(date +%s.%N)"
-# This time taken needs attention - does not work anymore
-# for some reason
-# echo "Time taken: 0$(echo $time2-$time1 | bc) seconds"
-ls -l $device
-#ls -l $luksfile
-}
 
-WRITEINFORMATIONFILE()
-{
-DISPLAYLOGO 1>$keydir/$name.information 2>$keydir/$name.information
-DISPLAYSUMMARY 1>>$keydir/$name.information 2>>$keydir/$name.information
-ls -l $keydir/$name* 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo "" 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo "In order to mount your newly encrypted volume, run the following:" 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo "###" 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $loopbackhelp 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $cryptoinithelp 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo $mounthelp 1>>$keydir/$name.information 2>>$keydir/$name.information
-echo "###" 1>>$keydir/$name.information 2>>$keydir/$name.information
-cp $keydir/$name.information $mountpoint
-}

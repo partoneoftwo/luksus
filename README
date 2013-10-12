@@ -381,6 +381,7 @@ Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
 
 Improve this script to make it working (NetBSD cgdconfig)
+# The above lines almost make cgdconfig work... still have to work it out
 #!/usr/pkg/bin/bash -x
 #### The netbsd CGD drive encryption method is really arcane.
 
@@ -420,8 +421,6 @@ newfs /dev/rcgd0a
 
 # configure cgdconfig - is this necessary???
 echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
-
-
 
 
 ---
@@ -479,17 +478,28 @@ whiptail --menu "Choose encryption engine" 10 40 4 \
 
 source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
 
+a complete menusystem I borrowed some ideas from:
+http://www.bashguru.com/2011/01/menu-driven-shell-script-using-dialog.html
+
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
 
-v1.2.3
+v1.3.0
++Extensive testing was done on all platforms
++NetBSD is now properly supported
 +Command line arguments are now optional, a dialog/whiptail will ask the
 user.
-+Attempts were made to add crude NetBSD support
 +Added whiptail support, which will not require dialog on Debian based
 systems. Thanks Stackexchange! 
 http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
+
+v1.2.5
+Preliminary menu system is almost a reality
+
+v1.2.3
++Attempts were made to add crude NetBSD support
+
 
 v1.2.2
 Create a label to newly created filesystem, based on $name (Linux only)
