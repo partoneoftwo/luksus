@@ -112,6 +112,7 @@ HOUSECLEANING ()
 # rely on STDERR anymore to push data to variables. I have to write
 # temporary inforamtion to the filesystem in tiny
 rm welcomelogo.$$
+rm *.$$
 }
 
 

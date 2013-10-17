@@ -426,6 +426,87 @@ do
 
 done 
 
+
+-- begin probably to be implemented system --
+#!/bin/bash
+dialogsize="12 75"
+deletetempfiles()
+{
+rm *.$$
+}
+dialogapp=dialog
+
+DEVICESET()
+{
+device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3)
+}
+
+NAMESET()
+{
+name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
+}
+
+LUKSFILESET()
+{
+luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
+}
+
+LUKSFILESIZESET()
+{
+luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
+}
+
+SECURITYMODE()
+{
+echo set security mode
+}
+
+set >menuq.variables
+trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
+
+while :
+do
+
+# Dialog utility to display options list
+
+    dialog --clear --backtitle "$programname $version" --title "MAIN MENU" \
+    --menu "Use [UP/DOWN] key to move" $dialogsize 7 \
+    "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOPBACK)" \
+    "NAME"  "NICK NAME FOR ENCRYPTED CONTAINER" \
+    "LOCATION" "SPECIFY WHERE TO STORE ENCRYPTED VOLUME (FIXED SIZE)" \
+    "SIZE" "SPECIFY HOW LARGE THE CONTAINER SHOULD BE" \
+    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" \
+    "SUMMARY"     "TO LIST CURRENT SETTINGS" \
+    "NEXT"      "GO HERE WHEN READY TO CONTINUE" 2> menuchoices.$$
+
+    retopt=$?
+    choice=`cat menuchoices.$$`
+
+    case $retopt in
+
+           0) case $choice in
+
+                  DEVICE)         DEVICESET;;
+                  NAME)           NAMESET ;;
+                  LOCATION)       LUKSFILESET ;;
+                  SIZE)           LUKSFILESIZESET;;
+                  SECURITYMODE)   SECURITYMODE ;;
+                  SUMMARY)        SUMMARY ;;
+                  NEXT)           sleep 2s; exit 0;;
+
+              esac ;;
+
+          *)clear ; exit ;;
+    esac
+
+done 
+        keyfile=/keys/$name.key
+        headerbackup=/keys/$name.header
+        mountpoint=/mnt/$name
+
+-- end probably to be implemented system --
+
+
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
