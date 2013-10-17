@@ -426,10 +426,13 @@ do
 
 done 
 
+-- menusystem is becoming very good --
 
--- begin probably to be implemented system --
 #!/bin/bash
-dialogsize="12 75"
+dialogsize="16 75"
+programname=LUKSUS
+version="v1.2.7"
+
 deletetempfiles()
 {
 rm *.$$
@@ -461,7 +464,19 @@ SECURITYMODE()
 echo set security mode
 }
 
-set >menuq.variables
+
+WIZARD()
+{
+# RUN THROUGH THE LUKSUS-WIZARD
+DEVICESET
+NAMESET
+# IF LOOP TRUE THEN
+LUKSFILESET
+LUKSFILESIZESET
+SECURITYMODE
+}
+
+
 trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
 
 while :
@@ -469,15 +484,17 @@ do
 
 # Dialog utility to display options list
 
-    dialog --clear --backtitle "$programname $version" --title "MAIN MENU" \
-    --menu "Use [UP/DOWN] key to move" $dialogsize 7 \
+    dialog --clear --backtitle "$programname $version" --title "" \
+    --menu "Run wizard and then choose next" $dialogsize 9 \
+    "WIZARD" "RUN THE WIZARD TO SET UP LUKSUS" \
+    "NEXT" "CONTINUE LUKSUS AND PROCEED WITH VOLUME CREATION" \
+    "-"  "" \
+    "-" "" \
     "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOPBACK)" \
     "NAME"  "NICK NAME FOR ENCRYPTED CONTAINER" \
     "LOCATION" "SPECIFY WHERE TO STORE ENCRYPTED VOLUME (FIXED SIZE)" \
     "SIZE" "SPECIFY HOW LARGE THE CONTAINER SHOULD BE" \
-    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" \
-    "SUMMARY"     "TO LIST CURRENT SETTINGS" \
-    "NEXT"      "GO HERE WHEN READY TO CONTINUE" 2> menuchoices.$$
+    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" 2> menuchoices.$$
 
     retopt=$?
     choice=`cat menuchoices.$$`
@@ -486,7 +503,8 @@ do
 
            0) case $choice in
 
-                  DEVICE)         DEVICESET;;
+                  WIZARD)         WIZARD ;;
+                  DEVICE)         DEVICESET ;;
                   NAME)           NAMESET ;;
                   LOCATION)       LUKSFILESET ;;
                   SIZE)           LUKSFILESIZESET;;
@@ -504,7 +522,8 @@ done
         headerbackup=/keys/$name.header
         mountpoint=/mnt/$name
 
--- end probably to be implemented system --
+-- end menusystem is becoming very good --
+
 
 
 ########################################################
