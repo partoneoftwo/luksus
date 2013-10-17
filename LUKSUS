@@ -72,6 +72,14 @@ fi
 DISPLAYLOGO
 OSTEST
 
+# USER INTERACTION
+GRAPHICALWELCOME
+GRAPHICAL
+GRAPHICALVERIFYCHOICES
+set >luksus.environment #REMOVE WHEN DONE - USED FOR DEBUGGING PURPOSES
+ASKUSERVERIFYCONSOLE
+
+
 # PREPARE KEYFILE
 CREATEKEYFILE
 
@@ -83,22 +91,17 @@ NETBSDHOUSEKEEPING
 
 ###############################
 ######### VARIABLES RE-INITIALIZATION  ###########
-# maybe not necessary #
+# maybe not necessary # it probably resets runtime variables and fucks everything up
 ###############################
 
-if [ -r LUKSUS.variables ]; then
-	source LUKSUS.variables
-else
-	exit 1
-fi
+#if [ -r LUKSUS.variables ]; then
+#	source LUKSUS.variables
+#else
+#	exit 1
+#fi
 
-
-# USER INTERACTION
-GRAPHICALWELCOME
-GRAPHICAL
-GRAPHICALVERIFYCHOICES
-set >luksus.environment
-ASKUSERVERIFYCONSOLE
+# THE STUFF BELOW REQUIRES STABLE RUNTIME VARIABLES
+# NOTE TO SELF - DON'T LET USER CHANGE ANYTHING BELOW HERE
 
 # BEGIN PROGRAM
 LOOPBACKMETHOD

@@ -102,7 +102,7 @@ DISPLAYLOGO ()
    else
         ghead -n 6 LUKSUS.logo 2> /dev/null || head -n 6 LUKSUS.logo;
         ghead -n 6 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || head -n 6 LUKSUS.logo >welcomelogo.$$
-        dialogsize="15 60"
+        dialogsize="12 60"
    fi
 }
 
@@ -226,18 +226,15 @@ GRAPHICAL ()
         name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3);
         luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3);
         luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3);
-        $1="$device";
-        $2="$name";
-	echo $name
-	echo $device
-	echo $keyfile
-	sleep 30s
-    fi
+        keyfile=/keys/$name.key
+        headerbackup=/keys/$name.header
+        mountpoint=/mnt/$name
+fi
 }
 GRAPHICALVERIFYCHOICES () 
 { 
     if [[ $GOGRAPHICAL = 1 ]]; then
-        $dialogapp --title "DRIVE ENCRYPTION SCRIPT" --yesno "\nDETAILS AS SUBMITTED BY THE USER
+        $dialogapp --title "$name $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
 ENCRYPTION USED: $ENCRYPTION
 \n
@@ -272,8 +269,8 @@ ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 GRAPHICALWELCOME () 
 { 
     if [[ $dialog == true ]]; then
-       dialog --backtitle "Welcome to $programname" \
-       --title "WELCOME TO LUKSUS $version" \
+       dialog --backtitle "$programname $version" \
+       --title "" \
        --textbox welcomelogo.$$ $dialogsize;
 
 #        $dialogapp --title "WELCOME TO $programname" --msgbox "\n$programname $version $date on $UNAME\n\n
@@ -288,7 +285,7 @@ LOOPBACKMETHOD ()
     if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]; then
         echo Beginning loopbackmethod on $device;
         head -c $luksfilesize /dev/zero > $luksfile;
-        losetup -f > /dev/null 2> /dev/null;
+        losetup -f 1>/dev/null 2> /dev/null;
         losetup $device $luksfile;
         loopbackhelp="losetup $device $luksfile";
     else
