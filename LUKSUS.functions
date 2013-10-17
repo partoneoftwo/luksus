@@ -230,6 +230,13 @@ GRAPHICAL ()
         headerbackup=/keys/$name.header
         mountpoint=/mnt/$name
 fi
+
+$dialogapp --menu "Choose method to lock the encrypted volume" $dialogsize 2 \
+               KEYFILE "Use a keyfile. This will be generated for you." off  \
+               TRUECRYPT "Use a password. Popular choice."   on   \
+               2>SECUREMODE.$$
+
+
 }
 GRAPHICALVERIFYCHOICES () 
 { 

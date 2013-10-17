@@ -382,6 +382,50 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 a complete menusystem I borrowed some ideas from:
 http://www.bashguru.com/2011/01/menu-driven-shell-script-using-dialog.html
 
+
+#!/bin/bash
+deletetempfiles()
+{
+rm *.$$
+}
+
+trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
+
+while :
+do
+
+# Dialog utility to display options list
+
+    dialog --clear --backtitle "$programname $version" --title "MAIN MENU" \
+    --menu "Use [UP/DOWN] key to move" 12 60 6 \
+    "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOP DEVICE)" \
+    "NAME"  "NICK NAME FOR ENCRYPTED CONTAINER" \
+    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" \
+    "SUMMARY"     "TO LIST CURRENT SETTINGS" \
+    "DISK"      "TO DISPLAY DISK STATISTICS" \
+    "NEXT"      "GO HERE WHEN READY TO CONTINUE" 2> menuchoices.$$
+
+    retopt=$?
+    choice=`cat menuchoices.$$`
+
+    case $retopt in
+
+           0) case $choice in
+
+                  DEVICE)  SETDEVICE ;;
+                  NAME)   NAME ;;
+                  SECURITYMODE)     SECURITYMODE ;;
+                  SUMMARY)      SUMMARY ;;
+                  DISK)       diskstats ;;
+                  NEXT)       mc; exit 0;;
+
+              esac ;;
+
+          *)clear ; exit ;;
+    esac
+
+done 
+
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
@@ -389,17 +433,17 @@ http://www.bashguru.com/2011/01/menu-driven-shell-script-using-dialog.html
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
-+Command line arguments are now optional, a dialog/whiptail will ask the
-user.
-+Added whiptail support, which will not require dialog on Debian based
-systems. Thanks Stackexchange! 
-http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
 
 v1.2.7
 +Preliminary menu system works
 It is not pretty enough yet, but the idea is that from now on, the
 user will not have to use commandline options. Dialog og whiptail is
 required.
++Added whiptail support, which will not require dialog on Debian based
+systems. Thanks Stackexchange! 
+http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
++Command line arguments are now optional, a dialog/whiptail will ask the
+user for options.
 
 v1.2.5
 Preliminary menu system is almost a reality
