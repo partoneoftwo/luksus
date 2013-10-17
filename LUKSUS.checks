@@ -85,7 +85,7 @@ read dialogapp <<< "$(which whiptail dialog 2> /dev/null)"
 }
 
 # just use whichever was found
-"$dialogapp" --msgbox "Message displayed with $dialogapp" 0 0
+# This is only cool for the dev himself # "$dialogapp" --msgbox "Message displayed with $dialogapp" 0 0
 
 
 # user wants to force LUKS

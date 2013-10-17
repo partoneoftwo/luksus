@@ -31,6 +31,20 @@ SECURITYMODE()
 echo set security mode
 }
 
+WELCOMEINFORMATION()
+{
+"$dialogapp" --msgbox "Welcome to $programname $version. \n\n
+This program lets you create an encrypted volume. Either be on physical media such
+as a hardrive or usb stick, or it can be in the form of a file
+container. The program will now ask you to specify which device you
+wish to create the volume on. If you are creating a file container
+then you must choose a loopback device as device. You can also choose
+between using a password or a keyfile if the encryption mechanism
+supports it. The default is to use a password.\n\n
+When you click OK the wizard will start and ask you which device you
+wish to proceed with. You can re-run the wizard and you can exit the
+program before $programname does any heavywork." 0 0
+}
 
 WIZARD()
 {
@@ -54,8 +68,8 @@ do
 
     dialog --clear --backtitle "$programname $version" --title "" \
     --menu "Run wizard and then choose next" $dialogsize 9 \
-    "WIZARD" "RUN THE WIZARD TO SET UP LUKSUS" \
-    "NEXT" "CONTINUE LUKSUS AND PROCEED WITH VOLUME CREATION" \
+    "NEXT" "CONTINUE LUKSUS, REVIEW AND BEGIN VOLUME CREATION" \
+    "WIZARD" "RUN THE WIZARD AGAIN TO SET UP LUKSUS" \
     "-"  "" \
     "-" "" \
     "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOPBACK)" \
