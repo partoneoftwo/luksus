@@ -40,7 +40,7 @@ echo CONTINUING
 WELCOMEINFORMATION()
 {
 "$dialogapp" --msgbox "Welcome to $programname $version. \n\n
-This program lets you create an encrypted volume. Either be on physical media such
+This program lets you create an encrypted volume on a physical media such
 as a hardrive or usb stick, or it can be in the form of a file
 container. The program will now ask you to specify which device you
 wish to create the volume on. If you are creating a file container
@@ -215,15 +215,6 @@ DISPLAYLOGO ()
         ghead -n 6 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || head -n 6 LUKSUS.logo >welcomelogo.$$
         dialogsize="12 60"
    fi
-}
-
-HOUSECLEANING ()
-{
-# this will probably grow as I have now caved in, and realize I can't
-# rely on STDERR anymore to push data to variables. I have to write
-# temporary inforamtion to the filesystem in tiny
-rm welcomelogo.$$
-rm *.$$
 }
 
 

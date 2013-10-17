@@ -136,5 +136,4 @@ DISPLAYLOGO
 echo The data below can also be found in /keys/$name.information
 DISPLAYSUMMARY
 WRITEINFORMATIONFILE
-HOUSECLEANING
 exit 0
