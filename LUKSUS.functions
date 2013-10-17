@@ -67,7 +67,7 @@ SECURITYMODE
 
 MENUSYSTEM()
 {
-while [ $NEXT = false ] :
+while [ $NEXT == false ] ;
 do
 
 # Dialog utility to display options list
