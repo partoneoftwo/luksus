@@ -382,9 +382,9 @@ ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 GRAPHICALWELCOME () 
 { 
     if [[ $dialog == true ]]; then
-       dialog --backtitle "$programname $version" \
+       $dialogapp --backtitle "$programname $version" \
        --title "" \
-       --textbox welcomelogo.$$ $dialogsize;
+       --exit-label "BEGIN" --textbox welcomelogo.$$ $dialogsize;
 
 #        $dialogapp --title "WELCOME TO $programname" --msgbox "\n$programname $version $date on $UNAME\n\n
 #Written by \n
