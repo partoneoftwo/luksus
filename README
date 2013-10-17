@@ -238,10 +238,33 @@ put these new engine* functions into the main LUKSUS bootstrap-file
 TEST TEST TEST! It is easy to break things, so it is very important to
 test a lot.
 
+Release preparation stuff to do:
+* Complete the extensive test procedure:
+Test in virtualbox:
+4 different Linux distributions, Debian, CentOS, Arch, Ubuntu.
+FreeBSD
+DragonFlyBSD
+NetBSD
+
+Must pass both tests:
+Create volume on a physical drive (Virtualbox is fine)
+Create volume on a virtual file container (if supported by os)
+Frag any typos and silly formulations.
+Frag any error messages.
+
+Release it into the wild:
+Bump version number in LUKSUS.variables
+Update README Changelog and TODO
+Push a new tag to Github
+Update jekyll homepage at thomasfrivold.github.io/luksus
+Post to Freshmeat
+Consider posting elsewhere
 
 ########################################################
 ###################TODO ##############################
 ########################################################
+
+
 
 Engines todo:
 Add NetBSD support, cgd
@@ -255,12 +278,14 @@ Implement headerbackup in the geli encryption routine
 Fix keyfile handling with GELI - Skip passphrase, and use key
 Test keyfile handling properly with GELI
 
+# User interaction things
+Let the user get back into the menu when asked if the options are
+correct.
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
 Improve LUKSUS output in Dialog window, remove keyfile information
 if the user is not using a keyfile.
-
 Add mount command and losetup/vnconfig to key.information for added usability
 
 Improve the actual output, if not using keyfile, then don't show
@@ -275,8 +300,6 @@ create a stronbox, this should rather become a part of the README
 file. And it should become a suggestion)
 
 Project overall todo:
-Try to overhaul the README again, and create a section that this is
-opinionated software. There are some critical requirements.
 Get user feedback, feature requests
 Dare to post it to "Show Hackernews" (news.ycombinator.com)
 Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
@@ -379,151 +402,6 @@ whiptail --menu "Choose encryption engine" 10 40 4 \
 
 source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
 
-a complete menusystem I borrowed some ideas from:
-http://www.bashguru.com/2011/01/menu-driven-shell-script-using-dialog.html
-
-
-#!/bin/bash
-deletetempfiles()
-{
-rm *.$$
-}
-
-trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
-
-while :
-do
-
-# Dialog utility to display options list
-
-    dialog --clear --backtitle "$programname $version" --title "MAIN MENU" \
-    --menu "Use [UP/DOWN] key to move" 12 60 6 \
-    "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOP DEVICE)" \
-    "NAME"  "NICK NAME FOR ENCRYPTED CONTAINER" \
-    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" \
-    "SUMMARY"     "TO LIST CURRENT SETTINGS" \
-    "DISK"      "TO DISPLAY DISK STATISTICS" \
-    "NEXT"      "GO HERE WHEN READY TO CONTINUE" 2> menuchoices.$$
-
-    retopt=$?
-    choice=`cat menuchoices.$$`
-
-    case $retopt in
-
-           0) case $choice in
-
-                  DEVICE)  SETDEVICE ;;
-                  NAME)   NAME ;;
-                  SECURITYMODE)     SECURITYMODE ;;
-                  SUMMARY)      SUMMARY ;;
-                  DISK)       diskstats ;;
-                  NEXT)       mc; exit 0;;
-
-              esac ;;
-
-          *)clear ; exit ;;
-    esac
-
-done 
-
--- menusystem is becoming very good --
-
-#!/bin/bash
-dialogsize="16 75"
-programname=LUKSUS
-version="v1.2.7"
-
-deletetempfiles()
-{
-rm *.$$
-}
-dialogapp=dialog
-
-DEVICESET()
-{
-device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3)
-}
-
-NAMESET()
-{
-name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
-}
-
-LUKSFILESET()
-{
-luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
-}
-
-LUKSFILESIZESET()
-{
-luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
-}
-
-SECURITYMODE()
-{
-echo set security mode
-}
-
-
-WIZARD()
-{
-# RUN THROUGH THE LUKSUS-WIZARD
-DEVICESET
-NAMESET
-# IF LOOP TRUE THEN
-LUKSFILESET
-LUKSFILESIZESET
-SECURITYMODE
-}
-
-
-trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
-
-while :
-do
-
-# Dialog utility to display options list
-
-    dialog --clear --backtitle "$programname $version" --title "" \
-    --menu "Run wizard and then choose next" $dialogsize 9 \
-    "WIZARD" "RUN THE WIZARD TO SET UP LUKSUS" \
-    "NEXT" "CONTINUE LUKSUS AND PROCEED WITH VOLUME CREATION" \
-    "-"  "" \
-    "-" "" \
-    "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOPBACK)" \
-    "NAME"  "NICK NAME FOR ENCRYPTED CONTAINER" \
-    "LOCATION" "SPECIFY WHERE TO STORE ENCRYPTED VOLUME (FIXED SIZE)" \
-    "SIZE" "SPECIFY HOW LARGE THE CONTAINER SHOULD BE" \
-    "SECURITYMODE"    "CHOOSE TO USE PASSPHRASE OR KEYFILE" 2> menuchoices.$$
-
-    retopt=$?
-    choice=`cat menuchoices.$$`
-
-    case $retopt in
-
-           0) case $choice in
-
-                  WIZARD)         WIZARD ;;
-                  DEVICE)         DEVICESET ;;
-                  NAME)           NAMESET ;;
-                  LOCATION)       LUKSFILESET ;;
-                  SIZE)           LUKSFILESIZESET;;
-                  SECURITYMODE)   SECURITYMODE ;;
-                  SUMMARY)        SUMMARY ;;
-                  NEXT)           sleep 2s; exit 0;;
-
-              esac ;;
-
-          *)clear ; exit ;;
-    esac
-
-done 
-        keyfile=/keys/$name.key
-        headerbackup=/keys/$name.header
-        mountpoint=/mnt/$name
-
--- end menusystem is becoming very good --
-
 
 
 ########################################################
@@ -533,6 +411,11 @@ done
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
+
+v1.2.8 19:25 17.10.2013
++Very nice looking menu created
+Got some ideas from here: a complete menusystem I borrowed some ideas from:
+http://www.bashguru.com/2011/01/menu-driven-shell-script-using-dialog.html
 
 v1.2.7
 +Preliminary menu system works
