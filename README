@@ -494,6 +494,12 @@ user.
 systems. Thanks Stackexchange! 
 http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
 
+v1.2.6
++Preliminary menu system works
+It is not pretty enough yet, but the idea is that from now on, the
+user will not have to use commandline options. Dialog og whiptail is
+required.
+
 v1.2.5
 Preliminary menu system is almost a reality
 
