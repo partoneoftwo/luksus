@@ -22,3 +22,4 @@ datenow=$(date)
 USEKEY=false
 freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
 ENCRYPTION=LUKS
+next=false

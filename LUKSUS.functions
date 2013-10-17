@@ -31,6 +31,12 @@ SECURITYMODE()
 echo set security mode
 }
 
+NEXT()
+{
+NEXT=TRUE
+echo CONTINUING
+}
+
 WELCOMEINFORMATION()
 {
 "$dialogapp" --msgbox "Welcome to $programname $version. \n\n
@@ -61,13 +67,13 @@ SECURITYMODE
 
 MENUSYSTEM()
 {
-while :
+while $NEXT == false :
 do
 
 # Dialog utility to display options list
 
-    dialog --clear --backtitle "$programname $version" --title "" \
-    --menu "Run wizard and then choose next" $dialogsize 9 \
+    dialog --cancel-label "EXIT LUKSUS" --clear --backtitle "$programname $version" --title "" \
+    --menu "Choose next or run the wizard again" $dialogsize 9 \
     "NEXT" "CONTINUE LUKSUS, REVIEW AND BEGIN VOLUME CREATION" \
     "WIZARD" "RUN THE WIZARD AGAIN TO SET UP LUKSUS" \
     "-"  "" \
@@ -92,7 +98,7 @@ do
                   SIZE)           LUKSFILESIZESET;;
                   SECURITYMODE)   SECURITYMODE ;;
                   SUMMARY)        SUMMARY ;;
-                  NEXT)           ping;;
+                  NEXT)           NEXT ;;
 
               esac ;;
 
