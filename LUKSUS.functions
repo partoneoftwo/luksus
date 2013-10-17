@@ -33,7 +33,7 @@ echo set security mode
 
 NEXT()
 {
-NEXT=TRUE
+NEXT=true
 echo CONTINUING
 }
 
@@ -67,7 +67,7 @@ SECURITYMODE
 
 MENUSYSTEM()
 {
-while $NEXT == false :
+while [ $NEXT = false ] :
 do
 
 # Dialog utility to display options list
