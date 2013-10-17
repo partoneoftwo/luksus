@@ -68,18 +68,18 @@ fi
 #########################################################
 #########################################################
 
+trap 'exithousekeeping'  EXIT     # calls deletetempfiles function on exit
+
+
 # Calling functions
 DISPLAYLOGO
 OSTEST
 
-# USER INTERACTION
+# MENUSYSTEM - USER INTERACTION
 GRAPHICALWELCOME
-GRAPHICAL
+MENUSYSTEM
 GRAPHICALVERIFYCHOICES
-set >luksus.environment #REMOVE WHEN DONE - USED FOR DEBUGGING PURPOSES
 ASKUSERVERIFYCONSOLE
-
-
 # PREPARE KEYFILE
 CREATEKEYFILE
 
