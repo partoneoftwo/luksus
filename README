@@ -23,108 +23,15 @@ encryption.
 
 This is thus a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
 Instead of having to read up on the documentation for these
-wonderful tools, I wrote this wrapper script to handle the dirtywork.
+tools, I wrote this wrapper script to handle the dirtywork.
+Being opinionated and pragmatic this program assumes that you (must)
+have: dialog or whiptail, gnutools / coretools , and a supported
+encryption engine installed.
 
 # USAGE
 
-USAGE: Physical drive
-./LUKSUS DEVICENAME VOLUMENAME
-
-USAGE: File container
-./LUKSUS loopback-DEVICENAME VOLUMENAME filename filesize-in-megabytesM
-
-
-The usage of LUKSUS can take two different forms, 
-mainly whether you are using LUKSUS on a physical device or a
-virtual file. These two requires somewhat different commandline
-arguments. Volumename simply means nickname for the encrypted
-drive/media. Optional parameters are: 
-truecrypt - which enables truecrypt instead of using LUKS (Linux and
-DragonFlyBSD only)
-usekey - which uses a keyfile instead of a passphrase, which will be
-placed in /keys (LUKS only, works on truecrypt as well, but it will
-ask for a passphrase anyhow so this will add a keyfile to the volume)
-
-EXAMPLES: 
-ENCRYPT PHYSICAL MEDIA: Using password
-./LUKSUS /dev/sdb1 rambo1
- 
-ENCRYPT PHYSICAL MEDIA: Using keyfile
-./LUKSUS /dev/sdb1 rambo1 usekey
-
-CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
-./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
-./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
-./LUKSUS /dev/md0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
-
-
-To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
-./LUKSUS /dev/sdc1 library truecrypt
-./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
-
-This last example is a corner case. This would create an encrypted
-filecontainer using truecrypt with a passphrase as well as with a keyfile.
-That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
-./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey
-
-
-As of version 1.0, LUKSUS defaults to passphrase
-for securing the volume. Using a keyfile is optional
-and can be activated by using the commandline option: usekey
-as mentioned earlier.
-
-optional commandline arguments are: usekey nodialog
-usekey - will enable the use of a keyfile instead of a passphrase
-nodialog - will disable dialog prompts. Some people wants this.
-
-
-ENCRYPTED FILECONTAINER
-It is possible to create an encrypted file container
-The usage then changes a little as the script then needs to
-know which loopbackdevice you wish to use, where the encrypted
-filecontainer should be located, and how large it should be.
-Please note that the size must have M for megabytes or G for
-gigabyte appended to the size.
-
-The following will use loop0, and place the encrypted container in
-/usr and will have 1000MiB as space.
-
-./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
-
-For creating an encrypted filecontainer on DragonFlyBSD
-./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
-
-DRAGONFLYBSD NOTES:
-There are a few things to note about running this on DragonflyBSD...
-#
-NO EXT4, UFS IS USED 
-EXT4 support is currently not available in a workable state in DFlyBSD;
-The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
-loopback device, and I have not yet managed to get it to work.
-Therefore the user will get a UFS filesystem instead.
-
-TRUECRYPT NOTES:
-
-Truecrypt defaults to using passphrase for volume security.
-A keyfile can be added by using the commandline argument: usekey
-This will add a key to the keychain in the volume, but TrueCrypt will
-also ask for a password. 
-
-Applies to both on Linux and DragonflyBSD
-Truecrypt / tcplay is slow when it is creating encrypted
-filecontainers on Linux. Once the volume has been created
-speeds are nominal. This has at least been the case in my 
-testing on Virtualbox instances of various Linux distributions.
-
-Really slow loopback device encryption in DragonFlyBSD:
-For some reason the cryptsetup tool in Dfly takes a very long time
-to do its work when it is manipulating loopback LUKS volumes, ie.
-file containers... I do not know the reason to this strange behaviour, 
-but once it has created the volume, file transfer speeds are nominal and fast.
-In my experience it takes 15 minutes to finish the process of creating
-an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
-loopback devices:)
-
+./LUKSUS
+(No command line options needed, anymore)
 
 
 # FAQ:
@@ -148,7 +55,7 @@ A: I wrote this script because I wanted to have a way to easily and casually cre
 
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
-   license. Please let me know if this makes it hard for you to use it, and I
+   license. Please let me know if the GPLv2 makes it hard for you to use it, and I
    will consider adding an extra license or changing it.
 
 Q: Why should I encrypt?
@@ -196,6 +103,7 @@ The script works like this:
 Q: Is there a Disclaimer? 
 A: Yes:
     As with all security measures: Think them through, use with caution.
+    There is no such thing as 100% guaranteed security. Also:
     I, the author, take no responsibility if a black hole appears,
     and implodes your house, your town and the entire planet earth as an
     effect of using this script.
@@ -233,7 +141,7 @@ Computers become a reality.
 http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
 
 Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
-A: -
+A: Good question, some crypto wizards gave me this answer: -
 (Passphrase-protected) Keyfiles are two-factor (something you have,
 something you know) and passphrases are one-factor (something you
 know). It should be obvious that (passphrase-protected) keyfiles are
@@ -257,7 +165,6 @@ compulsive discovery (the cyrpto wrench attack, legal compulsion, etc.).
 -
 Source: Reddit discussion
 http://www.reddit.com/r/crypto/comments/1gnezg/keyfile_or_passphrase/
-
 
 So let's take the case of David Miranda, for him it was very useful
 not to have the keys: 
@@ -319,21 +226,18 @@ A: LUKSUS is maintained in a Github repository.
    or just go to the shiny fancy page:
    http://thomasfrivold.github.io/luksus
 
-Q: I want to improve my information security beyond encrypting files,
-where can I learn more?
-A: This very well made blog post provides a very good guide into
-user-cryptography:
-http://blog.sanctum.geek.nz/series/linux-crypto/
-
-Q: How do I add another encryption engine?
+Q: I'm a developer. How do I add another encryption engine?
 A: After having made the script more or less modular, this is the
-steps necessary to add another engine to LUKSUS
+steps necessary to add another engine to LUKSUS:
 
 ADD OS UNAME TO OSTEST()
 Add loopbackdevice to LOOPBACKTEST()
 Write HOUSEKEEPING() function for the new OS if necessary
 Create engine() enginekeyfile() and engineopen() functions
-TEST TEST TEST!
+put these new engine* functions into the main LUKSUS bootstrap-file
+TEST TEST TEST! It is easy to break things, so it is very important to
+test a lot.
+
 
 ########################################################
 ###################TODO ##############################
@@ -351,9 +255,6 @@ Implement headerbackup in the geli encryption routine
 Fix keyfile handling with GELI - Skip passphrase, and use key
 Test keyfile handling properly with GELI
 
-LUKSUS improvements todo:
-Make LUKSUS entirely interactive. No commandline options
-
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
@@ -361,6 +262,7 @@ Improve LUKSUS output in Dialog window, remove keyfile information
 if the user is not using a keyfile.
 
 Add mount command and losetup/vnconfig to key.information for added usability
+
 Improve the actual output, if not using keyfile, then don't show
 the empty variables to the dialog screen... 
 
@@ -390,7 +292,6 @@ disklabel -i sd1
 
 # scrub partition with random data
 cgdconfig -s cgd0 /dev/sd1a aes-cbc 128 < /dev/urandom
-
 
 # scrub partition with zero ... however it will be converted into random
 # data using aes-cbc with a random key and cbc mode for XORing with previous
@@ -494,7 +395,7 @@ user.
 systems. Thanks Stackexchange! 
 http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
 
-v1.2.6
+v1.2.7
 +Preliminary menu system works
 It is not pretty enough yet, but the idea is that from now on, the
 user will not have to use commandline options. Dialog og whiptail is
@@ -660,4 +561,106 @@ v0.2
 
 v0.1 16.04.2012 GMT+1 1320
 + initial release
+
+
+### Notes ###
+
+DRAGONFLYBSD NOTES:
+There are a few things to note about running this on DragonflyBSD...
+#
+NO EXT4, UFS IS USED 
+EXT4 support is currently not available in a workable state in DFlyBSD;
+The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
+loopback device, and I have not yet managed to get it to work.
+Therefore the user will get a UFS filesystem instead.
+
+TRUECRYPT NOTES:
+
+Truecrypt defaults to using passphrase for volume security.
+A keyfile can be added by using the commandline argument: usekey
+This will add a key to the keychain in the volume, but TrueCrypt will
+also ask for a password. 
+
+Applies to both on Linux and DragonflyBSD
+Truecrypt / tcplay is slow when it is creating encrypted
+filecontainers on Linux. Once the volume has been created
+speeds are nominal. This has at least been the case in my 
+testing on Virtualbox instances of various Linux distributions.
+
+Really slow loopback device encryption in DragonFlyBSD:
+For some reason the cryptsetup tool in Dfly takes a very long time
+to do its work when it is manipulating loopback LUKS volumes, ie.
+file containers... I do not know the reason to this strange behaviour, 
+but once it has created the volume, file transfer speeds are nominal and fast.
+In my experience it takes 15 minutes to finish the process of creating
+an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
+loopback devices:)
+
+
+
+
+### LEGACY README INFORMATION FOR THOSE NOSTALGIC PEOPLE ###
+
+Legacy documentation for those who really wish to use command line
+options (not necessary anymore):
+
+The usage of LUKSUS can take two different forms, 
+mainly whether you are using LUKSUS on a physical device or a
+virtual file. These two requires somewhat different commandline
+arguments. Volumename simply means nickname for the encrypted
+drive/media. Optional parameters are: 
+truecrypt - which enables truecrypt instead of using LUKS (Linux and
+DragonFlyBSD only)
+usekey - which uses a keyfile instead of a passphrase, which will be
+placed in /keys (LUKS only, works on truecrypt as well, but it will
+ask for a passphrase anyhow so this will add a keyfile to the volume)
+
+EXAMPLES: 
+ENCRYPT PHYSICAL MEDIA: Using password
+./LUKSUS /dev/sdb1 rambo1
+ 
+ENCRYPT PHYSICAL MEDIA: Using keyfile
+./LUKSUS /dev/sdb1 rambo1 usekey
+
+CREATING AN ENCRYPTED FILECONTAINER (LUKS on Linux and DragonFlyBSD)
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M 
+./LUKSUS /dev/vn0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+./LUKSUS /dev/md0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M
+
+
+To enable the use of TrueCrypt instead of LUKS append the option: truecrypt
+./LUKSUS /dev/sdc1 library truecrypt
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt
+
+This last example is a corner case. This would create an encrypted
+filecontainer using truecrypt with a passphrase as well as with a keyfile.
+That keyfile would then work as a backdoor or an extra way into the archive, in case the password gets lost.
+./LUKSUS /dev/loop0 ENCRYPTEDVOLUME /encryptedvolume.encrypted 300M truecrypt usekey
+
+
+As of version 1.0, LUKSUS defaults to passphrase
+for securing the volume. Using a keyfile is optional
+and can be activated by using the commandline option: usekey
+as mentioned earlier.
+
+optional commandline arguments are: usekey nodialog
+usekey - will enable the use of a keyfile instead of a passphrase
+nodialog - will disable dialog prompts. Some people wants this.
+
+
+ENCRYPTED FILECONTAINER
+It is possible to create an encrypted file container
+The usage then changes a little as the script then needs to
+know which loopbackdevice you wish to use, where the encrypted
+filecontainer should be located, and how large it should be.
+Please note that the size must have M for megabytes or G for
+gigabyte appended to the size.
+
+The following will use loop0, and place the encrypted container in
+/usr and will have 1000MiB as space.
+
+./LUKSUS /dev/loop0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
+For creating an encrypted filecontainer on DragonFlyBSD
+./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
 
