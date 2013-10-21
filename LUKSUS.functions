@@ -3,7 +3,10 @@
                                     
 DEVICESET()
 {
-device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3)
+device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to
+create encrypted volume on.\nExample:\n/dev/sdd1\n\nTo create an encrypted filecontainer
+use a loopbackdevice.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
+(FreeBSD/DragonFlyBSD)\n\n " 0 0 3>&1 1>&2 2>&3)
 }
 
 exithousekeeping()
@@ -15,7 +18,7 @@ set >luksus.environment #REMOVE WHEN DONE - USED FOR DEBUGGING PURPOSES
 
 NAMESET()
 {
-name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
+name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume). Example: Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
 }
 
 LUKSFILESET()
@@ -26,7 +29,7 @@ echo Okay. Using a physical device.
 else
 $dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "Loopbackdevice detected!\nYou have specified a loopbackdevice and want to create
 a filecontainer." 0 0
-luksfile=$($dialogapp --title $programname --inputbox "LUKSUS has detected that you are
+luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are
 creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be
 created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
 fi
@@ -38,15 +41,21 @@ if [[ $LOOPBACKDEVICE == false ]]
 then
 echo ..
 else
-luksfilesize=$($dialogapp --title $programname --inputbox "What is the desired size of the
+luksfilesize=$($dialogapp $DIALOGAPPOPTIONS --inputbox "What is the desired size of the
 encrypted file container. \n\nExample: 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
 fi
 }
 
-SECURITYMODE()
-{
-echo set security mode
-}
+#SECURITYMODE()
+#{
+#set USEKEY=true
+#set USEKEY=false
+#else
+#USEKEY == true
+#USEKEY == false
+#
+#echo set security mode
+#}
 
 NEXT()
 {
@@ -56,7 +65,7 @@ echo CONTINUING
 
 WELCOMEINFORMATION()
 {
-"$dialogapp" --title $programname --msgbox "Welcome to $programname $version. \n\n
+"$dialogapp" --title $programname --msgbox "Welcome to $programname $version \n\n
 This program lets you create an encrypted volume on a physical media such
 as a hardrive or usb stick, or it can be in the form of a file
 container. The program will now ask you to specify which device you
@@ -138,7 +147,7 @@ ASKUSERVERIFYCONSOLE ()
     echo THE DEVICE YOU HAVE SPECIFIED;
     echo;
     echo;
-    echo DETAILS AS SUBMITTED BY THE USER;
+    echo THE FOLLOWING DETAILS HAS BEEN SET BY THE USER;
     echo PLEASE VERIFY THAT THESE ARE CORRECT;
     echo ENCRYPTION USED: $ENCRYPTION;
     echo DRIVE: $device;
@@ -362,7 +371,7 @@ $dialogapp --menu "Choose method to lock the encrypted volume" $dialogsize 2 \
 GRAPHICALVERIFYCHOICES () 
 { 
     if [[ $GOGRAPHICAL = 1 ]]; then
-        $dialogapp $DIALOGAPPOPTIONS --title "$programname $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
+        $dialogapp --title "$programname $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
 ENCRYPTION USED: $ENCRYPTION
 \n
@@ -377,7 +386,7 @@ USING KEYFILE: $USEKEY\n
 LOOPBACKDEVICE: $loopbackdevice\n
 OS: $UNAME\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
-" 30 50;
+" 0 0;
         case $? in 
             0)
 
@@ -400,11 +409,6 @@ GRAPHICALWELCOME ()
        $dialogapp --backtitle "$programname $version" \
        --title "WELCOME" \
        --exit-label "BEGIN" --textbox welcomelogo.$$ $dialogsize;
-
-#        $dialogapp --title "WELCOME TO $programname" --msgbox "\n$programname $version $date on $UNAME\n\n
-#Written by \n
-#$author \n
-#" 10 30;
     fi
 }
 

@@ -70,7 +70,6 @@ fi
 
 trap 'exithousekeeping'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
 
-
 # Calling functions
 DISPLAYLOGO
 OSTEST

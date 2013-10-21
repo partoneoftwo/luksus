@@ -23,4 +23,5 @@ USEKEY=false
 freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
 ENCRYPTION=LUKS
 NEXT=false
-DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle "$programname $version" --title "$version" --no-cancel"
+DIALOGAPPOPTIONS="--no-cancel --backtitle $programname"
+#DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle $programname $version --title "$version""
