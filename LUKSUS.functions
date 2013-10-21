@@ -6,7 +6,9 @@ DEVICESET()
 device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to
 create encrypted volume on.\nExample:\n/dev/sdd1\n\nTo create an encrypted filecontainer
 use a loopbackdevice.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
-(FreeBSD/DragonFlyBSD)\n\n " 0 0 3>&1 1>&2 2>&3)
+(DragonFlyBSD)\n
+/dev/md0 (FreeBSD)\n 
+/dev/vnd0 (NetBSD)\n" 0 0 3>&1 1>&2 2>&3)
 }
 
 exithousekeeping()
@@ -41,20 +43,31 @@ if [[ $LOOPBACKDEVICE == false ]]
 then
 echo ..
 else
-luksfilesize=$($dialogapp $DIALOGAPPOPTIONS --inputbox "What is the desired size of the
-encrypted file container. \n\nExample: 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
+luksfilesize=$($dialogapp $DIALOGAPPOPTIONS --inputbox "What is the
+desired size of the encrypted file container. \n\nExample: 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
 fi
 }
 
 #SECURITYMODE()
 #{
-#set USEKEY=true
-#set USEKEY=false
-#else
-#USEKEY == true
-#USEKEY == false
+#$dialogapp --title "$programname $version" --yesno "\nPASSPHRASE OR KEYFILE
+#\n \n \nDO YOU WISH TO USE A PASSPHRASE TO PROTECT THE VOLUME OR KEYFILE?
+#" 0 0;
+#        case $? in 
+#            0)
 #
-#echo set security mode
+#            ;;
+#            1)
+#                echo "Will use passphrase";
+#                set USEKEY=false
+#            ;;
+#            255)
+#                echo "Box closed"
+#            ;;
+#        esac;
+#    else
+#        echo "";
+#    fi
 #}
 
 NEXT()
@@ -143,11 +156,6 @@ done
 
 ASKUSERVERIFYCONSOLE () 
 { 
-    echo;
-    echo DRIVE ENCRYPTION;
-    echo THIS SCRIPT ASSUMES YOU WANT TO COMPLETELY ERASE;
-    echo THE DEVICE YOU HAVE SPECIFIED;
-    echo;
     echo;
     echo THE FOLLOWING DETAILS HAS BEEN SET BY THE USER;
     echo PLEASE VERIFY THAT THESE ARE CORRECT;
