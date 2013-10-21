@@ -100,9 +100,10 @@ do
 # Dialog utility to display options list
 
     dialog --cancel-label "EXIT LUKSUS" --clear --backtitle "$programname $version" --title "" \
-    --menu "Choose next to proceed or run the wizard again" $dialogsize 9 \
+    --menu "Choose next to proceed or run the wizard again" $dialogsize 10 \
     "NEXT" "CONTINUE LUKSUS, REVIEW AND BEGIN VOLUME CREATION" \
     "WIZARD" "RUN THE WIZARD AGAIN TO SET UP LUKSUS" \
+    "REVIEW" "REVIEW THE USERSPECIFIED OPTIONS" \
     "-"  "" \
     "-" "" \
     "DEVICE" "ENTER DEVICE TO USE (PHYSICAL OR LOOPBACK)" \
@@ -126,6 +127,7 @@ do
                   SECURITYMODE)   SECURITYMODE ;;
                   SUMMARY)        SUMMARY ;;
                   NEXT)           NEXT ;;
+                  REVIEW)         GRAPHICALVERIFYCHOICES ;;
 
               esac ;;
 
