@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# LUKSUS
-# Easy drive encryption script using LUKS
-# by Thomas Frivold
+# LUKSUS by Thomas Frivold
 #
 # github code repository (project page):
 # https://github.com/thomasfrivold/luksus
+#
+# fancy website:
+# http://thomasfrivold.github.io/luksus
 #
 # please see README file for complete information
 # regarding LUKSUS
 # 
 # LUKSUS is released under GNU GPLv2 License
-# see URL below
-# http://www.gnu.org/licenses/gpl-2.0.html 
+# see URL http://www.gnu.org/licenses/gpl-2.0.html 
 
 ###############################
 ######### VARIABLES ###########
@@ -68,7 +68,7 @@ fi
 #########################################################
 #########################################################
 
-trap 'exithousekeeping'  EXIT     # calls deletetempfiles function on exit
+trap 'exithousekeeping'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
 
 
 # Calling functions
@@ -80,8 +80,7 @@ GRAPHICALWELCOME
 WELCOMEINFORMATION
 WIZARD
 MENUSYSTEM
-GRAPHICALVERIFYCHOICES
-ASKUSERVERIFYCONSOLE
+ASKUSERVERIFYCONSOLE # safety check. To be sure.
 
 # PREPARE KEYFILE
 CREATEKEYFILE
@@ -118,15 +117,20 @@ GELI
 GELIKEYFILE
 GELIOPEN
 
-# CGD PROCESS COMING SOON
+# CGD PROCESS COMING SOON FOR NETBSD SUPPORT
 # CGD
 # CGDKEYFILE
 # CGDOPEN
 
-# BIOCTL PROCESS MIGHT BE COMING SOON
+# BIOCTL PROCESS MIGHT BE COMING SOON FOR OPENBSD SUPPORT
 # BIOCTL
 # BIOCTLKEYFILE
 # BIOCTLOPEN
+
+# OPENPGPCTL PROCESS MIGHT BE COMING SOON FOR PGP SUPPORT
+# OPENPGP
+# OPENPGPKEYFILE
+# OPENPGPOPEN
 
 # CREATING THE FILESYSTEM AND MOUNTING IT
 CREATEANDMOUNTFS

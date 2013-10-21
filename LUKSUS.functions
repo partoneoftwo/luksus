@@ -1,29 +1,46 @@
 #### FUNCTIONS ######
 
+                                    
+DEVICESET()
+{
+device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3)
+}
+
 exithousekeeping()
 {
 rm *.$$
 set >luksus.environment #REMOVE WHEN DONE - USED FOR DEBUGGING PURPOSES
 }
 
-DEVICESET()
-{
-device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3)
-}
 
 NAMESET()
 {
-name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
+name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
 }
 
 LUKSFILESET()
 {
-luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
+if [[ $loopbackdevice == false ]]
+then
+echo Okay. Using a physical device.
+else
+$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "Loopbackdevice detected!\nYou have specified a loopbackdevice and want to create
+a filecontainer." 0 0
+luksfile=$($dialogapp --title $programname --inputbox "LUKSUS has detected that you are
+creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be
+created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
+fi
 }
 
 LUKSFILESIZESET()
 {
-luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
+if [[ $LOOPBACKDEVICE == false ]]
+then
+echo ..
+else
+luksfilesize=$($dialogapp --title $programname --inputbox "What is the desired size of the
+encrypted file container. \n\nExample: 100M or 25G" $dialogsize 3>&1 1>&2 2>&3)
+fi
 }
 
 SECURITYMODE()
@@ -39,7 +56,7 @@ echo CONTINUING
 
 WELCOMEINFORMATION()
 {
-"$dialogapp" --msgbox "Welcome to $programname $version. \n\n
+"$dialogapp" --title $programname --msgbox "Welcome to $programname $version. \n\n
 This program lets you create an encrypted volume on a physical media such
 as a hardrive or usb stick, or it can be in the form of a file
 container. The program will now ask you to specify which device you
@@ -56,10 +73,12 @@ WIZARD()
 {
 # RUN THROUGH THE LUKSUS-WIZARD
 DEVICESET
-NAMESET
+LOOPBACKTEST
 LUKSFILESET
 LUKSFILESIZESET
+NAMESET
 SECURITYMODE
+GRAPHICALVERIFYCHOICES
 }
 
 
@@ -72,7 +91,7 @@ do
 # Dialog utility to display options list
 
     dialog --cancel-label "EXIT LUKSUS" --clear --backtitle "$programname $version" --title "" \
-    --menu "Choose next or run the wizard again" $dialogsize 9 \
+    --menu "Choose next to proceed or run the wizard again" $dialogsize 9 \
     "NEXT" "CONTINUE LUKSUS, REVIEW AND BEGIN VOLUME CREATION" \
     "WIZARD" "RUN THE WIZARD AGAIN TO SET UP LUKSUS" \
     "-"  "" \
@@ -132,8 +151,8 @@ ASKUSERVERIFYCONSOLE ()
     echo OS: $UNAME;
     echo;
     echo JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE;
-    echo WE ASK AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?;
-    echo YOU WILL NUKE YOUR DRIVE: $device;
+    echo LUKSUS ASKS AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?;
+    echo YOU WILL NUKE THE FOLLOWING DEVICE: $device;
     echo HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE;
     echo "";
     echo SERIOUSLY - LAST CHANCE;
@@ -243,7 +262,7 @@ DISPLAYSUMMARY ()
 DONTSHREDIFLOOPBACK () 
 { 
     if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]; then
-        echo "Okay we are using $device ...";
+        echo "Okay we are using a physical device $device ...";
         echo Shredding ...;
         shred -f -v -n1 $device || gshred -f -v -n1 $device;
     else
@@ -257,7 +276,7 @@ DONTSHREDIFLOOPBACK ()
                 echo in the middle of the shredding.place;
                 gshred -f -v -n1 $device;
             else
-                echo "$device is a loopback device. OK.";
+                echo "$device is a loopback device.";
             fi;
         fi;
     fi
@@ -343,11 +362,11 @@ $dialogapp --menu "Choose method to lock the encrypted volume" $dialogsize 2 \
 GRAPHICALVERIFYCHOICES () 
 { 
     if [[ $GOGRAPHICAL = 1 ]]; then
-        $dialogapp --title "$name $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
+        $dialogapp $DIALOGAPPOPTIONS --title "$programname $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
 \n \n \n
 ENCRYPTION USED: $ENCRYPTION
 \n
-NAME: 	        $name \n
+NAME:          $name \n
 DRIVE:         $device \n
 MOUNTPOINT:    $mountpoint \n
 KEYFILE:       $keyfile \n
@@ -379,7 +398,7 @@ GRAPHICALWELCOME ()
 { 
     if [[ $dialog == true ]]; then
        $dialogapp --backtitle "$programname $version" \
-       --title "" \
+       --title "WELCOME" \
        --exit-label "BEGIN" --textbox welcomelogo.$$ $dialogsize;
 
 #        $dialogapp --title "WELCOME TO $programname" --msgbox "\n$programname $version $date on $UNAME\n\n
