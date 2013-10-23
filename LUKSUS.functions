@@ -78,7 +78,6 @@ LUKSFILESET
 LUKSFILESIZESET
 NAMESET
 SECURITYMODE
-GRAPHICALVERIFYCHOICES
 }
 
 
@@ -387,7 +386,7 @@ ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 
             ;;
             1)
-                echo "You have pressed NO. LUKSUS will now close.";
+                echo "You have pressed NO. Exit LUKSUS.";
                 exit 1
             ;;
             255)
