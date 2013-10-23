@@ -1,0 +1,60 @@
+# FUNCTIONS FILE FOR WRITING NEW FUNCTIONS TO THE APPLICATION
+# THIS FILE EXISTS BECAUSE WRITING NEW CODE EASILY BREAKS THE MAIN
+# FUNCTIONS FILE AND THE WHOLE PROGRAM BREAKS
+ENCRYPTIONENGINE()
+{
+DIALOGAPP=${DIALOG=dialog}
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+$DIALOGAPP --clear --title "Set your preferred encryption engine" \
+        --menu "Please choose encryption engine" 20 51 4 \
+        "LUKS"  "LUKS (Linux and DragonFlyBSD)" \
+        "TRUECRYPT" "Truecrypt (TCPLAY) (Linux and DragonFlyBSD)" \
+        "GELI" "GELI (FreeBSD)" \
+        "CGD" "CGD (NetBSD)" \
+        "BIOCTL"  "BIOCTL (OpenBSD)" \
+        "OPENPGP"  "GNU GPG OPENPGP (GENERIC)" 2> $tempfile.enginemode
+
+retval=$?
+
+choice=`cat $tempfile.enginemode`
+
+case $retval in
+  0)
+    echo "'$choice' is your chosen encryption engine";;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    echo "ESC pressed.";;
+esac
+}
+
+SECURITYMODE()
+{
+DIALOGAPP=${DIALOG=dialog}
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile.securitymode" 0 1 2 5 15
+
+$DIALOGAPP --clear --title "Please choose security mode" \
+        --menu "Do you wish to use a passphrase or a keyfile" 20 51 4 \
+        "PASSPHRASE"  "PASSPHRASE" \
+        "KEYFILE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
+
+retval=$?
+
+choice=`cat $tempfile.securitymode`
+
+case $retval in
+  0)
+    echo "'$choice' is your chosen security mode";;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    echo "ESC pressed.";;
+esac
+}
+
+ENCRYPTIONENGINE
+SECURITYMODE
+

@@ -1,0 +1,9 @@
+# THIS FILE IS INTENTED TO CREATE A DEBUGGING FACILITY
+# IT CAN BE MODIFIED TO THE SPECIFIC SITUATION
+DEBUGSTEP()
+{
+echo Debugging enabled
+date +20%y.%m%h.%s
+set >LUKSUS.debug.`date +20%y.%m%h.%s`
+sleep 1s
+}
