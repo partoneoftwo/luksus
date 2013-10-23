@@ -58,3 +58,11 @@ esac
 ENCRYPTIONENGINE
 SECURITYMODE
 
+#!/bin/sh
+if [ -z $DISPLAY ]
+then
+DIALOG=dialog
+ else
+  DIALOG=kdialog
+ fi
+$DIALOG --yesno "Is this fun" 0 0
