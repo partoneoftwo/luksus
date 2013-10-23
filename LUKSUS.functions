@@ -5,7 +5,7 @@ DEVICESET()
 {
 device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to
 create encrypted volume on.\nExample:\n/dev/sdd1\n\nTo create an encrypted filecontainer
-use a loopbackdevice.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
+use a LOOPBACKDEVICE.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
 (DragonFlyBSD)\n
 /dev/md0 (FreeBSD)\n 
 /dev/vnd0 (NetBSD)\n" 0 0 3>&1 1>&2 2>&3)
@@ -24,11 +24,11 @@ name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname 
 
 LUKSFILESET()
 {
-if [[ $loopbackdevice == false ]]
+if [[ $LOOPBACKDEVICE == false ]]
 then
 echo Okay. Using a physical device.
 else
-$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "Loopbackdevice detected!\nYou have specified a loopbackdevice and want to create
+$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "LOOPBACKDEVICE detected!\nYou have specified a LOOPBACKDEVICE and want to create
 a filecontainer." 0 0
 luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are
 creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be
@@ -47,27 +47,6 @@ desired size of the encrypted file container. \n\nExample: 100M or 25G" $dialogs
 fi
 }
 
-#SECURITYMODE()
-#{
-#$dialogapp --title "$programname $version" --yesno "\nPASSPHRASE OR KEYFILE
-#\n \n \nDO YOU WISH TO USE A PASSPHRASE TO PROTECT THE VOLUME OR KEYFILE?
-#" 0 0;
-#        case $? in 
-#            0)
-#
-#            ;;
-#            1)
-#                echo "Will use passphrase";
-#                set USEKEY=false
-#            ;;
-#            255)
-#                echo "Box closed"
-#            ;;
-#        esac;
-#    else
-#        echo "";
-#    fi
-#}
 
 NEXT()
 {
@@ -165,7 +144,7 @@ ASKUSERVERIFYCONSOLE ()
     echo HEADER BACKUP: $headerbackup;
     echo USING KEYFILE: $USEKEY;
     echo KEYFILE: $keyfile;
-    echo LOOPBACK: $loopbackdevice;
+    echo LOOPBACK: $LOOPBACKDEVICE;
     echo OS: $UNAME;
     echo;
     echo JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE;
@@ -286,17 +265,17 @@ $dialogapp --textbox $keydir/$name.information 0 0;
 
 DONTSHREDIFLOOPBACK () 
 { 
-    if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]; then
+    if [[ $LOOPBACKDEVICE == false ]] && [[ $UNAME == Linux ]]; then
         echo "Okay we are using a physical device $device ...";
         echo Shredding ...;
         shred -f -v -n1 $device || gshred -f -v -n1 $device;
     else
-        if [[ $loopbackdevice == false ]] && [[ UNAME == DragonFly ]]; then
+        if [[ $LOOPBACKDEVICE == false ]] && [[ UNAME == DragonFly ]]; then
             echo On DragonFlyBSD. Okay cool.;
             echo in the middle of the shredding.place;
             gshred -f -v -n1 $device;
         else
-            if [[ $loopbackdevice == false ]] && [[ $UNAME == FreeBSD ]]; then
+            if [[ $LOOPBACKDEVICE == false ]] && [[ $UNAME == FreeBSD ]]; then
                 echo On FreeBSD. Okay cool.;
                 echo in the middle of the shredding.place;
                 gshred -f -v -n1 $device;
@@ -399,7 +378,7 @@ HEADER BACKUP: $headerbackup\n
 FILECONTAINER LOCATION: $luksfile\n
 FILECONTAINER SIZE: $luksfilesize\n
 USING KEYFILE: $USEKEY\n
-LOOPBACKDEVICE: $loopbackdevice\n
+LOOPBACKDEVICE: $LOOPBACKDEVICE\n
 OS: $UNAME\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
 " 0 0;
@@ -430,14 +409,14 @@ GRAPHICALWELCOME ()
 
 LOOPBACKMETHOD () 
 { 
-    if [[ $loopbackdevice == true ]] && [[ $UNAME == Linux ]]; then
+    if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == Linux ]]; then
         echo Beginning loopbackmethod on $device;
         head -c $luksfilesize /dev/zero > $luksfile;
         losetup -f 1>/dev/null 2> /dev/null;
         losetup $device $luksfile;
         loopbackhelp="losetup $device $luksfile";
     else
-        if [[ $loopbackdevice == true ]] && [[ $UNAME == DragonFly ]]; then
+        if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == DragonFly ]]; then
             echo DragonFlyBSD - Nice...;
             echo Beginning loopbackmethod on $device;
             ghead -c $luksfilesize /dev/zero > $luksfile;
@@ -445,7 +424,7 @@ LOOPBACKMETHOD ()
             vnconfig $device $luksfile;
             loopbackhelp="vnconfig $device $luksfile";
         else
-            if [[ $loopbackdevice == true ]] && [[ $UNAME == FreeBSD ]]; then
+            if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == FreeBSD ]]; then
                 echo FreeBSD - Nice...;
                 ghead /dev/zero -c $luksfilesize > $luksfile;
                 mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
@@ -459,18 +438,18 @@ LOOPBACKMETHOD ()
 LOOPBACKTEST () 
 { 
     if [[ $device == *loop* ]]; then
-        loopbackdevice=true;
+        LOOPBACKDEVICE=true;
     else
         if [[ $device == *vn* ]]; then
-            loopbackdevice=true;
+            LOOPBACKDEVICE=true;
         else
             if [[ $device == *md* ]]; then
-                loopbackdevice=true;
+                LOOPBACKDEVICE=true;
             else
                 if [[ $device == *vnd* ]]; then
-                    loopbackdevice=true;
+                    LOOPBACKDEVICE=true;
                 else
-                    loopbackdevice=false;
+                    LOOPBACKDEVICE=false;
                 fi;
             fi;
         fi;

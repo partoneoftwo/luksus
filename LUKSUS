@@ -64,12 +64,13 @@ fi
 # ITS OWN SOURCE, SINCE THE   #
 # MAIN FUNCTIONS FILE EASILY  #
 # BREAK WHEN THINGS ARE ADDED #
+# REMOVE COMMENTS TO ENABLE   #
 ###############################
-if [ -r LUKSUS.debug ]; then
-	source LUKSUS.debug
-else
-	exit 1
-fi
+#if [ -r LUKSUS.debug ]; then
+#	source LUKSUS.debug
+#else
+#	exit 1
+#fi
 
 
 
@@ -83,7 +84,7 @@ fi
 #########################################################
 #########################################################
 
-trap 'exithousekeeping'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
+trap 'EXITHOUSEKEEPING'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
 
 # Calling functions
 DEBUGSTEP
