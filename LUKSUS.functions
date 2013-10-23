@@ -11,10 +11,9 @@ use a loopbackdevice.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
 /dev/vnd0 (NetBSD)\n" 0 0 3>&1 1>&2 2>&3)
 }
 
-exithousekeeping()
+EXITHOUSEKEEPING()
 {
 rm *.$$
-set >luksus.environment #REMOVE WHEN DONE - USED FOR DEBUGGING PURPOSES
 }
 
 
@@ -278,6 +277,13 @@ DISPLAYSUMMARY ()
     time2="$(date +%s.%N)";
     ls -l $device
 }
+
+DISPLAYSUMMARYGRAPHICAL ()
+{
+$dialogapp --textbox $keydir/$name.information 0 0;
+}
+
+
 DONTSHREDIFLOOPBACK () 
 { 
     if [[ $loopbackdevice == false ]] && [[ $UNAME == Linux ]]; then
