@@ -288,6 +288,8 @@ Improve LUKSUS output in Dialog window, remove keyfile information
 if the user is not using a keyfile.
 Add mount command and losetup/vnconfig to key.information for added usability
 
+Consider using GNOME GDIALOG. This would make the script graphical,
+and sexy. Must be tested thoroughly.
 Improve the actual output, if not using keyfile, then don't show
 the empty variables to the dialog screen... 
 
@@ -306,7 +308,7 @@ Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
 
 Improve this script to make it working (NetBSD cgdconfig)
-# The above lines almost make cgdconfig work... still have to work it out
+# The below lines almost make cgdconfig work... still have to work it out
 #!/usr/pkg/bin/bash -x
 #### The netbsd CGD drive encryption method is really arcane.
 
@@ -411,6 +413,11 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
+
+V1.2.9 14:50 23.10.2013
+Great strides has been taken to improve the code.
+Added a debug mode
+
 
 v1.2.8 19:25 17.10.2013
 +Very nice looking menu created
