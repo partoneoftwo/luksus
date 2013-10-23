@@ -7,8 +7,7 @@
 # fancy website:
 # http://thomasfrivold.github.io/luksus
 #
-# please see README file for complete information
-# regarding LUKSUS
+# please see README file for complete information regarding LUKSUS
 # 
 # LUKSUS is released under GNU GPLv2 License
 # see URL http://www.gnu.org/licenses/gpl-2.0.html 
@@ -64,13 +63,13 @@ fi
 # ITS OWN SOURCE, SINCE THE   #
 # MAIN FUNCTIONS FILE EASILY  #
 # BREAK WHEN THINGS ARE ADDED #
-# REMOVE COMMENTS TO ENABLE   #
+# set DEBUGSTEP=DEBUGSTEP in variables to enable#
 ###############################
-#if [ -r LUKSUS.debug ]; then
-#	source LUKSUS.debug
-#else
-#	exit 1
-#fi
+if [ -r LUKSUS.debug ]; then
+	source LUKSUS.debug
+else
+	exit 1
+fi
 
 
 
