@@ -89,7 +89,7 @@ do
 
 # Dialog utility to display options list
 
-    dialog --cancel-label "EXIT LUKSUS" --clear --backtitle "$programname $version" --title "" \
+    $dialogapp --cancel-label "EXIT LUKSUS" --clear --backtitle "$programname $version" --title "" \
     --menu "Choose next to proceed or run the wizard again" $dialogsize 10 \
     "NEXT" "CONTINUE LUKSUS, REVIEW AND BEGIN VOLUME CREATION" \
     "WIZARD" "RUN THE WIZARD AGAIN TO SET UP LUKSUS" \
