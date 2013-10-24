@@ -74,7 +74,7 @@ rm *.$$
 
 NAMESET()
 {
-name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume). Example: Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3)
+name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume).\nExample: Mystuff\nNote no special characters or spaces" 0 0 3>&1 1>&2 2>&3)
 }
 
 LUKSFILESET()
@@ -83,11 +83,8 @@ if [[ $LOOPBACKDEVICE == false ]]
 then
 echo Okay. Using a physical device.
 else
-$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "LOOPBACKDEVICE detected!\nYou have specified a LOOPBACKDEVICE and want to create
-a filecontainer." 0 0
-luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are
-creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be
-created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
+$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "Loopbackdevice has been detected!\nYou have specified a loopbackdevice and want to create a filecontainer." 0 0
+luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
 fi
 }
 
@@ -401,25 +398,6 @@ GELIOPEN ()
         fi;
     fi
 }
-GRAPHICAL () 
-{ 
-    if [[ $GOGRAPHICAL = 1 ]]; then
-        device=$($dialogapp --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" $dialogsize 3>&1 1>&2 2>&3);
-        name=$($dialogapp --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" $dialogsize 3>&1 1>&2 2>&3);
-        luksfile=$($dialogapp --inputbox "Full path of encrypted volume. No spaces or special characters. E.g. /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3);
-        luksfilesize=$($dialogapp --inputbox "What is the desired size of the container. E.g. 100M or 25G" $dialogsize 3>&1 1>&2 2>&3);
-        keyfile=/keys/$name.key
-        headerbackup=/keys/$name.header
-        mountpoint=/mnt/$name
-fi
-
-$dialogapp --menu "Choose method to lock the encrypted volume" $dialogsize 2 \
-               KEYFILE "Use a keyfile. This will be generated for you." off  \
-               TRUECRYPT "Use a password. Popular choice."   on   \
-               2>SECUREMODE.$$
-
-
-}
 GRAPHICALVERIFYCHOICES () 
 { 
     if [[ $GOGRAPHICAL = 1 ]]; then
@@ -434,7 +412,7 @@ KEYFILE:       $keyfile \n
 HEADER BACKUP: $headerbackup\n
 FILECONTAINER LOCATION: $luksfile\n
 FILECONTAINER SIZE: $luksfilesize\n
-USING KEYFILE: $USEKEY\n
+SECURITYMODE: $SECURITYMODE\n
 LOOPBACKDEVICE: $LOOPBACKDEVICE\n
 OS: $UNAME\n\n
 ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
