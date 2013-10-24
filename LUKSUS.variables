@@ -26,4 +26,4 @@ NEXT=false
 DIALOGAPPOPTIONS="--no-cancel --backtitle $programname"
 #DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle $programname $version --title "$version""
 # Set DEBUGSTEP=DEBUGSTEP to enable debugging
-DEBUGSTEP=DEBUGSTEP
+DEBUGSTEP=
