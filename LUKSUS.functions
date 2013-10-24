@@ -32,7 +32,7 @@ choice=$(cat $tempfile.enginemode)
 ENCRYPTION=$(cat $tempfile.enginemode)
 case $retval in
   0)
-    echo "'$choice' is your chosen encryption engine";;
+    $dialogapp --msgbox "Encryption engine chosen: $choice" 0 0;;
   1)
     echo "Cancel pressed.";;
   255)
@@ -48,16 +48,16 @@ trap "rm -f $tempfile.securitymode" 0 1 2 5 15
 
 $DIALOGAPP --clear --title "Please choose security mode" \
         --menu "Do you wish to use a passphrase or a keyfile" 20 51 4 \
-        "FALSE"  "PASSPHRASE" \
-        "TRUE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
+        "PASSPHRASE"  "PASSPHRASE" \
+        "KEYFILE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
 
 retval=$?
 
 choice=$(cat $tempfile.securitymode)
-USEKEY=$(cat $tempfile.securitymode)
+SECURITYMODE=$(cat $tempfile.securitymode)
 case $retval in
   0)
-    echo "'$choice' is your chosen security mode";;
+    $dialogapp --msgbox "You chose the following security for your volume: $choice" 0 0;;
   1)
     echo "Cancel pressed.";;
   255)
@@ -199,7 +199,7 @@ ASKUSERVERIFYCONSOLE ()
     echo NAME: $name;
     echo MOUNTPOINT: $mountpoint;
     echo HEADER BACKUP: $headerbackup;
-    echo USING KEYFILE: $USEKEY;
+    echo SECURITY MODE: $SECURITYMODE;
     echo KEYFILE: $keyfile;
     echo LOOPBACK: $LOOPBACKDEVICE;
     echo OS: $UNAME;
@@ -215,7 +215,7 @@ ASKUSERVERIFYCONSOLE ()
 
 CGD () 
 { 
-    if [[ $ENCRYPTION == CGD ]] && [[ $USEKEY == false ]]; then
+    if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Initializing $device with $ENCRYPTION;
         cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
         cgdconfig -g -o $keydir/$name aes-cbc 256;
@@ -260,7 +260,7 @@ CREATEANDMOUNTFS ()
 }
 CREATEKEYFILE () 
 { 
-    if [[ $USEKEY == true ]]; then
+    if [[ $SECURITYMODE == KEYFILE ]]; then
         echo Creating key;
         dd if=/dev/urandom of=$keyfile bs=512 count=256;
     else
@@ -297,7 +297,7 @@ DISPLAYSUMMARY ()
     echo Results of LUKSUS:;
     echo DRIVE: $device;
     echo NAME: $name;
-    echo USED KEYFILE: $USEKEY;
+    echo SECURITYMODE: $SECURITYMODE;
     echo KEYFILE: $keyfile;
     echo MOUNTPOINT: $mountpoint;
     echo HEADER BACKUP: $headerbackup;
@@ -367,7 +367,7 @@ FREEBSDHOUSEKEEPING ()
 }
 GELI () 
 { 
-    if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]; then
+    if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Initializing $device with $ENCRYPTION;
         geli init -B $headerbackup -s 4096 $device;
     else
@@ -376,7 +376,7 @@ GELI ()
 }
 GELIKEYFILE () 
 { 
-    if [[ ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]; then
+    if [[ ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Initializing $device with $ENCRYPTION with a keyfile;
         geli init -B $headerbackup -p -s 4096 -K $keyfile $device;
     else
@@ -385,13 +385,13 @@ GELIKEYFILE ()
 }
 GELIOPEN () 
 { 
-    if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == true ]]; then
+    if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
         geli attach -k $keyfile $device;
         cryptoinithelp="geli attach -k $keyfile $device";
         VOLUMESTATUS=$(geli dump $name);
     else
-        if [[ $ENCRYPTION == GELI ]] && [[ $USEKEY == false ]]; then
+        if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
             echo Attempting to open the newly created $ENCRYPTION volume $name;
             geli attach $device;
             cryptoinithelp="geli attach $device";
@@ -514,7 +514,7 @@ LOOPBACKTEST ()
 }
 LUKS () 
 { 
-    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]]; then
+    if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo LUKS with passphrase;
         echo You will only be prompted for a password once. Type carefully.;
         cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
@@ -524,7 +524,7 @@ LUKS ()
 }
 LUKSKEYFILE () 
 { 
-    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY = true ]]; then
+    if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE = KEYFILE ]]; then
         echo LUKS mode;
         cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile;
     else
@@ -533,13 +533,13 @@ LUKSKEYFILE ()
 }
 LUKSOPEN () 
 { 
-    if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == true ]]; then
+    if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
         cryptsetup luksOpen $device $name --key-file=$keyfile;
         cryptoinithelp="cryptsetup luksOpen $device $name --key-file=$keyfile";
         VOLUMESTATUS=$(cryptsetup status $name);
     else
-        if [[ $ENCRYPTION == LUKS ]] && [[ $USEKEY == false ]]; then
+        if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
             echo Attempting to open the newly created $ENCRYPTION volume $name;
             cryptsetup luksOpen $device $name;
             cryptoinithelp="cryptsetup luksOpen $device $name";
@@ -600,7 +600,7 @@ OSTEST ()
 }
 TRUECRYPT () 
 { 
-    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo TrueCrypt mode;
         tcplay --create --device=$device --cipher=AES-256-XTS;
     else
@@ -609,7 +609,7 @@ TRUECRYPT ()
 }
 TRUECRYPTKEYFILE () 
 { 
-    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]]; then
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo TrueCrypt mode and adding a keyfile;
         tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile;
     else
@@ -618,13 +618,13 @@ TRUECRYPTKEYFILE ()
 }
 TRUECRYPTOPEN () 
 { 
-    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Attempting to open and mount the newly created Truecrypt encrypted volume;
         tcplay -m $name -d $device;
         cryptoinithelp="tcplay -m $name -d $device";
         VOLUMESTATUS=$(cryptsetup status $name);
     else
-        if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == true ]]; then
+        if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
             echo Attempting to open newly created Truecrypt volume $name;
             tcplay -m $name -d $device -k $keyfile;
             cryptoinithelp="tcplay -m $name -d $device -k $keyfile";
