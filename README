@@ -236,14 +236,14 @@ put these new engine* functions into the main LUKSUS bootstrap-file
 TEST TEST TEST! It is easy to break things, so it is very important to
 test a lot.
 
-Release preparation stuff to do:
+Q: What are the release preparations for LUKSUS?
+A: Release preparation stuff to do:
 * Complete the extensive test procedure:
 Test in virtualbox:
 4 different Linux distributions, Debian, CentOS, Arch, Ubuntu.
 FreeBSD
 DragonFlyBSD
 NetBSD
-
 Must pass both tests:
 Create volume on a physical drive (Virtualbox is fine)
 Create volume on a virtual file container (if supported by os)
@@ -262,15 +262,6 @@ Consider posting elsewhere
 ###################TODO ##############################
 ########################################################
 
-Implement a use of the oschecker in the encryption engine choice:
-if linux then display available encryption engines
-if freebsd then present available encryption engines
-if netbsd then present available encryption engines
-if dragonflybsd then present available encryption engines
-
-Make the encryption engine choice work
-Make the passphrase or keyfile stuff work
-Focus and improve the user experience
 
 Project overall todo:
 Get user feedback, feature requests
@@ -426,6 +417,10 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
+
+v1.2.20 00:45 25.10.2013
++The menu system is now complete.
++Code improvements
 
 V1.2.9 14:50 23.10.2013
 Great strides has been taken to improve the code.
