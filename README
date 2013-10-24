@@ -262,10 +262,26 @@ Consider posting elsewhere
 ###################TODO ##############################
 ########################################################
 
+Implement a use of the oschecker in the encryption engine choice:
+if linux then display available encryption engines
+if freebsd then present available encryption engines
+if netbsd then present available encryption engines
+if dragonflybsd then present available encryption engines
+
+Make the encryption engine choice work
+Make the passphrase or keyfile stuff work
+Focus and improve the user experience
+
+Project overall todo:
+Get user feedback, feature requests
+Dare to post it to "Show Hackernews" (news.ycombinator.com)
+Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
+list, FreeBSD users list 
+
 
 
 Engines todo:
-Add NetBSD support, cgd
+Add NetBSD support, cgd [50% done!]
 Add OpenBSD , bioctl support
 Add PGP / OpenPGP container support (maybe, if feasible)
 Add ecryptfs container support (maybe, if feasible)
@@ -277,19 +293,21 @@ Fix keyfile handling with GELI - Skip passphrase, and use key
 Test keyfile handling properly with GELI
 
 # User interaction things
-Let the user get back into the menu when asked if the options are
-correct.
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
 Add LUKSUS status to key.information
 Improve LUKSUS output in Dialog window, remove keyfile information
 if the user is not using a keyfile.
-Add mount command and losetup/vnconfig to key.information for added usability
-
-Consider using GNOME GDIALOG. This would make the script graphical,
-and sexy. Must be tested thoroughly.
 Improve the actual output, if not using keyfile, then don't show
 the empty variables to the dialog screen... 
+
+
+Add mount command and losetup/vnconfig to key.information for added usability
+
+Consider using GNOME GDIALOG OR ZENITY OR YAD. 
+This would make the script graphical. Consider how to
+ask the user about this. ** Must be tested thoroughly. **
+
 
 Write a proper Jekyll Markdown Github page for the readme.
 
@@ -299,12 +317,9 @@ Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
 create a stronbox, this should rather become a part of the README
 file. And it should become a suggestion)
 
-Project overall todo:
-Get user feedback, feature requests
-Dare to post it to "Show Hackernews" (news.ycombinator.com)
-Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
-list, FreeBSD users list 
 
+*** ADD NETBSD SUPPORT ***
+*** PRELIMINARY WORK ON THIS BELOW ***
 Improve this script to make it working (NetBSD cgdconfig)
 # The below lines almost make cgdconfig work... still have to work it out
 #!/usr/pkg/bin/bash -x
@@ -414,8 +429,7 @@ v1.3.0
 
 V1.2.9 14:50 23.10.2013
 Great strides has been taken to improve the code.
-Added a debug mode
-
+Added a debug mode, can be enabled in the VARIABLES section. Devs only.
 
 v1.2.8 19:25 17.10.2013
 +Very nice looking menu created
