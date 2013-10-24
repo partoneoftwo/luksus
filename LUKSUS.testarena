@@ -1,6 +1,7 @@
 # FUNCTIONS FILE FOR WRITING NEW FUNCTIONS TO THE APPLICATION
 # THIS FILE EXISTS BECAUSE WRITING NEW CODE EASILY BREAKS THE MAIN
 # FUNCTIONS FILE AND THE WHOLE PROGRAM BREAKS
+
 ENCRYPTIONENGINE()
 {
 DIALOGAPP=${DIALOG=dialog}
@@ -30,39 +31,35 @@ case $retval in
 esac
 }
 
-SECURITYMODE()
-{
-DIALOGAPP=${DIALOG=dialog}
-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
-trap "rm -f $tempfile.securitymode" 0 1 2 5 15
 
-$DIALOGAPP --clear --title "Please choose security mode" \
-        --menu "Do you wish to use a passphrase or a keyfile" 20 51 4 \
-        "PASSPHRASE"  "PASSPHRASE" \
-        "KEYFILE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
-
-retval=$?
-
-choice=`cat $tempfile.securitymode`
-
-case $retval in
-  0)
-    echo "'$choice' is your chosen security mode";;
-  1)
-    echo "Cancel pressed.";;
-  255)
-    echo "ESC pressed.";;
-esac
+    if [[ $UNAME = Linux ]]; then
+    echo DETECTED OS: $UNAME
+    echo These are the available encryption engines
+    echo Please pick one.
+    echo This choice can be overridden by choosing something else
+    echo in the Main Menu.
+    
+        ENCRYPTION=LUKS;
+        echo On $UNAME, defaulting to $ENCRYPTION;
+    else
+        if [[ $UNAME = DragonFly ]]; then
+            ENCRYPTION=LUKS;
+            echo On $UNAME, defaulting to $ENCRYPTION;
+        else
+            if [[ $UNAME = FreeBSD ]]; then
+                ENCRYPTION=GELI;
+                echo On $UNAME, Encryption set to $ENCRYPTION;
+            else
+                if [[ $UNAME = NetBSD ]]; then
+                    ENCRYPTION=CGD;
+                else
+                    ENCRYPTION=LUKSUS;
+                    echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION;
+                fi;
+            fi;
+        fi;
+    fi
 }
-
-ENCRYPTIONENGINE
-SECURITYMODE
-
-#!/bin/sh
-if [ -z $DISPLAY ]
-then
-DIALOG=dialog
- else
-  DIALOG=kdialog
- fi
-$DIALOG --yesno "Is this fun" 0 0
+TRUECRYPT () 
+{ 
+    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
