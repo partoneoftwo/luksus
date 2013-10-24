@@ -28,8 +28,8 @@ $DIALOGAPP --clear --title "Set your preferred encryption engine" \
 
 retval=$?
 
-choice=`cat $tempfile.enginemode`
-
+choice=$(cat $tempfile.enginemode)
+ENCRYPTION=$(cat $tempfile.enginemode)
 case $retval in
   0)
     echo "'$choice' is your chosen encryption engine";;
@@ -48,13 +48,13 @@ trap "rm -f $tempfile.securitymode" 0 1 2 5 15
 
 $DIALOGAPP --clear --title "Please choose security mode" \
         --menu "Do you wish to use a passphrase or a keyfile" 20 51 4 \
-        "PASSPHRASE"  "PASSPHRASE" \
-        "KEYFILE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
+        "FALSE"  "PASSPHRASE" \
+        "TRUE" "KEYFILE (WILL BE GENERATED FOR YOU)" 2> $tempfile.securitymode
 
 retval=$?
 
-choice=`cat $tempfile.securitymode`
-
+choice=$(cat $tempfile.securitymode)
+USEKEY=$(cat $tempfile.securitymode)
 case $retval in
   0)
     echo "'$choice' is your chosen security mode";;
@@ -127,9 +127,9 @@ program before $programname does any heavywork." 0 0
 WIZARD()
 {
 # RUN THROUGH THE LUKSUS-WIZARD
+ENCRYPTIONENGINE
 DEVICESET
 LOOPBACKTEST
-ENCRYPTIONENGINE
 LUKSFILESET
 LUKSFILESIZESET
 NAMESET
