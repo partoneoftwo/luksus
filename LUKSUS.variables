@@ -25,4 +25,5 @@ ENCRYPTION=LUKS
 NEXT=false
 DIALOGAPPOPTIONS="--no-cancel --backtitle $programname"
 #DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle $programname $version --title "$version""
-DEBUGSTEP=true
+# Set DEBUGSTEP=DEBUGSTEP to enable debugging
+DEBUGSTEP=DEBUGSTEP

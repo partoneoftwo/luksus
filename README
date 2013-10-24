@@ -135,8 +135,7 @@ geli init -s 4096 $device
 
 
 Q: Why are we using the AES-256 cipher?
-A: 
-It is thoroughly vetted and impossible to crack unless Quantum
+A: It is thoroughly vetted and impossible to crack unless Quantum
 Computers become a reality.
 http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
 
@@ -180,21 +179,20 @@ A: an empty hardrive or storage media
    
    On Linux:
    bash
-   dialog
+   dialog or whiptail
    cryptsetup
    tcplay
+   gnutools
+   
    
    On *BSD:
    bash
    coreutils
-   dialog
+   dialog or whiptail
    
    tcplay - If you want to encrypt using truecrypt, then install the
    tcplay package.
 
-   dialog - If you want to get a nice dialog interface giving you some
-   options and runtime information. Puritans say NO here, dialog is
-   optional.
 
 DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
 from the repositories. "pkg_radd bash dialog coreutils tcplay" 

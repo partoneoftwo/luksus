@@ -82,7 +82,6 @@ fi
 #########################################################
 #########################################################
 #########################################################
-dialogapp=gdialog
 trap 'EXITHOUSEKEEPING'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
 $DEBUGSTEP
 
@@ -100,6 +99,7 @@ $DEBUGSTEP
 MENUSYSTEM
 $DEBUGSTEP
 GRAPHICALVERIFYCHOICES
+$DEBUGSTEP
 ASKUSERVERIFYCONSOLE # safety check. To be sure.
 
 # PREPARE KEYFILE

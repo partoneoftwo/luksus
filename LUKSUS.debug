@@ -2,7 +2,7 @@
 # IT CAN BE MODIFIED TO THE SPECIFIC SITUATION
 DEBUGSTEP()
 {
-if [[ DEBUGSTEP == true ]]
+if [[ DEBUGSTEP == DEBUGSTEP ]]
 then
 echo Debugging enabled
 date +20%y.%m%h.%s
