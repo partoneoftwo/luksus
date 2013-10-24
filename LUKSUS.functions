@@ -313,7 +313,7 @@ DISPLAYSUMMARY ()
 
 DISPLAYSUMMARYGRAPHICAL ()
 {
-$dialogapp --textbox $keydir/$name.information 0 0;
+$dialogapp --textbox $keydir/$name.information $dialogsize;
 }
 
 
