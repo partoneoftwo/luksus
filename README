@@ -264,6 +264,36 @@ Update jekyll homepage at thomasfrivold.github.io/luksus
 Post to Freshmeat
 Consider posting elsewhere
 
+
+* Uber elite hackers dislike my code and think my project is lame.
+I tell these people they can either fork my project, 
+submit code via github or take a hike to /dev/null.
+In fact it reminds me of when I built an outdoor balcony for
+my mum. Every carpenter came by our house and chimed in on building
+techniques, and without exception they alled condemmed my project
+saying it would fail and that with my building technique the balcony
+would only last one season. Well 10 years on, the balcony is still
+there, the ice and tundra hasn't twisted the wood foundation, and
+it helped raise the value of the appartment by 15000EUR.
+I see the same kind of sentiments from uber-coders about my project,
+and really I don't care.
+The project is thoroughly tested and since I know firsthand that
+everything works, I don't care when they complain about wasting computer
+cycles and doing things more efficiently. It's a bash script, not
+rocket science. So I code pragmatically and improve over time.
+
+* Whiptail seems to have unstable commandline options, and it seems
+to break randomly. I am considering eliminating whiptail support
+after all the pain involved in seeing where it isn't compatible with
+dialog.
+
+
+* Some engines do not support keyfiles, and yet I let the user
+specify keyfile usage with these engines. This needs to be fixed,
+just so that the user experience is smoother.
+
+
+
 ########################################################
 ###################TODO ##############################
 ########################################################

@@ -289,7 +289,7 @@ DISPLAYLOGO ()
 
 DISPLAYSUMMARY () 
 { 
-    echo;
+    echo "All the following information can be found in $keydir/$name.information";
     date;
     echo Results of LUKSUS:;
     echo DRIVE: $device;
@@ -313,7 +313,9 @@ DISPLAYSUMMARY ()
 
 DISPLAYSUMMARYGRAPHICAL ()
 {
-$dialogapp --textbox $keydir/$name.information $dialogsize;
+$dialogapp --msgbox "All the following information can be found
+in\n$keydir/$name.information" 0 0;
+$dialogapp --textbox $keydir/$name.information 0 0;
 }
 
 
