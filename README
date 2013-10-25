@@ -87,6 +87,12 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    NetBSD disk encryption description: http://www.imrryr.org/~elric/cgd/cgd.pdf
    NetBSD cgd author interview: http://www.onlamp.com/pub/a/bsd/2005/12/21/netbsd_cgd.html
 
+   Bash and sh guides:
+   Michael Potter, Advanced Shell Scripting, http://uniforum.chi.il.us/slides/bash1.pdf
+   Steve Parker, Bourne Shell Programming Tutorial, http://steve-parker.org/sh/sh.shtml
+   Cooper, Advanced Bash Guide, http://www.tldp.org/LDP/abs/html/
+   Greg's Wiki, BashFAQ, http://mywiki.wooledge.org/BashFAQ
+
 Q: How is the script designed?
 A: The script reuses code wherever possible and is heavily built around reusable variables.
 The script works like this:

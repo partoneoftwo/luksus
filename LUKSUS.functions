@@ -83,7 +83,7 @@ if [[ $LOOPBACKDEVICE == false ]]
 then
 echo Okay. Using a physical device.
 else
-$dialogapp $DIALOGAPPOPTIONS --exit-label "PROCEED" --title $programname --msgbox "Loopbackdevice has been detected!\nYou have specified a loopbackdevice and want to create a filecontainer." 0 0
+$dialogapp $DIALOGAPPOPTIONS --title $programname --msgbox "Loopbackdevice has been detected!\nYou have specified a loopbackdevice and want to create a filecontainer." 0 0
 luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
 fi
 }
