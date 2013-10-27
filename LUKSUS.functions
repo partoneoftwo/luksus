@@ -67,8 +67,8 @@ esac
 
 TRAPERR()
 {
-    echo "ERROR: ${BASH_SOURCE[1]} '' \
-    ''at about line ${BASH_LINENO[0]}"
+    echo "ERROR: ${BASH_SOURCE[1]} "" \
+    ""at about line ${BASH_LINENO[0]}"
 }
 
 EXITHOUSEKEEPING()
