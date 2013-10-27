@@ -82,7 +82,13 @@ fi
 #########################################################
 #########################################################
 #########################################################
-trap 'EXITHOUSEKEEPING'  EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
+set -o noclobber
+set -o errtrace
+set -o errexit
+set -o pipefail
+trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
+trap traperr ERR
+
 $DEBUGSTEP
 
 # Calling functions

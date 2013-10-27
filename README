@@ -26,7 +26,8 @@ Instead of having to read up on the documentation for these
 tools, I wrote this wrapper script to handle the dirtywork.
 Being opinionated and pragmatic this program assumes that you (must)
 have: dialog or whiptail, gnutools / coretools , and a supported
-encryption engine installed.
+encryption engine installed. On Linux this is either found in the
+cryptsetup package for LUKS support and tcplay for Truecrypt support.
 
 # USAGE
 
@@ -35,6 +36,24 @@ encryption engine installed.
 
 
 # FAQ:
+Q: What's in the secret sauce?
+This is the gist of the encryption process is this command:
+
+LUKS
+cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
+
+Truecrypt (tcplay)
+tcplay --create --device=$device --cipher=AES-256-XTS
+
+Geli (FreeBSD)
+geli init -s 4096 $device
+
+
+Q: Why are we using the AES-256 cipher?
+A: It is thoroughly vetted and impossible to crack unless Quantum
+Computers become a reality.
+http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
+
 Q: I really want to learn more about crypto in Linux. Where should I start?
 A: This Kiwi guy wrote a series of excellent blog posts covering Linux
 crypto software and usage of these. I highly recommend reading through them:
@@ -128,23 +147,6 @@ Q: I lost the key or the password, is there a way to restore the key
 if I forgot it?
 A: No. Really. No.
 
-Q: What's in the secret sauce?
-This is the gist of the encryption process is this command:
-
-LUKS
-cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
-
-Truecrypt (tcplay)
-tcplay --create --device=$device --cipher=AES-256-XTS
-
-Geli (FreeBSD)
-geli init -s 4096 $device
-
-
-Q: Why are we using the AES-256 cipher?
-A: It is thoroughly vetted and impossible to crack unless Quantum
-Computers become a reality.
-http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
 
 Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
 A: Good question, some crypto wizards gave me this answer: -
@@ -454,6 +456,10 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
+
+v1.2.40 21:30 27.10.2013
+Whiptail options are unstable and troublesome. Support removed until later
+notice, relying on dialog.
 
 v1.2.20 00:45 25.10.2013
 +The menu system is now complete.
