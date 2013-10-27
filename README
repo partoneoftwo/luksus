@@ -56,7 +56,8 @@ A: I wrote this script because I wanted to have a way to easily and casually cre
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
    license. Please let me know if the GPLv2 makes it hard for you to use it, and I
-   will consider adding an extra license or changing it.
+   will consider adding an extra license or changing it. Perhaps
+   changing to MIT license.
 
 Q: Why should I encrypt?
 A: It is beyond the scope of this README to go indepth. 
@@ -269,7 +270,7 @@ Consider posting elsewhere
 I tell these people they can either fork my project, 
 submit code via github or take a hike to /dev/null.
 In fact it reminds me of when I built an outdoor balcony for
-my mum. Every carpenter came by our house and chimed in on building
+my mum. Every carpenter in the neighbourhood came by our house and chimed in on building
 techniques, and without exception they alled condemmed my project
 saying it would fail and that with my building technique the balcony
 would only last one season. Well 10 years on, the balcony is still
@@ -277,6 +278,7 @@ there, the ice and tundra hasn't twisted the wood foundation, and
 it helped raise the value of the appartment by 15000EUR.
 I see the same kind of sentiments from uber-coders about my project,
 and really I don't care.
+
 The project is thoroughly tested and since I know firsthand that
 everything works, I don't care when they complain about wasting computer
 cycles and doing things more efficiently. It's a bash script, not
@@ -286,7 +288,6 @@ rocket science. So I code pragmatically and improve over time.
 to break randomly. I am considering eliminating whiptail support
 after all the pain involved in seeing where it isn't compatible with
 dialog.
-
 
 * Some engines do not support keyfiles, and yet I let the user
 specify keyfile usage with these engines. This needs to be fixed,

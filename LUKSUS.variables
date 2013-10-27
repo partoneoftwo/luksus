@@ -23,8 +23,9 @@ USEKEY=false
 freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
 ENCRYPTION=LUKS
 NEXT=false
-DIALOGAPPOPTIONS="--nocancel"
+#DIALOGAPPOPTIONS="--nocancel"
 #DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle $programname $version --title "$version""
 #--exit-label "PROCEED"
 # Set DEBUGSTEP=DEBUGSTEP to enable debugging
 DEBUGSTEP=
+dialogapp=dialog

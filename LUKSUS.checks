@@ -1,6 +1,6 @@
 # DOING CONDITIONAL CHECKING
 # CHECKING IF RUNTIME ARGUMENTS ARE COOL
-## Testing if the user has any options for LUKSUS. These should
+# Testing if the user has any options for LUKSUS. These should
 # probably be ported to GETOPTS code, but it has to stay like this for
 # now. Will fix later, maybe, one day.
 if [ -z "$1" ]
@@ -74,15 +74,17 @@ echo Using passphrase
 USEKEY=false
 fi
 
+# WHIPTAIL SUPPORT IS TEMPORARILY REMOVED. IT REALLY IS LACKING A LOT
+# OF DIALOG FEATURES.
 ## Dialog/Whiptail test - see which one to use
 # check whether whiptail or dialog is installed
-read dialogapp <<< "$(which whiptail dialog 2> /dev/null)"
-
+#read dialogapp <<< "$(which whiptail dialog 2> /dev/null)"
+#
 # exit if none found
-[[ "$dialogapp" ]] || {
-  echo 'neither whiptail nor dialog found' >&2
-  exit 1
-}
+#[[ "$dialogapp" ]] || {
+#  echo 'neither whiptail nor dialog found' >&2
+#  exit 1
+#}
 
 # just use whichever was found
 # This is only cool for the dev himself # "$dialogapp" --msgbox "Message displayed with $dialogapp" 0 0

@@ -1,12 +1,21 @@
 # FUNCTIONS FILE FOR WRITING NEW FUNCTIONS TO THE APPLICATION
 # THIS FILE EXISTS BECAUSE WRITING NEW CODE EASILY BREAKS THE MAIN
 # FUNCTIONS FILE AND THE WHOLE PROGRAM BREAKS
-
+UNAME=linux
 ENCRYPTIONENGINE()
 {
 DIALOGAPP=${DIALOG=dialog}
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
 trap "rm -f $tempfile" 0 1 2 5 15
+
+if [[ UNAME == Linux ]]
+then
+echo RUNNING LINUX, THESE ARE YOUR OPTIONS
+echo LUKS
+echo TRUECRYPT
+echo OPENPGP
+sleep 30s
+else
 
 $DIALOGAPP --clear --title "Set your preferred encryption engine" \
         --menu "Please choose encryption engine" 20 51 4 \
@@ -29,6 +38,7 @@ case $retval in
   255)
     echo "ESC pressed.";;
 esac
+fi
 }
 
 
