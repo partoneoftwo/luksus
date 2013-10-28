@@ -36,8 +36,16 @@ cryptsetup package for LUKS support and tcplay for Truecrypt support.
 
 
 # FAQ:
-Q: What's in the secret sauce?
-This is the gist of the encryption process is this command:
+Q: Should I trust TrueCrypt?
+A: I have stopped using Truecrypt altogether, and now use LUKS for
+all my security needs.
+
+Take a look here for a review on a proposed
+code review and full audit of the Truecrypt project: http://istruecryptauditedyet.com/
+
+Q: What's in the secret sauce of LUKSUS?
+This is the gist of the encryption process is these commands
+(different for every engine of course):
 
 LUKS
 cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile
@@ -188,7 +196,7 @@ A: an empty hardrive or storage media
    
    On Linux:
    bash
-   dialog or whiptail
+   dialog
    cryptsetup
    tcplay
    gnutools
@@ -197,7 +205,7 @@ A: an empty hardrive or storage media
    On *BSD:
    bash
    coreutils
-   dialog or whiptail
+   dialog
    
    tcplay - If you want to encrypt using truecrypt, then install the
    tcplay package.
@@ -279,12 +287,13 @@ would only last one season. Well 10 years on, the balcony is still
 there, the ice and tundra hasn't twisted the wood foundation, and
 it helped raise the value of the appartment by 15000EUR.
 I see the same kind of sentiments from uber-coders about my project,
-and really I don't care.
+and really I don't care since they are not giving constructive
+feedback such as real suggestions with code suggestions.
 
 The project is thoroughly tested and since I know firsthand that
 everything works, I don't care when they complain about wasting computer
-cycles and doing things more efficiently. It's a bash script, not
-rocket science. So I code pragmatically and improve over time.
+cycles and doing things ultima prime efficient. 
+I code pragmatically and improve over time.
 
 * Whiptail seems to have unstable commandline options, and it seems
 to break randomly. I am considering eliminating whiptail support

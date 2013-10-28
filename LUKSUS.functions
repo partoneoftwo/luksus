@@ -595,7 +595,7 @@ TRUECRYPT ()
 TRUECRYPTKEYFILE () 
 { 
     if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
-        echo TrueCrypt mode and adding a keyfile;
+        echo TrueCrypt mode and adding a keyfile. Truecrypt asks for a password in any case. The container will also have a keyfile;
         tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile;
     else
         echo "";
