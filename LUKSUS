@@ -82,12 +82,12 @@ fi
 #########################################################
 #########################################################
 #########################################################
-# set -o noclobber
 set -o errtrace #enables error trace with trap
 set -o errexit #enables exit tasks with trap
-set -o pipefail #
+set -o pipefail # quit on errorlevel 1
 trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
-trap TRAPERR ERR
+trap TRAPERR ERR # displays where an error occurred
+trap "rm -f $tempfile" 0 1 2 5 15
 
 
 
@@ -186,4 +186,5 @@ DISPLAYSUMMARY
 WRITEINFORMATIONFILE
 DISPLAYSUMMARYGRAPHICAL
 DISPLAYSUMMARY
+EXITHOUSEKEEPING
 exit 0
