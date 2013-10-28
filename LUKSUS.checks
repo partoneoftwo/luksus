@@ -89,6 +89,20 @@ fi
 # just use whichever was found
 # This is only cool for the dev himself # "$dialogapp" --msgbox "Message displayed with $dialogapp" 0 0
 
+### HEAD OR GHEAD TEST
+read HEADAPP <<< "$(which head ghead 2> /dev/null)"
+[[ "$HEADAPP" ]] || {
+  echo 'neither head nor ghead found. Please install gnutools or coretools package' >&2
+  exit 1
+}
+
+### TAIL OR GTAIL TEST
+read TAILAPP <<< "$(which tail gtail 2> /dev/null)"
+[[ "$TAILAPP" ]] || {
+  echo 'neither tail nor gtail found. Please install gnutools or coretools package' >&2
+  exit 1
+}
+
 
 # user wants to force LUKS
 if [[ "$3" = "luks" ]] || [[ "$4" = "luks" ]] || [[ "$5" = "luks" ]] || [[ "$6" = "luks" ]] || [[ "$7" = "luks" ]] || [[ "$8" = "luks" ]] 

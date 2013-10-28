@@ -281,12 +281,12 @@ DEVICEEXISTS ()
 DISPLAYLOGO () 
 { 
     if [ $width -gt 119 ]; then
-        gtail -n 12 LUKSUS.logo 2> /dev/null || tail -n 12 LUKSUS.logo;
-	gtail -n 12 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || tail -n 12 LUKSUS.logo >welcomelogo.$$
+        $TAILAPP -n 12 LUKSUS.logo 2> /dev/null || tail -n 12 LUKSUS.logo;
+	$TAILAPP -n 12 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || tail -n 12 LUKSUS.logo >welcomelogo.$$
 	dialogsize="17 123"
    else
-        ghead -n 6 LUKSUS.logo 2> /dev/null || head -n 6 LUKSUS.logo;
-        ghead -n 6 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || head -n 6 LUKSUS.logo >welcomelogo.$$
+        $HEADAPP -n 6 LUKSUS.logo 2> /dev/null || head -n 6 LUKSUS.logo;
+        $HEADAPP -n 6 LUKSUS.logo 1>welcomelogo.$$ 2> /dev/null || head -n 6 LUKSUS.logo >welcomelogo.$$
         dialogsize="12 60"
    fi
 }
@@ -461,14 +461,14 @@ LOOPBACKMETHOD ()
         if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == DragonFly ]]; then
             echo DragonFlyBSD - Nice...;
             echo Beginning loopbackmethod on $device;
-            ghead -c $luksfilesize /dev/zero > $luksfile;
+            $HEADAPP -c $luksfilesize /dev/zero > $luksfile;
             vnconfig > /dev/null 2> /dev/null;
             vnconfig $device $luksfile;
             loopbackhelp="vnconfig $device $luksfile";
         else
             if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == FreeBSD ]]; then
                 echo FreeBSD - Nice...;
-                ghead /dev/zero -c $luksfilesize > $luksfile;
+                $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
                 mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
                 loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
             else
