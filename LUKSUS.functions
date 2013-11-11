@@ -65,15 +65,13 @@ esac
 
 TRAPERR()
 {
-    echo "ERROR: ${BASH_SOURCE[1]} "" \
+    echo "$programname HAS STOPPED: ${BASH_SOURCE[1]} "" \
     ""at about line ${BASH_LINENO[0]}"
 }
 
 EXITHOUSEKEEPING()
 {
 rm *.$$
-#rm menuchoices.*
-rm welcomelogo.*
 }
 
 
@@ -294,7 +292,7 @@ DISPLAYLOGO ()
 
 DISPLAYSUMMARY () 
 { 
-    echo "All the following information can be found in $keydir/$name.information";
+    echo "Showing the contents of file: $keydir/$name.information";
     date;
     echo Results of LUKSUS:;
     echo DRIVE: $device;

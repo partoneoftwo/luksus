@@ -21,7 +21,7 @@ crypto subsystem internal to the Linux Kernel. It can also use
 Truecrypt encryption with the tcplay command, and FreeBSD's geli
 encryption.
 
-This is thus a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
+LUKSUS is a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
 Instead of having to read up on the documentation for these
 tools, I wrote this wrapper script to handle the dirtywork.
 Being opinionated and pragmatic this program assumes that you (must)
@@ -34,14 +34,38 @@ cryptsetup package for LUKS support and tcplay for Truecrypt support.
 ./LUKSUS
 (No command line options needed, anymore)
 
+Dependencies:
+   an empty hardrive or storage media
+   knowledge about which device the hardrive or storage
+   (blkid or dmesg will provide this)
+   
+   On Linux - The following packages are required:
+   bash
+   dialog
+   cryptsetup - If you want to use LUKS
+   tcplay - If you want to encrypt using truecrypt, then install the tcplay package.
+   gnutools (depending on your distro)
+   coreutils (depending on your distro)
+   
+   On *BSD:
+   bash
+   coreutils (we need gtail and ghead, we rely on the same parameters as the Linux tools)
+   dialog
+   DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
+   from the repositories. "pkg_radd bash dialog coreutils tcplay" 
+   FreeBSD: pkg_add -r bash dialog coreutils
+   NetBSD: pkg_add -v bash dialog coreutils
+
 
 # FAQ:
-Q: Should I trust TrueCrypt?
-A: I have stopped using Truecrypt altogether, and now use LUKS for
-all my security needs.
+Q: Why should I use this script? 
+A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
+   Because doing all these tasks manually is 
+   time consuming and can be a little tricky. I wanted to have a simple
+   way of creating encrypted volumes instead of having to consult
+   documentation each and every time I wanted to do it.
+   Also, writing this has been a great learning experience.
 
-Take a look here for a review on a proposed
-code review and full audit of the Truecrypt project: http://istruecryptauditedyet.com/
 
 Q: What's in the secret sauce of LUKSUS?
 This is the gist of the encryption process is these commands
@@ -56,6 +80,11 @@ tcplay --create --device=$device --cipher=AES-256-XTS
 Geli (FreeBSD)
 geli init -s 4096 $device
 
+Q: What are some alternatives to LUKSUS? (LUKSUS seeks to be different
+than other tools)
+
+The QT-based zulucrypt is a graphical option - and a good one too!:
+http://code.google.com/p/zulucrypt/
 
 Q: Why are we using the AES-256 cipher?
 A: It is thoroughly vetted and impossible to crack unless Quantum
@@ -68,17 +97,12 @@ crypto software and usage of these. I highly recommend reading through them:
 http://blog.sanctum.geek.nz/series/linux-crypto/
 Thanks a lot Tom Ryder, for these very thorough and awesome posts.
 
-Q: What are some alternatives to LUKSUS?
-The QT-based zulucrypt is a graphical option - and a good one too!:
-http://code.google.com/p/zulucrypt/
+Q: Should I trust TrueCrypt?
+A: I have stopped using Truecrypt altogether, and now use LUKS for
+all my security needs.
 
-Q: Why should I use this script? 
-A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
-   Because doing all these tasks manually is 
-   time consuming and can be a little tricky. I wanted to have a simple
-   way of creating encrypted volumes instead of having to consult
-   documentation each and every time I wanted to do it.
-   Also, writing this has been a great learning experience.
+Take a look here for a review on a proposed
+code review and full audit of the Truecrypt project: http://istruecryptauditedyet.com/
 
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
@@ -121,9 +145,11 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    Cooper, Advanced Bash Guide, http://www.tldp.org/LDP/abs/html/
    Greg's Wiki, BashFAQ, http://mywiki.wooledge.org/BashFAQ
 
+   (to be implemented, Google's shell script manual of style)
+
 Q: How is the script designed?
 A: The script reuses code wherever possible and is heavily built around reusable variables.
-The script works like this:
+   The script works like this:
    all existing data will be brutally removed beyond reconstruction (forensically)
    then it writes random data to the drive
    then creates a keyfile
@@ -189,33 +215,6 @@ http://www.theatlantic.com/international/archive/2013/08/the-real-terrifying-rea
 Also the web is closing in even on longer passwords nowadays:
 http://arstechnica.com/security/2013/08/thereisnofatebutwhatwemake-turbo-charged-cracking-comes-to-long-passwords/
 
-Q: What are the requirements of using LUKSUS:
-A: an empty hardrive or storage media
-   knowledge about which device the hardrive or storage
-   (blkid or dmesg will provide this)
-   
-   On Linux:
-   bash
-   dialog
-   cryptsetup
-   tcplay
-   gnutools
-   
-   
-   On *BSD:
-   bash
-   coreutils
-   dialog
-   
-   tcplay - If you want to encrypt using truecrypt, then install the
-   tcplay package.
-
-
-DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
-from the repositories. "pkg_radd bash dialog coreutils tcplay" 
-FreeBSD: pkg_add -r bash dialog coreutils
-NetBSD: pkg_add -v bash dialog coreutils
-
 
 Q: On what platforms and distributions has LUKSUS been tested?
 A: LUKSUS works on Linux, FreeBSD and DragonFlyBSD.
@@ -241,7 +240,10 @@ A: LUKSUS is maintained in a Github repository.
    or just go to the shiny fancy page:
    http://thomasfrivold.github.io/luksus
 
-Q: I'm a developer. How do I add another encryption engine?
+
+Developer docs: (notes to self mainly)
+
+Q: How do I add another encryption engine?
 A: After having made the script more or less modular, this is the
 steps necessary to add another engine to LUKSUS:
 
@@ -249,21 +251,34 @@ ADD OS UNAME TO OSTEST()
 Add loopbackdevice to LOOPBACKTEST()
 Write HOUSEKEEPING() function for the new OS if necessary
 Create engine() enginekeyfile() and engineopen() functions
-put these new engine* functions into the main LUKSUS bootstrap-file
+put these new engine* functions into the main LUKSUS file
 TEST TEST TEST! It is easy to break things, so it is very important to
 test a lot.
 
 Q: What are the release preparations for LUKSUS?
 A: Release preparation stuff to do:
-* Complete the extensive test procedure:
-Test in virtualbox:
-4 different Linux distributions, Debian, CentOS, Arch, Ubuntu.
-FreeBSD
+*** Complete the extensive LUKSUS test procedure ***
+
+Critical test:
+Must pass all testing, not a single mistake in regards to user experience:
+* Create volume on a physical drive (Virtualbox is fine) using keyfile
+with every supported encryption engine.
+* Create volume on a physical drive (Virtualbox is fine) using
+passphrase with every supported encryption engine.
+Create volume on a virtual file container (if supported by os) using
+keyfile with every supported encryption engine.
+Create volume on a virtual file container (if supported by os) using
+passphrase with every supported encryption engine.
+
+Do this for all supported systems, and make a note in Changelog about testing after
+each OS has passed test.
+
+On the following systems - Test in virtualbox:
+6 different Linux distributions: Debian, CentOS, Arch, Ubuntu, Fedora, Gentoo.
+FreeBSD distros: FreeBSD, PCBSD
 DragonFlyBSD
 NetBSD
-Must pass both tests:
-Create volume on a physical drive (Virtualbox is fine)
-Create volume on a virtual file container (if supported by os)
+
 Frag any typos and silly formulations.
 Frag any error messages.
 
@@ -273,17 +288,54 @@ Update README Changelog and TODO
 Push a new tag to Github
 Update jekyll homepage at thomasfrivold.github.io/luksus
 Post to Freshmeat
-Consider posting elsewhere
+Consider posting elsewhere, if release is awesome enough.
 
 
-* Uber elite hackers dislike my code and think my project is lame.
+### Notes ###
+
+DRAGONFLYBSD NOTES:
+There are a few things to note about running this on DragonflyBSD...
+#
+NO EXT4, UFS IS USED 
+EXT4 support is currently not available in a workable state in DFlyBSD;
+The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
+loopback device, and I have not yet managed to get it to work.
+Therefore the user will get a UFS filesystem instead.
+
+TRUECRYPT NOTES:
+
+Truecrypt defaults to using passphrase for volume security.
+A keyfile can be added by using the commandline argument: usekey
+This will add a key to the keychain in the volume, but TrueCrypt will
+also ask for a password. 
+
+Applies to both on Linux and DragonflyBSD
+Truecrypt / tcplay is slow when it is creating encrypted
+filecontainers on Linux. Once the volume has been created
+speeds are nominal. This has at least been the case in my 
+testing on Virtualbox instances of various Linux distributions.
+
+Really slow loopback device encryption in Linux and DragonFlyBSD when
+using Truecrypt (tcplay):
+For some reason the cryptsetup tool in Dfly takes a very long time
+to do its work when it is manipulating loopback LUKS volumes, ie.
+file containers... I do not know the reason to this strange behaviour, 
+but once it has created the volume, file transfer speeds are nominal and fast.
+In my experience it takes 15 minutes to finish the process of creating
+an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
+loopback devices:)
+
+
+Comments on feedback:
+* The establishment of the uber elite dislike my code and think my project is lame.
 I tell these people they can either fork my project, 
 submit code via github or take a hike to /dev/null.
-In fact it reminds me of when I built an outdoor balcony for
-my mum. Every carpenter in the neighbourhood came by our house and chimed in on building
-techniques, and without exception they alled condemmed my project
+In fact this reminds me of when I built an outdoor balcony for
+my mum. Every carpenter in the neighbourhood came by our house, that
+sunny weekend, and chimed in on building techniques, pitfalls and
+whatnot. Without exception they all condemmed my project
 saying it would fail and that with my building technique the balcony
-would only last one season. Well 10 years on, the balcony is still
+would only last for one season. 10 years on, the balcony is still
 there, the ice and tundra hasn't twisted the wood foundation, and
 it helped raise the value of the appartment by 15000EUR.
 I see the same kind of sentiments from uber-coders about my project,
@@ -291,8 +343,9 @@ and really I don't care since they are not giving constructive
 feedback such as real suggestions with code suggestions.
 
 The project is thoroughly tested and since I know firsthand that
-everything works, I don't care when they complain about wasting computer
-cycles and doing things ultima prime efficient. 
+everything works, I don't care if the tests are not done 100%
+efficient. It's 2013, we have cpu cycles to spare. My goal is to code
+pragmatically and improve things continually, over time. 
 I code pragmatically and improve over time.
 
 * Whiptail seems to have unstable commandline options, and it seems
@@ -307,7 +360,7 @@ just so that the user experience is smoother.
 
 
 ########################################################
-###################TODO ##############################
+################### TODO ###############################
 ########################################################
 
 
@@ -317,13 +370,12 @@ Dare to post it to "Show Hackernews" (news.ycombinator.com)
 Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
 
-
-
 Engines todo:
 Add NetBSD support, cgd [50% done!]
 Add OpenBSD , bioctl support
 Add PGP / OpenPGP container support (maybe, if feasible)
 Add ecryptfs container support (maybe, if feasible)
+Other?
 
 FreeBSD todo: 
 Test LUKSUS on FreeBSD derivatives
@@ -334,23 +386,25 @@ Test keyfile handling properly with GELI
 # User interaction things
 Attempt to improve overall code, eliminate and kill laughable hacks
 Improve conditional statements, get rid of redundant echo "" lines
-Add LUKSUS status to key.information
+
+[done, must verify] Add LUKSUS status to key.information
+
 Improve LUKSUS output in Dialog window, remove keyfile information
 if the user is not using a keyfile.
-Improve the actual output, if not using keyfile, then don't show
-the empty variables to the dialog screen... 
 
-
-Add mount command and losetup/vnconfig to key.information for added usability
+[done, must verify] Add mount command and losetup/vnconfig to key.information for added usability
 
 Consider using GNOME GDIALOG OR ZENITY OR YAD. 
 This would make the script graphical. Consider how to
 ask the user about this. ** Must be tested thoroughly. **
+[still considering, zenity and yad wasn't that good. Maybe this will
+lead to bloat]
 
-
-Write a proper Jekyll Markdown Github page for the readme.
+[in progress] Write a proper Jekyll Markdown Github page for the readme.
 
 New features todo:
+[this shouldn't become a feature, but rather part of the
+documentation: Keyfile management] 
 Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
 (this might not be necessary since the user can simply use LUKSUS to
 create a stronbox, this should rather become a part of the README
@@ -358,7 +412,8 @@ file. And it should become a suggestion)
 
 
 *** ADD NETBSD SUPPORT ***
-*** PRELIMINARY WORK ON THIS BELOW ***
+*** PRELIMINARY WORK ON THE NETBSD IMPLEMENTATION BELOW ***
+*** KEPT HERE TO KEEP EVERYTHING IN ONE PLACE ***
 Improve this script to make it working (NetBSD cgdconfig)
 # The below lines almost make cgdconfig work... still have to work it out
 #!/usr/pkg/bin/bash -x
@@ -403,7 +458,7 @@ echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
 
 ---
 some pragmatic snippets of code, that probably will
-be implemented:
+be implemented for dialog handling:
 #!/bin/bash
 device=$(dialog --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
 name=$(dialog --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
@@ -455,16 +510,20 @@ whiptail --menu "Choose encryption engine" 10 40 4 \
                PGP "Rising Star Mint"   off  2>ENCRYPTION
 
 source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
-
+[target for 1.3.0]
+v1.3.0
++Extensive testing was done on all platforms
++NetBSD is now properly supported
 
 
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
 
-v1.3.0
-+Extensive testing was done on all platforms
-+NetBSD is now properly supported
+v1.2.45
+Code improvements
+[Pending] Tested and verified on: Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
+FreeBSD, PCBSD, DragonflyBSD. 
 
 v1.2.40 21:30 27.10.2013
 Whiptail options are unstable and troublesome. Support removed until later
@@ -654,40 +713,6 @@ v0.2
 
 v0.1 16.04.2012 GMT+1 1320
 + initial release
-
-
-### Notes ###
-
-DRAGONFLYBSD NOTES:
-There are a few things to note about running this on DragonflyBSD...
-#
-NO EXT4, UFS IS USED 
-EXT4 support is currently not available in a workable state in DFlyBSD;
-The mkfs.ext4 tool shipped in e2fsprogs does not like the Dfly
-loopback device, and I have not yet managed to get it to work.
-Therefore the user will get a UFS filesystem instead.
-
-TRUECRYPT NOTES:
-
-Truecrypt defaults to using passphrase for volume security.
-A keyfile can be added by using the commandline argument: usekey
-This will add a key to the keychain in the volume, but TrueCrypt will
-also ask for a password. 
-
-Applies to both on Linux and DragonflyBSD
-Truecrypt / tcplay is slow when it is creating encrypted
-filecontainers on Linux. Once the volume has been created
-speeds are nominal. This has at least been the case in my 
-testing on Virtualbox instances of various Linux distributions.
-
-Really slow loopback device encryption in DragonFlyBSD:
-For some reason the cryptsetup tool in Dfly takes a very long time
-to do its work when it is manipulating loopback LUKS volumes, ie.
-file containers... I do not know the reason to this strange behaviour, 
-but once it has created the volume, file transfer speeds are nominal and fast.
-In my experience it takes 15 minutes to finish the process of creating
-an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
-loopback devices:)
 
 
 
