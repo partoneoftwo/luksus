@@ -38,6 +38,12 @@ case $retval in
 esac
 }
 
+GOODBYE()
+{
+$dialogapp --msgbox "THANK YOU FOR USING $programname.\n A session summary was saved in $keydir/$name.information" 0 0;
+clear
+}
+
 SECURITYMODE()
 {
 DIALOGAPP=${DIALOG=dialog}
@@ -293,6 +299,7 @@ DISPLAYLOGO ()
 DISPLAYSUMMARY () 
 { 
     echo "Showing the contents of file: $keydir/$name.information";
+    echo Timestamp:
     date;
     echo Results of LUKSUS:;
     echo DRIVE: $device;
@@ -313,12 +320,10 @@ DISPLAYSUMMARY ()
     time2="$(date +%s.%N)";
     ls -l $device
 }
-
 DISPLAYSUMMARYGRAPHICAL ()
 {
-$dialogapp --msgbox "All the following information can be found
-in\n$keydir/$name.information" 0 0;
-$dialogapp --textbox $keydir/$name.information 0 0;
+$dialogapp --msgbox "Volume creation procedure is complete. Press enter to view a summary. All the following information can also be found in\n$keydir/$name.information" 0 0;
+$dialogapp --title "Showing the contents of file: $keydir/$name.information" --textbox $keydir/$name.information 0 0;
 }
 
 

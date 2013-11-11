@@ -364,13 +364,15 @@ just so that the user experience is smoother.
 ########################################################
 
 
-Project overall todo:
+Project government, community feedback:
 Get user feedback, feature requests
 Dare to post it to "Show Hackernews" (news.ycombinator.com)
 Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
 
+
 Engines todo:
+Create an autodetector on OS and present available engines based on OS
 Add NetBSD support, cgd [50% done!]
 Add OpenBSD , bioctl support
 Add PGP / OpenPGP container support (maybe, if feasible)
@@ -385,12 +387,13 @@ Test keyfile handling properly with GELI
 
 # User interaction things
 Attempt to improve overall code, eliminate and kill laughable hacks
+Attempt to follow the Google shell script manual of style
 Improve conditional statements, get rid of redundant echo "" lines
 
 [done, must verify] Add LUKSUS status to key.information
 
-Improve LUKSUS output in Dialog window, remove keyfile information
-if the user is not using a keyfile.
+Improve LUKSUS output in Dialog window:
+remove keyfile information if the user is not using a keyfile.
 
 [done, must verify] Add mount command and losetup/vnconfig to key.information for added usability
 

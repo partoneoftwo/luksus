@@ -164,6 +164,7 @@ echo The data below can also be found in /keys/$name.information
 DISPLAYSUMMARY
 WRITEINFORMATIONFILE
 DISPLAYSUMMARYGRAPHICAL
-DISPLAYSUMMARY
+# do we really want this anymore DISPLAYSUMMARY
 EXITHOUSEKEEPING
+GOODBYE
 exit 0
