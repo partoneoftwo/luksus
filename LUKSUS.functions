@@ -40,8 +40,7 @@ esac
 
 GOODBYE()
 {
-$dialogapp --msgbox "THANK YOU FOR USING $programname.\n A session summary was saved in $keydir/$name.information" 0 0;
-clear
+$dialogapp --msgbox "Thank you for using $programname $version\nA session summary was saved in $keydir/$name.information" 0 0;
 }
 
 SECURITYMODE()
@@ -218,6 +217,17 @@ ASKUSERVERIFYCONSOLE ()
     echo SERIOUSLY - LAST CHANCE;
     read || exit
 }
+
+GRAPHICALLASTCHANCE() 
+{ 
+    "$dialogapp" --title $programname --msgbox "
+    JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE\n
+    LUKSUS ASKS AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?\n
+    YOU WILL NUKE THE FOLLOWING DEVICE: $device\n
+    HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE\n
+    SERIOUSLY - LAST CHANCE\n" 0 0
+}
+
 
 CGD () 
 { 
