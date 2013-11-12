@@ -5,7 +5,7 @@ DEVICESET()
 {
 device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to
 create encrypted volume on.\nExample:\n/dev/sdd1\n\nTo create an encrypted filecontainer
-use a LOOPBACKDEVICE.\nExample:\n/dev/loop0 (Linux)\n/dev/vn0
+use a LOOPBACKDEVICE.\nExample:\n/dev/loop0 (Linux) $linuxloopbackmessage\n/dev/vn0
 (DragonFlyBSD)\n
 /dev/md0 (FreeBSD)\n 
 /dev/vnd0 (NetBSD)\n" 0 0 3>&1 1>&2 2>&3)
@@ -221,11 +221,10 @@ ASKUSERVERIFYCONSOLE ()
 GRAPHICALLASTCHANCE() 
 { 
     "$dialogapp" --title $programname --msgbox "
-    JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE\n
-    LUKSUS ASKS AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?\n
-    YOU WILL NUKE THE FOLLOWING DEVICE: $device\n
-    HIT CTRL+C NOW TO QUIT, OR HIT ANY KEY TO CONTINUE\n
-    SERIOUSLY - LAST CHANCE\n" 0 0
+    JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE
+    LUKSUS ASKS AGAIN. IS THIS THE CORRECT DEVICE TO FORMAT AND ENCRYPT?
+    YOU WILL NUKE THE FOLLOWING DEVICE: $device\n\n\n
+    HIT CTRL+C NOW OR HIT ESCAPE TO QUIT, OR HIT ANY KEY TO CONTINUE" 0 0
 }
 
 
