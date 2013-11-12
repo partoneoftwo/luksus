@@ -1,75 +1,23 @@
 # FUNCTIONS FILE FOR WRITING NEW FUNCTIONS TO THE APPLICATION
 # THIS FILE EXISTS BECAUSE WRITING NEW CODE EASILY BREAKS THE MAIN
 # FUNCTIONS FILE AND THE WHOLE PROGRAM BREAKS
-UNAME=linux
-ENCRYPTIONENGINE()
-{
-DIALOGAPP=${DIALOG=dialog}
-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
-trap "rm -f $tempfile" 0 1 2 5 15
+ENCRYPTION=LUKS
+dialogapp=dialog
 
-if [[ UNAME == Linux ]]
-then
-echo RUNNING LINUX, THESE ARE YOUR OPTIONS
-echo LUKS
-echo TRUECRYPT
-echo OPENPGP
-sleep 30s
-else
-
-$DIALOGAPP --clear --title "Set your preferred encryption engine" \
-        --menu "Please choose encryption engine" 20 51 4 \
-        "LUKS"  "LUKS (Linux and DragonFlyBSD)" \
-        "TRUECRYPT" "Truecrypt (TCPLAY) (Linux and DragonFlyBSD)" \
-        "GELI" "GELI (FreeBSD)" \
-        "CGD" "CGD (NetBSD)" \
-        "BIOCTL"  "BIOCTL (OpenBSD)" \
-        "OPENPGP"  "GNU GPG OPENPGP (GENERIC)" 2> $tempfile.enginemode
-
-retval=$?
-
-choice=`cat $tempfile.enginemode`
-
-case $retval in
-  0)
-    echo "'$choice' is your chosen encryption engine";;
-  1)
-    echo "Cancel pressed.";;
-  255)
-    echo "ESC pressed.";;
-esac
+LUKS () 
+{ 
+# Runtime Verification Checking
+if [[ $ENCRYPTION == LUKS ]]; then
+$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
+if [ -z `which cryptsetup` ] ; then  echo "Cannot continue using LUKS. Missing cryptsetup. Please install cryptsetup (cryptsetup package)" && exit; fi else echo ""
 fi
-}
-
-
-    if [[ $UNAME = Linux ]]; then
-    echo DETECTED OS: $UNAME
-    echo These are the available encryption engines
-    echo Please pick one.
-    echo This choice can be overridden by choosing something else
-    echo in the Main Menu.
-    
-        ENCRYPTION=LUKS;
-        echo On $UNAME, defaulting to $ENCRYPTION;
+if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
+        echo LUKS with passphrase;
+        echo You will only be prompted for a password once. Type carefully.;
+        cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
     else
-        if [[ $UNAME = DragonFly ]]; then
-            ENCRYPTION=LUKS;
-            echo On $UNAME, defaulting to $ENCRYPTION;
-        else
-            if [[ $UNAME = FreeBSD ]]; then
-                ENCRYPTION=GELI;
-                echo On $UNAME, Encryption set to $ENCRYPTION;
-            else
-                if [[ $UNAME = NetBSD ]]; then
-                    ENCRYPTION=CGD;
-                else
-                    ENCRYPTION=LUKSUS;
-                    echo No idea what I am running on $UNAME, defaulting to $ENCRYPTION;
-                fi;
-            fi;
-        fi;
+        echo "";
     fi
 }
-TRUECRYPT () 
-{ 
-    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $USEKEY == false ]]; then
+
+LUKS
