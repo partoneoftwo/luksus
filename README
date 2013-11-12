@@ -241,55 +241,6 @@ A: LUKSUS is maintained in a Github repository.
    http://thomasfrivold.github.io/luksus
 
 
-Developer docs: (notes to self mainly)
-
-Q: How do I add another encryption engine?
-A: After having made the script more or less modular, this is the
-steps necessary to add another engine to LUKSUS:
-
-ADD OS UNAME TO OSTEST()
-Add loopbackdevice to LOOPBACKTEST()
-Write HOUSEKEEPING() function for the new OS if necessary
-Create engine() enginekeyfile() and engineopen() functions
-put these new engine* functions into the main LUKSUS file
-TEST TEST TEST! It is easy to break things, so it is very important to
-test a lot.
-
-Q: What are the release preparations for LUKSUS?
-A: Release preparation stuff to do:
-*** Complete the extensive LUKSUS test procedure ***
-
-Critical test:
-Must pass all testing, not a single mistake in regards to user experience:
-* Create volume on a physical drive (Virtualbox is fine) using keyfile
-with every supported encryption engine.
-* Create volume on a physical drive (Virtualbox is fine) using
-passphrase with every supported encryption engine.
-Create volume on a virtual file container (if supported by os) using
-keyfile with every supported encryption engine.
-Create volume on a virtual file container (if supported by os) using
-passphrase with every supported encryption engine.
-
-Do this for all supported systems, and make a note in Changelog about testing after
-each OS has passed test.
-
-On the following systems - Test in virtualbox:
-6 different Linux distributions: Debian, CentOS, Arch, Ubuntu, Fedora, Gentoo.
-FreeBSD distros: FreeBSD, PCBSD
-DragonFlyBSD
-NetBSD
-
-Frag any typos and silly formulations.
-Frag any error messages.
-
-Release it into the wild:
-Bump version number in LUKSUS.variables
-Update README Changelog and TODO
-Push a new tag to Github
-Update jekyll homepage at thomasfrivold.github.io/luksus
-Post to Freshmeat
-Consider posting elsewhere, if release is awesome enough.
-
 
 ### Notes ###
 
@@ -517,16 +468,19 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 v1.3.0
 +Extensive testing was done on all platforms
 +NetBSD is now properly supported
+[Pending] Tested and verified on: Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
+FreeBSD, PCBSD, DragonflyBSD. 
 
 
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
 
+v1.2.50
++Introduced nice dependency checks.
+
 v1.2.45
 Code improvements
-[Pending] Tested and verified on: Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
-FreeBSD, PCBSD, DragonflyBSD. 
 
 v1.2.40 21:30 27.10.2013
 Whiptail options are unstable and troublesome. Support removed until later
@@ -716,6 +670,57 @@ v0.2
 
 v0.1 16.04.2012 GMT+1 1320
 + initial release
+
+
+
+Developer docs: (notes to self mainly)
+
+Q: How do I add another encryption engine?
+A: After having made the script more or less modular, this is the
+steps necessary to add another engine to LUKSUS:
+
+ADD OS UNAME TO OSTEST()
+Add loopbackdevice to LOOPBACKTEST()
+Write HOUSEKEEPING() function for the new OS if necessary
+Create engine() enginekeyfile() and engineopen() functions
+put these new engine* functions into the main LUKSUS file
+TEST TEST TEST! It is easy to break things, so it is very important to
+test a lot.
+
+Q: What are the release preparations for LUKSUS?
+A: Release preparation stuff to do:
+*** Complete the extensive LUKSUS test procedure ***
+
+Critical test:
+Must pass all testing, not a single mistake in regards to user experience:
+* Create volume on a physical drive (Virtualbox is fine) using keyfile
+with every supported encryption engine.
+* Create volume on a physical drive (Virtualbox is fine) using
+passphrase with every supported encryption engine.
+Create volume on a virtual file container (if supported by os) using
+keyfile with every supported encryption engine.
+Create volume on a virtual file container (if supported by os) using
+passphrase with every supported encryption engine.
+
+Do this for all supported systems, and make a note in Changelog about testing after
+each OS has passed test.
+
+On the following systems - Test in virtualbox:
+6 different Linux distributions: Debian, CentOS, Arch, Ubuntu, Fedora, Gentoo.
+FreeBSD distros: FreeBSD, PCBSD
+DragonFlyBSD
+NetBSD
+
+Frag any typos and silly formulations.
+Frag any error messages.
+
+Release it into the wild:
+Bump version number in LUKSUS.variables
+Update README Changelog and TODO
+Push a new tag to Github
+Update jekyll homepage at thomasfrivold.github.io/luksus
+Post to Freshmeat
+Consider posting elsewhere, if release is awesome enough.
 
 
 

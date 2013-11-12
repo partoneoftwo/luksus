@@ -77,6 +77,8 @@ TRAPERR()
 EXITHOUSEKEEPING()
 {
 rm *.$$
+rm menuchoices.*
+rm welcomelogo.*
 }
 
 NAMESET()
