@@ -89,11 +89,8 @@ trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be ru
 trap TRAPERR ERR # displays where an error occurred
 trap "rm -f $tempfile" 0 1 2 5 15
 
-
-
 # Calling functions
 OSTEST
-
 
 # MENUSYSTEM - USER INTERACTION
 GRAPHICALWELCOME

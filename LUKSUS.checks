@@ -15,17 +15,6 @@ then
    echo ""
 fi
 
-# Runtime Arguments Checking
-# I should use getops. Instead I make use of a crude but efficient 
-# test to see if the user wants truecrypt.
-if [[ "$3" = "truecrypt" ]] || [[ "$4" = "truecrypt" ]] || [[ "$5" = "truecrypt" ]] || [[ "$6" = "truecrypt" ]] || [[ "$7" = "truecrypt" ]] || [[ "$8" = "truecrypt" ]] || [[ "$9" = "truecrypt" ]];
-then
-echo "Using Truecrypt"
-ENCRYPTION=TRUECRYPT
-if [ -z `which tcplay` ] ;then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package)" && exit; fi
-else
-echo ""
-fi
 
 # test to see if the user wants geli (FreeBSD)
 if [[ "$3" = "geli" ]] || [[ "$4" = "geli" ]] || [[ "$5" = "geli" ]] || [[ "$6" = "geli" ]] || [[ "$7" = "geli" ]] || [[ "$8" = "geli" ]] || [[ "$9" = "geli" ]];
