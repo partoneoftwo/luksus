@@ -20,9 +20,9 @@ $DIALOGAPP --clear --title "Set your preferred encryption engine" \
         "LUKS"  "LUKS (Linux and DragonFlyBSD)" \
         "TRUECRYPT" "Truecrypt (TCPLAY) (Linux and DragonFlyBSD)" \
         "GELI" "GELI (FreeBSD)" \
-        "CGD" "CGD (NetBSD)" \
-        "BIOCTL"  "BIOCTL (OpenBSD)" \
-        "OPENPGP"  "GNU GPG OPENPGP (GENERIC)" 2> $tempfile.enginemode
+        "CGD" "CGD (NetBSD) (NOT IMPLEMENTED YET)" \
+        "BIOCTL"  "BIOCTL (OpenBSD) (NOT IMPLEMENTED YET)" \
+        "OPENPGP"  "GNU GPG OPENPGP (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
 
 retval=$?
 
