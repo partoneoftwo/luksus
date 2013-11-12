@@ -1,23 +1,28 @@
+#!/bin/bash
 # FUNCTIONS FILE FOR WRITING NEW FUNCTIONS TO THE APPLICATION
+
 # THIS FILE EXISTS BECAUSE WRITING NEW CODE EASILY BREAKS THE MAIN
 # FUNCTIONS FILE AND THE WHOLE PROGRAM BREAKS
-ENCRYPTION=LUKS
+ENCRYPTION=TRUECRYPT
 dialogapp=dialog
 
-LUKS () 
+TRUECRYPT () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == LUKS ]]; then
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [ -z `which cryptsetup` ] ; then  echo "Cannot continue using LUKS. Missing cryptsetup. Please install cryptsetup (cryptsetup package)" && exit; fi else echo ""
+if [[ $ENCRYPTION == TRUECRYPT ]] 
+then
+dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
+else
+echo .
 fi
-if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
-        echo LUKS with passphrase;
-        echo You will only be prompted for a password once. Type carefully.;
-        cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
-    else
-        echo "";
-    fi
+if [ -z `which tcplay` ] ; then 
+echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
+fi
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
+echo TrueCrypt mode;
+tcplay --create --device=$device --cipher=AES-256-XTS;
+else
+echo "";
+fi
 }
-
-LUKS
+TRUECRYPT

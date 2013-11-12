@@ -512,37 +512,49 @@ LOOPBACKTEST ()
 }
 
 
+
 LUKS () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == LUKS ]]; then
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [ -z `which cryptsetup` ] ; then  echo "Cannot continue using LUKS. Missing cryptsetup. Please install cryptsetup (cryptsetup package)" && exit; fi else echo ""
+if [[ $ENCRYPTION == LUKS ]]
+then
+dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
+else
+echo .
+fi
+if [ -z `which cryptsetup` ] ; then 
+echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo LUKS with passphrase;
         echo You will only be prompted for a password once. Type carefully.;
         cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
-    else
-        echo "";
-    fi
+else
+echo "";
+fi
 }
 
 
 LUKSKEYFILE () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == LUKS ]]; then
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [ -z `which cryptsetup` ] ; then  echo "Cannot continue using LUKS. Missing cryptsetup. Please install cryptsetup (cryptsetup package)" && exit; fi else echo ""
+if [[ $ENCRYPTION == LUKS ]]
+then
+dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
+else
+echo .
 fi
-if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE = KEYFILE ]]; then
-        echo LUKS mode;
+if [ -z `which cryptsetup` ] ; then 
+echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
+fi
+if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
+        echo LUKS with keyfile;
         cryptsetup --batch-mode --verbose --key-size=512 --cipher=aes-xts-plain64 luksFormat $device $keyfile;
-    else
-        echo "";
-    fi
+else
+echo "";
+fi
 }
+
 
 LUKSOPEN () 
 { 
@@ -612,37 +624,49 @@ OSTEST ()
     fi
 }
 
+
 TRUECRYPT () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == TRUECRYPT ]]; then
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [ -z `which tcplay` ] ; then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" 
+if [[ $ENCRYPTION == TRUECRYPT ]] 
+then
+dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
+else
+echo .
+fi
+if [ -z `which tcplay` ] ; then 
+echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
-        echo TrueCrypt mode;
-        tcplay --create --device=$device --cipher=AES-256-XTS;
-    else
-        echo "";
-    fi
+echo TrueCrypt mode;
+tcplay --create --device=$device --cipher=AES-256-XTS;
+else
+echo "";
+fi
 }
+
 
 TRUECRYPTKEYFILE () 
 { 
-if [[ $ENCRYPTION == TRUECRYPT ]]; then
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [ -z `which tcplay` ] ; then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" 
+# Runtime Verification Checking
+if [[ $ENCRYPTION == TRUECRYPT ]] 
+then
+dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
+else
+echo .
 fi
-$dialogapp --msgbox "Proceeding with $ENCRYPTION" 0 0;
-if [[ $ENCRYPTION == TRUECRYPT ]]; then
-if [ -z `which tcplay` ] ; then echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package)" && exit; fi
-    if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
-        echo TrueCrypt mode and adding a keyfile. Truecrypt asks for a password in any case. The container will also have a keyfile;
-        tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile;
-    else
-        echo "";
-    fi
+if [ -z `which tcplay` ] ; then 
+echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
+fi
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
+echo TrueCrypt mode;
+tcplay --create --device=$device --cipher=AES-256-XTS --keyfile=$keyfile;
+else
+echo "";
+fi
 }
+
+
 TRUECRYPTOPEN () 
 { 
     if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
