@@ -484,6 +484,12 @@ FreeBSD, PCBSD, DragonflyBSD.
 ###################CHANGELOG #########################
 ########################################################
 
+v1.2.60
++Finally got around to removing silly regressions on FreeBSD.
+These bugs slowed down development of the rest of LUKSUS by
+half a year or maybe more. Well. Solved now!
++Fully tested on FreeBSD. All features ok. All bugs fragged.
+
 v1.2.50
 +Introduced nice dependency checks.
 

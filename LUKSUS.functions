@@ -15,14 +15,14 @@ ENCRYPTIONENGINE()
 {
 DIALOGAPP=${DIALOG=dialog}
 
-$DIALOGAPP --clear --title "Selectt your preferred encryption engine" \
-        --menu "Please choose encryption engine" 20 51 4 \
+$DIALOGAPP --clear --title "Select your preferred encryption engine" \
+	--menu "Please choose encryption engine" 20 51 4 \
         "LUKS"  "Linux or DragonFlyBSD" \
         "TRUECRYPT" "Linux or DragonFlyBSD)" \
         "GELI" "FreeBSD" \
         "CGD" "NetBSD (NOT IMPLEMENTED YET)" \
         "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" \
-        "OPENPGP"  "GNU GPG S/MIME (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
+        "OPENPGP"  "GNU GPG OPENPGP (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
 
 retval=$?
 
@@ -380,7 +380,7 @@ FREEBSDHOUSEKEEPING ()
 	HEADAPP=ghead
 	TAILAPP=gtail
 	SHREDAPP=gshred
-        kldload geom_eli;
+        kldload geom_eli 2>/dev/null;
 	freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
         echo $luksfilesize
 	keyfile=/keys/$name.key
