@@ -1,7 +1,7 @@
 # This file contains variables and command substitutions (no more backticks) in variables
 programname=LUKSUS
-version=v1.2.50
-date="12.11.2013"
+version=v1.2.60
+date="15.02.2014"
 author="Thomas J. Frivold"
 time1="$(date +%s.%N)"
 # $1, %2, %3, %4 are command line arguments
@@ -22,13 +22,17 @@ datenow=$(date)
 USEKEY=false
 linuxloopback=$(losetup -f)
 linuxloopbackmessage="$linuxloopback is available"
+
+# Yes this is weird. I have to tell the FreeBSD encryption tool geli
+# which loopback device to attach to. It needs to know the numerical value.
 freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
 ENCRYPTION=LUKS
 NEXT=false
 #DIALOGAPPOPTIONS="--nocancel"
 #DIALOGAPPOPTIONS="--exit-label "PROCEED" --backtitle "$programname $version" "--title "$version"""
 #--exit-label "PROCEED"
-# Set DEBUGSTEP=DEBUGSTEP to enable debugging
-DEBUGSTEP=
 dialogapp=dialog
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+TAILAPP=tail
+HEADAPP=head
+SHREDAPP=shred

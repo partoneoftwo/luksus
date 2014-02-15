@@ -82,12 +82,12 @@ fi
 #########################################################
 #########################################################
 #########################################################
-set -o errtrace #enables error trace with trap
-set -o errexit #enables exit tasks with trap
-set -o pipefail # quit on errorlevel 1
-trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
-trap TRAPERR ERR # displays where an error occurred
-trap "rm -f $tempfile" 0 1 2 5 15
+#set -o errtrace #enables error trace with trap
+#set -o errexit #enables exit tasks with trap
+#set -o pipefail # quit on errorlevel 1
+#trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
+#trap TRAPERR ERR # displays where an error occurred
+#trap "rm -f $tempfile" 0 1 2 5 15
 
 # Calling functions
 OSTEST
@@ -98,31 +98,23 @@ WELCOMEINFORMATION
 WIZARD
 MENUSYSTEM
 GRAPHICALVERIFYCHOICES
-# deprechated ASKUSERVERIFYCONSOLE # safety check. To be sure.
 GRAPHICALLASTCHANCE
 
 # PREPARE KEYFILE
 CREATEKEYFILE
-
 # LOOP DEVICE FUNCTIONS AND HOUSEKEEPING
 LOOPBACKTEST
 DRAGONFLYHOUSEKEEPING
 FREEBSDHOUSEKEEPING
 NETBSDHOUSEKEEPING
-
-
-
 # THE STUFF BELOW REQUIRES STABLE RUNTIME VARIABLES
 # NOTE TO SELF - DON'T LET THE USER OR THE PROGRAM ITSELF CHANGE ANY VARIABLES BELOW HERE
 # THESE FUNCTIONS GO HAYWIRE IF THOSE VARIABLES ARE NOT PROPERLY SET
-
 # BEGIN PROGRAM
 LOOPBACKMETHOD
 DEVICEEXISTS
 DONTSHREDIFLOOPBACK
-
 ### ENCRYPTION PHASE ###
-
 # TRUECRYPT PROCESS
 TRUECRYPT
 TRUECRYPTKEYFILE
@@ -137,8 +129,9 @@ LUKSOPEN
 # GELI PROCESS
 GELI
 GELIKEYFILE
+sleep 10
 GELIOPEN
-
+sleep 30
 # CGD PROCESS COMING SOON FOR NETBSD SUPPORT
 # CGD
 # CGDKEYFILE
@@ -156,9 +149,7 @@ GELIOPEN
 
 # CREATING THE FILESYSTEM AND MOUNTING IT
 CREATEANDMOUNTFS
-
 # END PROGRAM
-#DISPLAYLOGO
 echo The data below can also be found in /keys/$name.information
 DISPLAYSUMMARY
 WRITEINFORMATIONFILE

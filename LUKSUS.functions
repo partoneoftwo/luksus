@@ -15,14 +15,14 @@ ENCRYPTIONENGINE()
 {
 DIALOGAPP=${DIALOG=dialog}
 
-$DIALOGAPP --clear --title "Set your preferred encryption engine" \
+$DIALOGAPP --clear --title "Selectt your preferred encryption engine" \
         --menu "Please choose encryption engine" 20 51 4 \
-        "LUKS"  "LUKS (Linux and DragonFlyBSD)" \
-        "TRUECRYPT" "Truecrypt (TCPLAY) (Linux and DragonFlyBSD)" \
-        "GELI" "GELI (FreeBSD)" \
-        "CGD" "CGD (NetBSD) (NOT IMPLEMENTED YET)" \
-        "BIOCTL"  "BIOCTL (OpenBSD) (NOT IMPLEMENTED YET)" \
-        "OPENPGP"  "GNU GPG OPENPGP (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
+        "LUKS"  "Linux or DragonFlyBSD" \
+        "TRUECRYPT" "Linux or DragonFlyBSD)" \
+        "GELI" "FreeBSD" \
+        "CGD" "NetBSD (NOT IMPLEMENTED YET)" \
+        "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" \
+        "OPENPGP"  "GNU GPG S/MIME (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
 
 retval=$?
 
@@ -72,13 +72,12 @@ TRAPERR()
 {
     echo "$programname HAS STOPPED: ${BASH_SOURCE[1]} "" \
     ""at about line ${BASH_LINENO[0]}"
+rm *.$$
 }
 
 EXITHOUSEKEEPING()
 {
 rm *.$$
-rm menuchoices.*
-rm welcomelogo.*
 }
 
 NAMESET()
@@ -146,6 +145,9 @@ NAMESET
 
 MENUSYSTEM()
 {
+trap "rm -f menuchoices.*" 0 1 2 5 15
+trap "rm -f securitymode.*" 0 1 2 5 15
+trap "rm -f welcomelogo.*" 0 1 2 5 15
 while [ $NEXT == false ] ;
 do
 
@@ -189,7 +191,7 @@ do
     esac
 
 done 
-# need to fill these variables again at this point
+# need to repopulate these variables again at this point
         keyfile=/keys/$name.key
         headerbackup=/keys/$name.header
         mountpoint=/mnt/$name
@@ -309,7 +311,6 @@ DISPLAYLOGO ()
 
 DISPLAYSUMMARY () 
 { 
-    echo "Showing the contents of file: $keydir/$name.information";
     echo Timestamp:
     date;
     echo Results of LUKSUS:;
@@ -375,11 +376,17 @@ DRAGONFLYHOUSEKEEPING ()
 FREEBSDHOUSEKEEPING () 
 { 
     if [ $UNAME == FreeBSD ]; then
-        echo We are on FreeBSD here. Cool.;
-        alias ghead=head;
-        alias gshred=shred;
+        echo We are on FreeBSD here. Cool. Doing some housekeeping...;
+	HEADAPP=ghead
+	TAILAPP=gtail
+	SHREDAPP=gshred
         kldload geom_eli;
-    else
+	freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
+        echo $luksfilesize
+	keyfile=/keys/$name.key
+        headerbackup=/keys/$name.header
+        mountpoint=/mnt/$name
+        else
         echo "";
     fi
 }
@@ -394,9 +401,9 @@ GELI ()
 }
 GELIKEYFILE () 
 { 
-    if [[ ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
-        echo Initializing $device with $ENCRYPTION with a keyfile;
-        geli init -B $headerbackup -p -s 4096 -K $keyfile $device;
+   if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
+        echo Initializing $device with $ENCRYPTION with a keyfile
+        geli init -B $headerbackup -s 4096 -P -K $keyfile $device; 
     else
         echo "";
     fi
@@ -405,7 +412,7 @@ GELIOPEN ()
 { 
     if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
-        geli attach -k $keyfile $device;
+        geli attach -p -k $keyfile $device;
         cryptoinithelp="geli attach -k $keyfile $device";
         VOLUMESTATUS=$(geli dump $name);
     else
@@ -467,7 +474,9 @@ LOOPBACKMETHOD ()
 { 
     if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == Linux ]]; then
         echo Beginning loopbackmethod on $device;
-        head -c $luksfilesize /dev/zero > $luksfile;
+# enogh of this head nonsense
+#       head -c $luksfilesize /dev/zero > $luksfile;
+	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
         losetup -f 1>/dev/null 2> /dev/null;
         losetup $device $luksfile;
         loopbackhelp="losetup $device $luksfile";
@@ -475,17 +484,26 @@ LOOPBACKMETHOD ()
         if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == DragonFly ]]; then
             echo DragonFlyBSD - Nice...;
             echo Beginning loopbackmethod on $device;
-            $HEADAPP -c $luksfilesize /dev/zero > $luksfile;
+            # ENOUGH OF THIS HEAD NONSENSE, GOING TO USE DD FROM NOW ON
+	    #$HEADAPP -c $luksfilesize /dev/zero > $luksfile;
+	    dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
             vnconfig > /dev/null 2> /dev/null;
             vnconfig $device $luksfile;
             loopbackhelp="vnconfig $device $luksfile";
         else
             if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == FreeBSD ]]; then
                 echo FreeBSD - Nice...;
-                $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
+                echo $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
+                echo mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
+                echo loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
+##                # No more head nonsense
+##                $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
+         	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+		echo dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
                 mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
                 loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
-            else
+
+         else
                 echo "Okay, not using a loopback device, proceeding in normal mode";
             fi;
         fi;
@@ -523,11 +541,12 @@ dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
 fi
-if [ -z `which cryptsetup` ] ; then 
+if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
-        echo LUKS with passphrase;
+        echo LUKS with passphrase mode
+	echo LUKS will now as you to provide a password for the encrypted container.
         echo You will only be prompted for a password once. Type carefully.;
         cryptsetup --batch-mode --verbose --cipher=aes-xts-plain64 luksFormat $device;
 else
@@ -545,7 +564,7 @@ dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
 fi
-if [ -z `which cryptsetup` ] ; then 
+if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
@@ -635,7 +654,7 @@ dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
 fi
-if [ -z `which tcplay` ] ; then 
+if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
 echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
@@ -656,7 +675,7 @@ dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
 fi
-if [ -z `which tcplay` ] ; then 
+if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
 echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then

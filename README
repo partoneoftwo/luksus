@@ -29,6 +29,7 @@ have: dialog or whiptail, gnutools / coretools , and a supported
 encryption engine installed. On Linux this is either found in the
 cryptsetup package for LUKS support and tcplay for Truecrypt support.
 
+
 # USAGE
 
 ./LUKSUS
@@ -131,6 +132,7 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
    Truecrypt documentation:  http://www.truecrypt.org/docs/
    FreeBSD disk encryption documentation: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/disks-encrypting.html
+   BSDTutorial: http://bsdtutorial.org/freebsd/encrypt-filesystem
    NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
    OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
    OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
@@ -181,9 +183,15 @@ Q: I lost the key or the password, is there a way to restore the key
 if I forgot it?
 A: No. Really. No.
 
+Q: LUKSUS is only a bash script, or a set of bash scripts. Is it robust?
+A: Recent versions of LUKSUS features several failsafe mechanisms to
+protect the user against its own mistakes, as well as faulty operating
+conditions like broken binaries and faulty command procedures (race errors).
+ERRTRAP has been set to 1 for instance.
 
 Q: ON KEYFILES - ARE THEY BETTER THAN PASSWORDS?
-A: Good question, some crypto wizards gave me this answer: -
+A short: Depends. Keyfiles creates a flexible situation.fs
+A long: Good question, some crypto wizards gave me this answer: -
 (Passphrase-protected) Keyfiles are two-factor (something you have,
 something you know) and passphrases are one-factor (something you
 know). It should be obvious that (passphrase-protected) keyfiles are
@@ -725,7 +733,7 @@ Consider posting elsewhere, if release is awesome enough.
 
 
 
-### LEGACY README INFORMATION FOR THOSE NOSTALGIC PEOPLE ###
+### LEGACY README INFORMATION FOR THOSE NOSTALGIC PEOPLE OUT THERE ###
 
 Legacy documentation for those who really wish to use command line
 options (not necessary anymore):
