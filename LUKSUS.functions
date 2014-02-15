@@ -327,7 +327,7 @@ DISPLAYSUMMARY ()
     echo `df -h | grep $name`;
     echo "";
     echo Volumestatus:;
-    echo $VOLUMESTATUS >> $keydir/$name.information 2>> $keydir/$name.information;
+    echo $VOLUMESTATUS 1>> $keydir/$name.information 2>> $keydir/$name.information;
     echo "################################################";
     time2="$(date +%s.%N)";
     ls -l $device
@@ -414,7 +414,7 @@ GELIOPEN ()
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
         geli attach -p -k $keyfile $device;
         cryptoinithelp="geli attach -k $keyfile $device";
-        VOLUMESTATUS=$(geli dump $name);
+	VOLUMESTATUS=$(geli dump $device);
     else
         if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
             echo Attempting to open the newly created $ENCRYPTION volume $name;
