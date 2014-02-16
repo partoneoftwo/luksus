@@ -232,9 +232,25 @@ GRAPHICALLASTCHANCE()
 }
 
 
-CGD () 
+CGD() 
 { 
     if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
+        echo Initializing $device with $ENCRYPTION;
+        cgdconfig -g -o /etc/cgd/$name aes-cbc 256
+        cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
+        cgdconfig -g -o $keydir/$name aes-cbc 256;
+        cgdconfig $name $device;
+        cgdconfig -V re-enter $name $device;
+        cgdconfig $name $devicec
+    else
+        echo "";
+    fi
+}
+
+
+CGDKEYFILE() 
+{ 
+    if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Initializing $device with $ENCRYPTION;
         cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
         cgdconfig -g -o $keydir/$name aes-cbc 256;
@@ -244,6 +260,7 @@ CGD ()
         echo "";
     fi
 }
+
 
 CREATEANDMOUNTFS () 
 { 
@@ -264,6 +281,8 @@ CREATEANDMOUNTFS ()
                 newfs -O 2 $device;
                 mount $device /mnt/$name;
                 mounthelp="mount $device /mnt/$name";
+                # loads of sed'ing and weird commando hacks needed to get the following to work:
+                # newfs -O 2 /dev/r$DEVICE-IDENTIFIEDc
             else
                 if [[ $UNAME == Linux ]]; then
                     mkfs.ext4 /dev/mapper/$name;
@@ -355,7 +374,12 @@ DONTSHREDIFLOOPBACK ()
                 echo On FreeBSD. Okay cool.;
                 echo in the middle of the shredding.place;
                 gshred -f -v -n1 $device;
-            else
+             else
+                if [[ $LOOPBACKDEVICE == false ]] && [[ $UNAME == NetBSD ]]; then
+                    echo On NetBSD. Okay cool.;
+                    echo in the middle of the shredding.place;
+                    gshred -f -v -n1 $device;
+                 else
                 echo "$device is a loopback device.";
             fi;
         fi;
@@ -493,16 +517,15 @@ LOOPBACKMETHOD ()
         else
             if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == FreeBSD ]]; then
                 echo FreeBSD - Nice...;
-                echo $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
-                echo mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
-                echo loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
-##                # No more head nonsense
-##                $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
-         	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
-		echo dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+            	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+ 		        echo dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
                 mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
                 loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
-
+        else
+            if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == NetBSD ]]; then
+                echo NetBSD - Nice...;
+                dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+    		    vnconfig -c $device $luksfile;
          else
                 echo "Okay, not using a loopback device, proceeding in normal mode";
             fi;
@@ -615,9 +638,16 @@ NETBSDHOUSEKEEPING ()
 { 
     if [ $UNAME == NetBSD ]; then
         echo We are on NetBSD here. Cool.;
-        alias ghead=head;
-        alias gshred=shred;
-    else
+        echo Doing NetBSD specific housekeeping...;
+	HEADAPP=ghead
+	TAILAPP=gtail
+	SHREDAPP=gshred
+	freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
+        echo $luksfilesize
+	keyfile=/keys/$name.key
+        headerbackup=/keys/$name.header
+        mountpoint=/mnt/$name
+        else
         echo "";
     fi
 }
