@@ -328,26 +328,28 @@ just so that the user experience is smoother.
 [wishlist / target for 1.3.0]
 v1.3.0
 +Extensive testing was done on all platforms
-+NetBSD is now properly supported
-[Pending] Tested and verified on: 
+[Pending] Tested and verified on all in testing spreadsheet: 
 Linux> Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
 FreeBSD> FreeBSD, PCBSD
 DragonFlyBSD> DragonflyBSD. 
 NetBSD
-OpenBSD
+OpenBSD: OpenBSD, BitRig
+Add:
+NetBSD Support
+OpenBSD Support
 
+Code improvements:
+Clear out the temp files
 Merge upstream code
 Compare and re-edit readme file
-Write functions for NetBSD
-Write functions for OpenBSD
 Improve requirements checks - reinstate them
 
 
 Project government, community feedback:
 Write a proper Markdown webpage on the GitHub readme file
 Get user feedback, feature requests
-Dare to post it to "Show Hackernews" (news.ycombinator.com)
-Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
+(maybe never) Dare to post it to "Show Hackernews" (news.ycombinator.com)
+(maybe) Post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
 
 
@@ -363,20 +365,14 @@ Other?
 Attempt to follow the Google shell script manual of style
 Improve conditional statements, get rid of redundant echo "" lines
 
-[done, must verify] Add LUKSUS status to key.information
-
 Improve LUKSUS output in Dialog window:
 remove keyfile information if the user is not using a keyfile.
-
-[done, must verify] Add mount command and losetup/vnconfig to key.information for added usability
 
 Consider using GNOME GDIALOG OR ZENITY OR YAD. 
 This would make the script graphical. Consider how to
 ask the user about this. ** Must be tested thoroughly. **
 [still considering, zenity and yad wasn't that good. Maybe this will
 lead to bloat]
-
-[in progress] Write a proper Jekyll Markdown Github page for the readme.
 
 New features todo:
 [this shouldn't become a feature, but rather part of the
@@ -405,34 +401,21 @@ cgdconfig -s cgd0 /dev/sd1a aes-cbc 128 < /dev/urandom
 # data using aes-cbc with a random key and cbc mode for XORing with previous
 # sectors.
 dd if=/dev/zero of=/dev/rcgd0a bs=32k
-
-
 # destroying the random key
 cgdconfig -u cgd0
-
-
 # build the cgd config file
 # skip the -V if you want data to be destroyed at first attempt of access with wrong key. For the truly paranoid.
 cgdconfig -g -V disklabel -o /etc/cgd/sd1a aes-cbc 256
-
-
 # specify the password
 cgdconfig -V re-enter cgd0 /dev/sd1a
-
-
 # create a disklabel (I don't really understand why we do this at this particular point in the process)
 disklabel -I -i /dev/cgd0
-
-
 # create filesystem
 newfs /dev/rcgd0a
-
-
 # configure cgdconfig - is this necessary???
 echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
-
-
 ---
+
 some pragmatic snippets of code, that probably will
 be implemented for dialog handling:
 #!/bin/bash
@@ -444,7 +427,6 @@ echo $device
 echo $name
 echo $luksfile
 echo $luksfilesize
-
 
 some code for improvement of the menu system
 
@@ -494,27 +476,23 @@ source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whipta
 ###################CHANGELOG #########################
 ########################################################
 
-v1.2.70
-
-
-v1.2.60
-07.05.2014 01:52 GMT+1
+v1.4 07.05.2014 01:52 GMT+1
 +Finally got around to removing silly regressions on FreeBSD.
 These bugs slowed down development of the rest of LUKSUS by
 half a year or maybe more. Well. Solved now!
 +Fully tested on FreeBSD. All features ok. All bugs fragged.
 
-v1.2.50
+v1.3.3
 +Introduced nice dependency checks.
 
-v1.2.45
+v1.3.2
 Code improvements
 
-v1.2.40 21:30 27.10.2013
+v1.3.1  21:30 27.10.2013
 Whiptail options are unstable and troublesome. Support removed until later
 notice, relying on dialog.
 
-v1.2.20 00:45 25.10.2013
+v1.3 00:45 25.10.2013
 +The menu system is now complete.
 +Code improvements
 
