@@ -271,27 +271,22 @@ A keyfile can be added by using the commandline argument: usekey
 This will add a key to the keychain in the volume, but TrueCrypt will
 also ask for a password. 
 
+
+TrueCrypt volume creation on loopback devices takes a lot of time,
+regardless of size. Just hang in there, it will complete eventually.
+
 Applies to both on Linux and DragonflyBSD
 Truecrypt / tcplay is slow when it is creating encrypted
 filecontainers on Linux. Once the volume has been created
 speeds are nominal. This has at least been the case in my 
 testing on Virtualbox instances of various Linux distributions.
 
-Really slow loopback device encryption in Linux and DragonFlyBSD when
-using Truecrypt (tcplay):
-For some reason the cryptsetup tool in Dfly takes a very long time
-to do its work when it is manipulating loopback LUKS volumes, ie.
-file containers... I do not know the reason to this strange behaviour, 
-but once it has created the volume, file transfer speeds are nominal and fast.
-In my experience it takes 15 minutes to finish the process of creating
-an encrypted filecontainer. Just have patience when creating encrypted filecontainers with 
-loopback devices:)
-
 
 Comments on feedback:
 * The establishment of the uber elite dislike my code and think my project is lame.
 I tell these people they can either fork my project, 
-submit code via github or take a hike to /dev/null.
+submit code via github or choose to walk away.
+
 In fact this reminds me of when I built an outdoor balcony for
 my mum. Every carpenter in the neighbourhood came by our house, that
 sunny weekend, and chimed in on building techniques, pitfalls and
@@ -338,12 +333,17 @@ Add:
 NetBSD Support
 OpenBSD Support
 
+Add a pager which will let the user read the README
+from within the program
+
 Code improvements:
 Clear out the temp files
 Merge upstream code
 Compare and re-edit readme file
 Improve requirements checks - reinstate them
-
+Consider running CHECKS after menu is done
+Implement robustness advice from bash-guides
+Complete implementing the NetBSD specific logic missing
 
 Project government, community feedback:
 Write a proper Markdown webpage on the GitHub readme file

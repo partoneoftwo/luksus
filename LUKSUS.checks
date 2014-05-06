@@ -46,8 +46,9 @@ dialog=false
 echo Dialog disabled by user request
 elif [ -z $(which dialog) ];
 then
-echo Dialog is not installed. Will not use dialog.
+echo Dialog is not installed. Cannot continue.
 dialog=false
+exit 1
 else
 echo Dialog enabled
 dialog=true

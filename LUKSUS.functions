@@ -89,7 +89,7 @@ LUKSFILESET()
 {
 if [[ $LOOPBACKDEVICE == false ]]
 then
-echo Okay. Using a physical device.
+echo Okay. This is a physical device.
 else
 $dialogapp $DIALOGAPPOPTIONS --title $programname --msgbox "Loopbackdevice has been detected!\nYou have specified a loopbackdevice and want to create a filecontainer." 0 0
 luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
@@ -232,9 +232,25 @@ GRAPHICALLASTCHANCE()
 }
 
 
-CGD () 
+CGD() 
 { 
     if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
+        echo Initializing $device with $ENCRYPTION;
+        cgdconfig -g -o /etc/cgd/$name aes-cbc 256
+        cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
+        cgdconfig -g -o $keydir/$name aes-cbc 256;
+        cgdconfig $name $device;
+        cgdconfig -V re-enter $name $device;
+        cgdconfig $name $device
+    else
+        echo "";
+    fi
+}
+
+
+CGDKEYFILE() 
+{ 
+    if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Initializing $device with $ENCRYPTION;
         cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
         cgdconfig -g -o $keydir/$name aes-cbc 256;
@@ -244,6 +260,11 @@ CGD ()
         echo "";
     fi
 }
+
+
+
+
+
 
 CREATEANDMOUNTFS () 
 { 
@@ -376,7 +397,7 @@ DRAGONFLYHOUSEKEEPING ()
 FREEBSDHOUSEKEEPING () 
 { 
     if [ $UNAME == FreeBSD ]; then
-        echo We are on FreeBSD here. Cool. Doing some housekeeping...;
+        echo Doing FreeBSD specific housekeeping...;
 	HEADAPP=ghead
 	TAILAPP=gtail
 	SHREDAPP=gshred
@@ -543,6 +564,7 @@ echo .
 fi
 if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
+exit 1
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo LUKS with passphrase mode
@@ -566,6 +588,7 @@ echo .
 fi
 if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
+exit 1
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo LUKS with keyfile;
@@ -655,7 +678,8 @@ else
 echo .
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
-echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
+echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
+exit 1
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
 echo TrueCrypt mode;
@@ -677,6 +701,7 @@ echo .
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
 echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
+exit 1
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
 echo TrueCrypt mode;

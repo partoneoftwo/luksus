@@ -15,7 +15,6 @@
 ###############################
 ######### VARIABLES ###########
 ###############################
-
 if [ -r LUKSUS.variables ]; then
 	source LUKSUS.variables
 else
@@ -82,9 +81,9 @@ fi
 #########################################################
 #########################################################
 #########################################################
-#set -o errtrace #enables error trace with trap
-#set -o errexit #enables exit tasks with trap
-#set -o pipefail # quit on errorlevel 1
+set -o errtrace #enables error trace with trap
+set -o errexit #enables exit tasks with trap
+set -o pipefail # quit on errorlevel 1
 #trap EXITHOUSEKEEPING EXIT     # calls housekeeping function on exit. Will be run once for errorlevel 0 and once for every errorlevel 1. awesome.
 #trap TRAPERR ERR # displays where an error occurred
 #trap "rm -f $tempfile" 0 1 2 5 15
@@ -131,8 +130,8 @@ GELI
 GELIKEYFILE
 GELIOPEN
 # CGD PROCESS COMING SOON FOR NETBSD SUPPORT
-# CGD
-# CGDKEYFILE
+CGD
+CGDKEYFILE
 # CGDOPEN
 
 # BIOCTL PROCESS MIGHT BE COMING SOON FOR OPENBSD SUPPORT
