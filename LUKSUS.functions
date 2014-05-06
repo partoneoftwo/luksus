@@ -18,7 +18,7 @@ DIALOGAPP=${DIALOG=dialog}
 $DIALOGAPP --clear --title "Select your preferred encryption engine" \
 	--menu "Please choose encryption engine" 20 51 4 \
         "LUKS"  "Linux or DragonFlyBSD" \
-        "TRUECRYPT" "Linux or DragonFlyBSD)" \
+        "TRUECRYPT" "Linux or DragonFlyBSD" \
         "GELI" "FreeBSD" \
         "CGD" "NetBSD (NOT IMPLEMENTED YET)" \
         "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" \
