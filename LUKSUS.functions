@@ -89,7 +89,7 @@ LUKSFILESET()
 {
 if [[ $LOOPBACKDEVICE == false ]]
 then
-echo Okay. This a physical device.
+echo Okay. Using a physical device.
 else
 $dialogapp $DIALOGAPPOPTIONS --title $programname --msgbox "Loopbackdevice has been detected!\nYou have specified a loopbackdevice and want to create a filecontainer." 0 0
 luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS has detected that you are creating an encrypted file container.\n\nPlease specify the full path where the encrypted volume should be created. No spaces or special characters. \n\nExample: /home/mystuff.archive" $dialogsize 3>&1 1>&2 2>&3)
@@ -232,26 +232,10 @@ GRAPHICALLASTCHANCE()
 }
 
 
-CGD() 
+CGD () 
 { 
     if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Initializing $device with $ENCRYPTION;
-        cgdconfig -g -o /etc/cgd/$name aes-cbc 256
-        cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
-        cgdconfig -g -o $keydir/$name aes-cbc 256;
-        cgdconfig $name $device;
-        cgdconfig -V re-enter $name $device;
-        cgdconfig $name $devicec
-    else
-        echo "";
-    fi
-}
-
-
-CGDKEYFILE() 
-{ 
-    if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == KEYFILE ]]; then
-        echo Initializing $device with $ENCRYPTION;
         cgdconfig -g -V $name -o $keydir/$name aes-cbc 256;
         cgdconfig -g -o $keydir/$name aes-cbc 256;
         cgdconfig $name $device;
@@ -260,7 +244,6 @@ CGDKEYFILE()
         echo "";
     fi
 }
-
 
 CREATEANDMOUNTFS () 
 { 
@@ -281,8 +264,6 @@ CREATEANDMOUNTFS ()
                 newfs -O 2 $device;
                 mount $device /mnt/$name;
                 mounthelp="mount $device /mnt/$name";
-                # loads of sed'ing and weird commando hacks needed to get the following to work:
-                # newfs -O 2 /dev/r$DEVICE-IDENTIFIEDc
             else
                 if [[ $UNAME == Linux ]]; then
                     mkfs.ext4 /dev/mapper/$name;
@@ -374,12 +355,7 @@ DONTSHREDIFLOOPBACK ()
                 echo On FreeBSD. Okay cool.;
                 echo in the middle of the shredding.place;
                 gshred -f -v -n1 $device;
-             else
-                if [[ $LOOPBACKDEVICE == false ]] && [[ $UNAME == NetBSD ]]; then
-                    echo On NetBSD. Okay cool.;
-                    echo in the middle of the shredding.place;
-                    gshred -f -v -n1 $device;
-                 else
+            else
                 echo "$device is a loopback device.";
             fi;
         fi;
@@ -400,7 +376,7 @@ DRAGONFLYHOUSEKEEPING ()
 FREEBSDHOUSEKEEPING () 
 { 
     if [ $UNAME == FreeBSD ]; then
-        echo Doing FreeBSD specific housekeeping...;
+        echo We are on FreeBSD here. Cool. Doing some housekeeping...;
 	HEADAPP=ghead
 	TAILAPP=gtail
 	SHREDAPP=gshred
@@ -517,15 +493,16 @@ LOOPBACKMETHOD ()
         else
             if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == FreeBSD ]]; then
                 echo FreeBSD - Nice...;
-            	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
- 		        echo dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+                echo $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
+                echo mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
+                echo loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
+##                # No more head nonsense
+##                $HEADAPP /dev/zero -c $luksfilesize > $luksfile;
+         	dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
+		echo dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
                 mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber;
                 loopbackhelp="mdconfig -a -t vnode -f $luksfile -u $freebsdloopnumber";
-        else
-            if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == NetBSD ]]; then
-                echo NetBSD - Nice...;
-                dd if=/dev/zero of=$luksfile bs=$luksfilesize count=1
-    		    vnconfig -c $device $luksfile;
+
          else
                 echo "Okay, not using a loopback device, proceeding in normal mode";
             fi;
@@ -566,7 +543,6 @@ echo .
 fi
 if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
-exit 1
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo LUKS with passphrase mode
@@ -590,7 +566,6 @@ echo .
 fi
 if [[ $ENCRYPTION == LUKS ]] && [ -z `which cryptsetup` ] ; then 
 echo "Missing cryptsetup. Cannot continue using LUKS. Please install cryptsetup (cryptsetup package)";
-exit 1
 fi
 if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo LUKS with keyfile;
@@ -638,16 +613,9 @@ NETBSDHOUSEKEEPING ()
 { 
     if [ $UNAME == NetBSD ]; then
         echo We are on NetBSD here. Cool.;
-        echo Doing NetBSD specific housekeeping...;
-	HEADAPP=ghead
-	TAILAPP=gtail
-	SHREDAPP=gshred
-	freebsdloopnumber=$(echo $device|{ read; echo "${REPLY#${REPLY%?}}";})
-        echo $luksfilesize
-	keyfile=/keys/$name.key
-        headerbackup=/keys/$name.header
-        mountpoint=/mnt/$name
-        else
+        alias ghead=head;
+        alias gshred=shred;
+    else
         echo "";
     fi
 }
@@ -680,7 +648,7 @@ OSTEST ()
 TRUECRYPT () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == TRUECRYPT ]] 
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]
 then
 dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
@@ -688,7 +656,6 @@ echo .
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
 echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
-exit 1
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
 echo TrueCrypt mode;
@@ -702,7 +669,7 @@ fi
 TRUECRYPTKEYFILE () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == TRUECRYPT ]] 
+if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]] 
 then
 dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
@@ -710,7 +677,6 @@ echo .
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [ -z `which tcplay` ] ; then 
 echo "Missing tcplay. Cannot continue. Please install Truecrypt (tcplay package). Note that you need the Libre Open Source GPL tcplay Truecrypt package and not the Truecrypt package downloaded from the Truecrypt.com website" ;
-exit 1
 fi
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]]; then
 echo TrueCrypt mode;

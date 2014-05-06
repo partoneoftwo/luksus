@@ -36,5 +36,3 @@ tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
 TAILAPP=tail
 HEADAPP=head
 SHREDAPP=shred
-# see the LUKSUS.debugstep for more info
-# DEBUGSTEP=DEBUGSTEP

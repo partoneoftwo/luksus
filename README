@@ -44,7 +44,7 @@ Dependencies:
    bash
    dialog
    cryptsetup - If you want to use LUKS
-   tcplay - If you want to encrypt using truecrypt, then install the tcplay package.
+   tcplay - If you want to encrypt using truecrypt, note: tcplay and not TrueCrypt.com's package
    gnutools (depending on your distro)
    coreutils (depending on your distro)
    
@@ -53,9 +53,10 @@ Dependencies:
    coreutils (we need gtail and ghead, we rely on the same parameters as the Linux tools)
    dialog
    DragonFlyBSD does not ship with bash, dialog and GNU coreutils by default, so you have to install it
-   from the repositories. "pkg_radd bash dialog coreutils tcplay" 
-   FreeBSD: pkg_add -r bash dialog coreutils
-   NetBSD: pkg_add -v bash dialog coreutils
+   from the repositories. 
+   DragonFlyBSD: pkg_radd bash dialog coreutils tcplay 
+   FreeBSD     : pkg_add -r bash dialog coreutils
+   NetBSD      : pkg_add -v bash dialog coreutils
 
 
 # FAQ:
@@ -135,7 +136,8 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    BSDTutorial: http://bsdtutorial.org/freebsd/encrypt-filesystem
    NetBSD disk encryption documentation: http://www.netbsd.org/docs/guide/en/chap-cgd.html
    OpenBSD crypto documentation: http://www.openbsd.org/crypto.html
-   OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt
+   Stackexchange: http://unix.stackexchange.com/questions/9527/how-should-one-set-up-full-disk-encryption-on-openbsd
+   OpenBSD 16 systems tips: http://www.16s.us/OpenBSD/vnconfig.txt (dead link :( )
    NetBSD disk encryption guide: http://julipedia.meroh.net/2012/02/encrypted-disk-images-in-netbsd.html
    NetBSD disk encryption guide: http://gilbert.fernandes.pagesperso-orange.fr/fullcgd.txt
    NetBSD disk encryption description: http://www.imrryr.org/~elric/cgd/cgd.pdf
@@ -146,8 +148,9 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    Steve Parker, Bourne Shell Programming Tutorial, http://steve-parker.org/sh/sh.shtml
    Cooper, Advanced Bash Guide, http://www.tldp.org/LDP/abs/html/
    Greg's Wiki, BashFAQ, http://mywiki.wooledge.org/BashFAQ
-
-   (to be implemented, Google's shell script manual of style)
+   Robert Muth, Better BASH in 15 minutes, http://robertmuth.blogspot.dk/2012/08/better-bash-scripting-in-15-minutes.html
+   All various Bash submissions on Hackernews: https://hn.algolia.com/?q=bash#!/story/forever/0/bash
+   Google's shell script manual of style
 
 Q: How is the script designed?
 A: The script reuses code wherever possible and is heavily built around reusable variables.
@@ -322,8 +325,26 @@ just so that the user experience is smoother.
 ################### TODO ###############################
 ########################################################
 
+[wishlist / target for 1.3.0]
+v1.3.0
++Extensive testing was done on all platforms
++NetBSD is now properly supported
+[Pending] Tested and verified on: 
+Linux> Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
+FreeBSD> FreeBSD, PCBSD
+DragonFlyBSD> DragonflyBSD. 
+NetBSD
+OpenBSD
+
+Merge upstream code
+Compare and re-edit readme file
+Write functions for NetBSD
+Write functions for OpenBSD
+Improve requirements checks - reinstate them
+
 
 Project government, community feedback:
+Write a proper Markdown webpage on the GitHub readme file
 Get user feedback, feature requests
 Dare to post it to "Show Hackernews" (news.ycombinator.com)
 Dare to post it to newslists, DragonFlyBSD users list, NetBSD users
@@ -338,14 +359,7 @@ Add PGP / OpenPGP container support (maybe, if feasible)
 Add ecryptfs container support (maybe, if feasible)
 Other?
 
-FreeBSD todo: 
-Test LUKSUS on FreeBSD derivatives
-Implement headerbackup in the geli encryption routine
-Fix keyfile handling with GELI - Skip passphrase, and use key
-Test keyfile handling properly with GELI
-
 # User interaction things
-Attempt to improve overall code, eliminate and kill laughable hacks
 Attempt to follow the Google shell script manual of style
 Improve conditional statements, get rid of redundant echo "" lines
 
@@ -472,19 +486,19 @@ whiptail --menu "Choose encryption engine" 10 40 4 \
                PGP "Rising Star Mint"   off  2>ENCRYPTION
 
 source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
-[target for 1.3.0]
-v1.3.0
-+Extensive testing was done on all platforms
-+NetBSD is now properly supported
-[Pending] Tested and verified on: Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
-FreeBSD, PCBSD, DragonflyBSD. 
+
+
 
 
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
 
+v1.2.70
+
+
 v1.2.60
+07.05.2014 01:52 GMT+1
 +Finally got around to removing silly regressions on FreeBSD.
 These bugs slowed down development of the rest of LUKSUS by
 half a year or maybe more. Well. Solved now!
