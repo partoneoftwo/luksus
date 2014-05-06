@@ -116,7 +116,7 @@ echo CONTINUING
 
 WELCOMEINFORMATION()
 {
-"$dialogapp" --title $programname --msgbox "Welcome to $programname $version \n\n
+"$dialogapp" --cancel-label "EXIT LUKSUS" --yesno --title $programname --msgbox "Welcome to $programname $version \n\n
 This program lets you create an encrypted volume on a physical media such
 as a hardrive or usb stick, or it can be in the form of a file
 container. The program will now ask you to specify which device you

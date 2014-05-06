@@ -288,7 +288,7 @@ I tell these people they can either fork my project,
 submit code via github or choose to walk away.
 
 In fact this reminds me of when I built an outdoor balcony for
-my mum. Every carpenter in the neighbourhood came by our house, that
+family house. Every carpenter in the neighbourhood came by our house, that
 sunny weekend, and chimed in on building techniques, pitfalls and
 whatnot. Without exception they all condemmed my project
 saying it would fail and that with my building technique the balcony
@@ -300,9 +300,8 @@ and really I don't care since they are not giving constructive
 feedback such as real suggestions with code suggestions.
 
 The project is thoroughly tested and since I know firsthand that
-everything works, I don't care if the tests are not done 100%
-efficient. It's 2013, we have cpu cycles to spare. My goal is to code
-pragmatically and improve things continually, over time. 
+everything works, The goal is not to write 100% perfect zen prose.
+My goal is to code pragmatically and improve things continually, over time. 
 I code pragmatically and improve over time.
 
 * Whiptail seems to have unstable commandline options, and it seems
@@ -312,27 +311,30 @@ dialog.
 
 * Some engines do not support keyfiles, and yet I let the user
 specify keyfile usage with these engines. This needs to be fixed,
-just so that the user experience is smoother.
-
-
+just so that the user experience is smoother. Could be part of the
+autodetector.
 
 ########################################################
 ################### TODO ###############################
 ########################################################
 
-[wishlist / target for 1.3.0]
-v1.3.0
-+Extensive testing was done on all platforms
-[Pending] Tested and verified on all in testing spreadsheet: 
+wishlist / for future release
+Consider changing wizard out with form based menu
+as seen here http://bash.cyberciti.biz/guide/The_form_dialog_for_input
+
+[wishlist / target for 1.5.0]
+v1.5.0
+Add:
++NetBSD Support
++OpenBSD Support
+
++Extensive testing on supported platforms
+++Tested and verified on all in testing spreadsheet: 
 Linux> Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
 FreeBSD> FreeBSD, PCBSD
 DragonFlyBSD> DragonflyBSD. 
 NetBSD
 OpenBSD: OpenBSD, BitRig
-Add:
-NetBSD Support
-OpenBSD Support
-
 Add a pager which will let the user read the README
 from within the program
 
@@ -344,6 +346,7 @@ Improve requirements checks - reinstate them
 Consider running CHECKS after menu is done
 Implement robustness advice from bash-guides
 Complete implementing the NetBSD specific logic missing
+Improve menus from examples here: - http://bash.cyberciti.biz/guide/A_menu_box
 
 Project government, community feedback:
 Write a proper Markdown webpage on the GitHub readme file
@@ -351,7 +354,6 @@ Get user feedback, feature requests
 (maybe never) Dare to post it to "Show Hackernews" (news.ycombinator.com)
 (maybe) Post it to newslists, DragonFlyBSD users list, NetBSD users
 list, FreeBSD users list 
-
 
 Engines todo:
 Create an autodetector on OS and present available engines based on OS
@@ -381,95 +383,6 @@ Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
 (this might not be necessary since the user can simply use LUKSUS to
 create a stronbox, this should rather become a part of the README
 file. And it should become a suggestion)
-
-
-*** ADD NETBSD SUPPORT ***
-*** PRELIMINARY WORK ON THE NETBSD IMPLEMENTATION BELOW ***
-*** KEPT HERE TO KEEP EVERYTHING IN ONE PLACE ***
-Improve this script to make it working (NetBSD cgdconfig)
-# The below lines almost make cgdconfig work... still have to work it out
-#!/usr/pkg/bin/bash -x
-#### The netbsd CGD drive encryption method is really arcane.
-
-# create cgd partition
-disklabel -i sd1
-
-# scrub partition with random data
-cgdconfig -s cgd0 /dev/sd1a aes-cbc 128 < /dev/urandom
-
-# scrub partition with zero ... however it will be converted into random
-# data using aes-cbc with a random key and cbc mode for XORing with previous
-# sectors.
-dd if=/dev/zero of=/dev/rcgd0a bs=32k
-# destroying the random key
-cgdconfig -u cgd0
-# build the cgd config file
-# skip the -V if you want data to be destroyed at first attempt of access with wrong key. For the truly paranoid.
-cgdconfig -g -V disklabel -o /etc/cgd/sd1a aes-cbc 256
-# specify the password
-cgdconfig -V re-enter cgd0 /dev/sd1a
-# create a disklabel (I don't really understand why we do this at this particular point in the process)
-disklabel -I -i /dev/cgd0
-# create filesystem
-newfs /dev/rcgd0a
-# configure cgdconfig - is this necessary???
-echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
----
-
-some pragmatic snippets of code, that probably will
-be implemented for dialog handling:
-#!/bin/bash
-device=$(dialog --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
-name=$(dialog --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
-luksfile=$(dialog --inputbox "Full path of encrypted volume" 10 30 3>&1 1>&2 2>&3)
-luksfilesize=$(dialog --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
-echo $device
-echo $name
-echo $luksfile
-echo $luksfilesize
-
-some code for improvement of the menu system
-
-#!/usr/bin/env bash
-t(){ type "$1"&>/dev/null;}
-function Menu.Show {
-   local DIA DIA_ESC; while :; do
-      t whiptail && DIA=whiptail && break
-      t dialog && DIA=dialog && DIA_ESC=-- && break
-      exec date +s"No dialog program found"
-   done; declare -A o="$1"; shift
-   $DIA --backtitle "${o[backtitle]}" --title "${o[title]}" \
-      --menu "${o[text]}" 0 0 0 $DIA_ESC "$@"; }
-
-
-
-Menu.Show '([backtitle]="Backtitle"
-            [title]="Title"
-            [question]="Please choose encryption ENGINE:")'          \
-                                                   \
-            "LUKS"  "LINUX NATIVE"                \
-            "TRUECRYPT"  "TRUECRYPT (TCPLAY)"                \
-            "GELI"  "FREEBSD NATIVE"                \
-            "CGD"  "NETBSD NATIVE"    
-
-source: http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
-
-whiptail implementation
-foobar=$(whiptail --inputbox "Enter some text" 10 30 3>&1 1>&2 2>&3)
-http://stackoverflow.com/questions/1970180/whiptail-how-to-redirect-output-to-environment-variable
-
-whiptail tutorial
-
-whiptail --menu "Choose encryption engine" 10 40 4 \
-               LUKS "" off  \
-               TRUECRYPT "Popular Ubuntu"   on   \
-               GELI "Hackish Fedora"   off  \
-               CGD "Stable Centos"    off  \
-               PGP "Rising Star Mint"   off  2>ENCRYPTION
-
-source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
-
-
 
 
 ########################################################
@@ -795,4 +708,97 @@ The following will use loop0, and place the encrypted container in
 
 For creating an encrypted filecontainer on DragonFlyBSD
 ./LUKSUS /dev/vn0 mysecretlibrary /usr/thelibrary.encrypted 1000M
+
+###################################################
+#### PRELIMINARY WORK ON VARIOUS FEATURES #########
+#### SIMPLY KEPT HERE... TO KEEP THINGS SIMPLE ####
+###################################################
+
+*** PRELIMINARY WORK ON GPG SUPPORT ****
+gpg -o myfile.gpg --cipher-algo AES256 --symmetric myfile
+will require a filemanager
+
+*** PRELIMINARY WORK ON THE NETBSD IMPLEMENTATION BELOW ***
+*** KEPT HERE TO KEEP EVERYTHING IN ONE PLACE ***
+Improve this script to make it working (NetBSD cgdconfig)
+# The below lines almost make cgdconfig work... still have to work it out
+#!/usr/pkg/bin/bash -x
+#### The netbsd CGD drive encryption method is really arcane.
+
+# create cgd partition
+disklabel -i sd1
+# scrub partition with random data
+cgdconfig -s cgd0 /dev/sd1a aes-cbc 128 < /dev/urandom
+# scrub partition with zero ... however it will be converted into random
+# data using aes-cbc with a random key and cbc mode for XORing with previous
+# sectors.
+dd if=/dev/zero of=/dev/rcgd0a bs=32k
+# destroying the random key
+cgdconfig -u cgd0
+# build the cgd config file
+# skip the -V if you want data to be destroyed at first attempt of access with wrong key. For the truly paranoid.
+cgdconfig -g -V disklabel -o /etc/cgd/sd1a aes-cbc 256
+# specify the password
+cgdconfig -V re-enter cgd0 /dev/sd1a
+# create a disklabel (I don't really understand why we do this at this particular point in the process)
+disklabel -I -i /dev/cgd0
+# create filesystem
+newfs /dev/rcgd0a
+# configure cgdconfig - is this necessary???
+echo "cgd0 /dev/sd1a" >> /etc/cgd/cgd.conf
+---
+
+some pragmatic snippets of code, that probably will
+be implemented for dialog handling:
+#!/bin/bash
+device=$(dialog --inputbox "Enter the device to create volume on. E.g. /dev/sdd1 or /dev/loop0" 10 30 3>&1 1>&2 2>&3)
+name=$(dialog --inputbox "Enter the volume name (nickname of the volume). E.g. Mystuff. Note no special characters or spaces" 10 30 3>&1 1>&2 2>&3)
+luksfile=$(dialog --inputbox "Full path of encrypted volume" 10 30 3>&1 1>&2 2>&3)
+luksfilesize=$(dialog --inputbox "What is the desired size of the container. E.g. 100M or 25G" 10 30 3>&1 1>&2 2>&3)
+echo $device
+echo $name
+echo $luksfile
+echo $luksfilesize
+
+some code for improvement of the menu system
+
+#!/usr/bin/env bash
+t(){ type "$1"&>/dev/null;}
+function Menu.Show {
+   local DIA DIA_ESC; while :; do
+      t whiptail && DIA=whiptail && break
+      t dialog && DIA=dialog && DIA_ESC=-- && break
+      exec date +s"No dialog program found"
+   done; declare -A o="$1"; shift
+   $DIA --backtitle "${o[backtitle]}" --title "${o[title]}" \
+      --menu "${o[text]}" 0 0 0 $DIA_ESC "$@"; }
+
+
+
+Menu.Show '([backtitle]="Backtitle"
+            [title]="Title"
+            [question]="Please choose encryption ENGINE:")'          \
+                                                   \
+            "LUKS"  "LINUX NATIVE"                \
+            "TRUECRYPT"  "TRUECRYPT (TCPLAY)"                \
+            "GELI"  "FREEBSD NATIVE"                \
+            "CGD"  "NETBSD NATIVE"    
+
+source: http://unix.stackexchange.com/questions/64627/whiptail-or-dialog
+
+whiptail implementation
+foobar=$(whiptail --inputbox "Enter some text" 10 30 3>&1 1>&2 2>&3)
+http://stackoverflow.com/questions/1970180/whiptail-how-to-redirect-output-to-environment-variable
+
+whiptail tutorial
+
+whiptail --menu "Choose encryption engine" 10 40 4 \
+               LUKS "" off  \
+               TRUECRYPT "Popular Ubuntu"   on   \
+               GELI "Hackish Fedora"   off  \
+               CGD "Stable Centos"    off  \
+               PGP "Rising Star Mint"   off  2>ENCRYPTION
+
+source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
+
 
