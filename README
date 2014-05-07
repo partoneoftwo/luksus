@@ -283,8 +283,8 @@ testing on Virtualbox instances of various Linux distributions.
 
 
 Comments on feedback:
-* The establishment of the uber elite dislike my code and think my project is lame.
-I tell these people they can either fork my project, 
+* There are factions who have voiced that they think this project
+unnecessary. I tell these people they can either fork my project, 
 submit code via github or choose to walk away.
 
 In fact this reminds me of when I built an outdoor balcony for
@@ -301,7 +301,6 @@ feedback such as real suggestions with code suggestions.
 
 The project is thoroughly tested and since I know firsthand that
 everything works, The goal is not to write 100% perfect zen prose.
-My goal is to code pragmatically and improve things continually, over time. 
 I code pragmatically and improve over time.
 
 * Whiptail seems to have unstable commandline options, and it seems
@@ -319,7 +318,7 @@ autodetector.
 ########################################################
 
 [wishlist / target for 1.5.0]
-v1.5.0
+v1.6.0
 Add:
 +NetBSD Support
 +OpenBSD Support
@@ -377,7 +376,7 @@ ask the user about this. ** Must be tested thoroughly. **
 [still considering, zenity and yad wasn't that good. Maybe this will
 lead to bloat]
 
-New features todo:
+Add a discussion to this readme file - Key vault:
 [this shouldn't become a feature, but rather part of the
 documentation: Keyfile management] 
 Add strongbox/keyvault option+Debate whether to call it strongbox or keyvault
@@ -387,7 +386,7 @@ file. And it should become a suggestion)
 
 
 ########################################################
-###################CHANGELOG #########################
+###################  CHANGELOG  ########################
 ########################################################
 
 v1.5
