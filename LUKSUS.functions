@@ -776,7 +776,7 @@ function GNUPGP(){
 	if [ -f $f ] 
 	then
         gpg -o $FILE.gpg --cipher-algo AES256 --symmetric $FILE && m="
-	Encryption completed successfully!\n
+	\n Encryption completed successfully!
         \n\n The file newly encrypted file is $FILE.gpg 
 	\n Original file: $f
 	\n Cipher: AES-256
