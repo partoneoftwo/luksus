@@ -1,4 +1,4 @@
-# DOING CONDITIONAL CHECKING
+# CONDITIONAL CHECKING
 # CHECKING IF RUNTIME ARGUMENTS ARE COOL
 # Testing if the user has any options for LUKSUS. These should
 # probably be ported to GETOPTS code, but it has to stay like this for

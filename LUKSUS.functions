@@ -1,7 +1,8 @@
-#### FUNCTIONS ######
-
+### File: LUKSUS.functions ####
+### Purpose: Contains all functions needed for LUKSUS ######
+### Sourced by LUKSUS ###
                                     
-DEVICESET()
+function DEVICESET()
 {
 device=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the device to
 create encrypted volume on.\nExample:\n/dev/sdd1\n\nTo create an encrypted filecontainer
@@ -11,7 +12,7 @@ use a LOOPBACKDEVICE.\nExample:\n/dev/loop0 (Linux) $linuxloopbackmessage\n/dev/
 /dev/vnd0 (NetBSD)\n" 0 0 3>&1 1>&2 2>&3)
 }
 
-ENCRYPTIONENGINE()
+function ENCRYPTIONENGINE()
 {
 DIALOGAPP=${DIALOG=dialog}
 
@@ -20,9 +21,9 @@ $DIALOGAPP --clear --title "Select your preferred encryption engine" \
         "LUKS"  "Linux or DragonFlyBSD" \
         "TRUECRYPT" "Linux or DragonFlyBSD" \
         "GELI" "FreeBSD" \
+	"GNUPGP"  "ENCRYPT A FILE WITH GNUPG OPENPGP" \
         "CGD" "NetBSD (NOT IMPLEMENTED YET)" \
-        "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" \
-        "OPENPGP"  "GNU GPG OPENPGP (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
+        "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
 
 retval=$?
 
@@ -36,14 +37,18 @@ case $retval in
   255)
     echo "ESC pressed.";;
 esac
+# ENCRYPTION DEPENDENCY CHECKS WILL BE RUN STRAIGHT AFTER THE USER HAS
+#CHOSEN THE ENGINE FROM NOW ON
+# SINCE THE GNUPGP MODE IS A BIT CHEEKY I MUST RUN IT FROM HERE AS WELL
+GNUPGPCHECK
 }
 
-GOODBYE()
+function GOODBYE()
 {
 $dialogapp --msgbox "Thank you for using $programname $version\nA session summary was saved in $keydir/$name.information" 0 0;
 }
 
-SECURITYMODE()
+function SECURITYMODE()
 {
 DIALOGAPP=${DIALOG=dialog}
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -68,24 +73,24 @@ case $retval in
 esac
 }
 
-TRAPERR()
+function TRAPERR()
 {
     echo "$programname HAS STOPPED: ${BASH_SOURCE[1]} "" \
     ""at about line ${BASH_LINENO[0]}"
 rm *.$$
 }
 
-EXITHOUSEKEEPING()
+function EXITHOUSEKEEPING()
 {
 rm *.$$
 }
 
-NAMESET()
+function NAMESET()
 {
 name=$($dialogapp $DIALOGAPPOPTIONS --inputbox "Enter the volume name (nickname of the volume).\nExample: Mystuff\nNote no special characters or spaces" 0 0 3>&1 1>&2 2>&3)
 }
 
-LUKSFILESET()
+function LUKSFILESET()
 {
 if [[ $LOOPBACKDEVICE == false ]]
 then
@@ -96,7 +101,7 @@ luksfile=$($dialogapp $DIALOGAPPOPTIONS --title $programname --inputbox "LUKSUS 
 fi
 }
 
-LUKSFILESIZESET()
+function LUKSFILESIZESET()
 {
 if [[ $LOOPBACKDEVICE == false ]]
 then
@@ -108,15 +113,15 @@ fi
 }
 
 
-NEXT()
+function NEXT()
 {
 NEXT=true
 echo CONTINUING
 }
 
-WELCOMEINFORMATION()
+function WELCOMEINFORMATION()
 {
-"$dialogapp" --cancel-label "EXIT LUKSUS" --yesno --title $programname --msgbox "Welcome to $programname $version \n\n
+"$dialogapp" --cancel-label "EXIT LUKSUS" --title $programname --msgbox "Welcome to $programname $version \n\n
 This program lets you create an encrypted volume on a physical media such
 as a hardrive or usb stick, or it can be in the form of a file
 container. The program will now ask you to specify which device you
@@ -129,7 +134,7 @@ wish to proceed with. You can re-run the wizard and you can exit the
 program before $programname does any heavywork and makes any changes." 0 0
 }
 
-WIZARD()
+function WIZARD()
 {
 # RUN THROUGH THE LUKSUS-WIZARD
 ENCRYPTIONENGINE
@@ -143,7 +148,7 @@ NAMESET
 
 
 
-MENUSYSTEM()
+function MENUSYSTEM()
 {
 trap "rm -f menuchoices.*" 0 1 2 5 15
 trap "rm -f securitymode.*" 0 1 2 5 15
@@ -198,7 +203,7 @@ done
 }
 
 
-ASKUSERVERIFYCONSOLE () 
+function ASKUSERVERIFYCONSOLE () 
 { 
     echo;
     echo THE FOLLOWING DETAILS HAS BEEN SET BY THE USER;
@@ -222,7 +227,7 @@ ASKUSERVERIFYCONSOLE ()
     read || exit
 }
 
-GRAPHICALLASTCHANCE() 
+function GRAPHICALLASTCHANCE() 
 { 
     "$dialogapp" --title $programname --msgbox "
     JUST TO MAKE DOUBLY SURE THAT YOU ARE FORMATTING THE CORRECT DRIVE
@@ -232,7 +237,7 @@ GRAPHICALLASTCHANCE()
 }
 
 
-CGD() 
+function CGD() 
 { 
     if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Initializing $device with $ENCRYPTION;
@@ -248,7 +253,7 @@ CGD()
 }
 
 
-CGDKEYFILE() 
+function CGDKEYFILE() 
 { 
     if [[ $ENCRYPTION == CGD ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Initializing $device with $ENCRYPTION;
@@ -262,11 +267,7 @@ CGDKEYFILE()
 }
 
 
-
-
-
-
-CREATEANDMOUNTFS () 
+function CREATEANDMOUNTFS () 
 { 
     mkdir -p $mountpoint;
     mkdir -p $keydir;
@@ -298,7 +299,8 @@ CREATEANDMOUNTFS ()
         fi;
     fi
 }
-CREATEKEYFILE () 
+
+function CREATEKEYFILE () 
 { 
     if [[ $SECURITYMODE == KEYFILE ]]; then
         echo Creating key;
@@ -307,7 +309,18 @@ CREATEKEYFILE ()
         echo ...;
     fi
 }
-DEVICEEXISTS () 
+
+function GNUPGPCHECK () 
+{ 
+    if [[ $ENCRYPTION == GNUPGP ]]; then
+        source LUKSUS.gnupgp;
+    else
+        echo .;
+    fi
+}
+
+
+function DEVICEEXISTS () 
 { 
     if [ -e "$device" ]; then
         echo "OK, $device exists";
@@ -316,7 +329,8 @@ DEVICEEXISTS ()
         exit 1;
     fi
 }
-DISPLAYLOGO () 
+
+function DISPLAYLOGO () 
 { 
     if [ $width -gt 119 ]; then
         $TAILAPP -n 12 LUKSUS.logo 2> /dev/null || tail -n 12 LUKSUS.logo;
@@ -330,7 +344,7 @@ DISPLAYLOGO ()
 }
 
 
-DISPLAYSUMMARY () 
+function DISPLAYSUMMARY () 
 { 
     echo Timestamp:
     date;
@@ -353,14 +367,15 @@ DISPLAYSUMMARY ()
     time2="$(date +%s.%N)";
     ls -l $device
 }
-DISPLAYSUMMARYGRAPHICAL ()
+
+function DISPLAYSUMMARYGRAPHICAL ()
 {
 $dialogapp --msgbox "Volume creation procedure is complete. Press enter to view a summary. All the following information can also be found in\n$keydir/$name.information" 0 0;
 $dialogapp --title "Showing the contents of file: $keydir/$name.information" --textbox $keydir/$name.information 0 0;
 }
 
 
-DONTSHREDIFLOOPBACK () 
+function DONTSHREDIFLOOPBACK () 
 { 
     if [[ $LOOPBACKDEVICE == false ]] && [[ $UNAME == Linux ]]; then
         echo "Okay we are using a physical device $device ...";
@@ -382,7 +397,7 @@ DONTSHREDIFLOOPBACK ()
         fi;
     fi
 }
-DRAGONFLYHOUSEKEEPING () 
+function DRAGONFLYHOUSEKEEPING () 
 { 
     if [[ $UNAME == DragonFly ]]; then
         echo We are on DragonFlyBSD here.;
@@ -394,7 +409,7 @@ DRAGONFLYHOUSEKEEPING ()
         echo "";
     fi
 }
-FREEBSDHOUSEKEEPING () 
+function FREEBSDHOUSEKEEPING () 
 { 
     if [ $UNAME == FreeBSD ]; then
         echo Doing FreeBSD specific housekeeping...;
@@ -411,7 +426,7 @@ FREEBSDHOUSEKEEPING ()
         echo "";
     fi
 }
-GELI () 
+function GELI () 
 { 
     if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Initializing $device with $ENCRYPTION;
@@ -420,7 +435,8 @@ GELI ()
         echo "";
     fi
 }
-GELIKEYFILE () 
+
+function GELIKEYFILE () 
 { 
    if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Initializing $device with $ENCRYPTION with a keyfile
@@ -429,7 +445,8 @@ GELIKEYFILE ()
         echo "";
     fi
 }
-GELIOPEN () 
+
+function GELIOPEN () 
 { 
     if [[ $ENCRYPTION == GELI ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
@@ -447,7 +464,8 @@ GELIOPEN ()
         fi;
     fi
 }
-GRAPHICALVERIFYCHOICES () 
+
+function GRAPHICALVERIFYCHOICES () 
 { 
     if [[ $GOGRAPHICAL = 1 ]]; then
         $dialogapp --title "$programname $version" --yesno "\nDETAILS AS SUBMITTED BY THE USER
@@ -482,7 +500,8 @@ ARE THESE VALUES CORRECT? \n\nIF UNSURE SAY NO.
         echo "";
     fi
 }
-GRAPHICALWELCOME () 
+
+function GRAPHICALWELCOME () 
 { 
     if [[ $dialog == true ]]; then
        $dialogapp --backtitle "$programname $version" \
@@ -491,7 +510,8 @@ GRAPHICALWELCOME ()
     fi
 }
 
-LOOPBACKMETHOD () 
+
+function LOOPBACKMETHOD () 
 { 
     if [[ $LOOPBACKDEVICE == true ]] && [[ $UNAME == Linux ]]; then
         echo Beginning loopbackmethod on $device;
@@ -530,7 +550,8 @@ LOOPBACKMETHOD ()
         fi;
     fi
 }
-LOOPBACKTEST () 
+
+function LOOPBACKTEST () 
 { 
     if [[ $device == *loop* ]]; then
         LOOPBACKDEVICE=true;
@@ -553,11 +574,10 @@ LOOPBACKTEST ()
 
 
 
-LUKS () 
+function LUKS () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == LUKS ]]
-then
+if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
 dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
@@ -577,11 +597,10 @@ fi
 }
 
 
-LUKSKEYFILE () 
+function LUKSKEYFILE () 
 { 
 # Runtime Verification Checking
-if [[ $ENCRYPTION == LUKS ]]
-then
+if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
 dialog --msgbox "Proceeding with $ENCRYPTION" 0 0;
 else
 echo .
@@ -599,7 +618,7 @@ fi
 }
 
 
-LUKSOPEN () 
+function LUKSOPEN () 
 { 
     if [[ $ENCRYPTION == LUKS ]] && [[ $SECURITYMODE == KEYFILE ]]; then
         echo Attempting to open the newly created $ENCRYPTION volume $name with $keyfile;
@@ -617,7 +636,7 @@ LUKSOPEN ()
         fi;
     fi
 }
-LUKSVERIFY () 
+function LUKSVERIFY () 
 { 
     if [[ $ENCRYPTION = LUKS ]]; then
         echo "Verifying LUKS volume";
@@ -632,7 +651,7 @@ LUKSVERIFY ()
         echo "";
     fi
 }
-NETBSDHOUSEKEEPING () 
+function NETBSDHOUSEKEEPING () 
 { 
     if [ $UNAME == NetBSD ]; then
         echo We are on NetBSD here. Cool.;
@@ -642,7 +661,8 @@ NETBSDHOUSEKEEPING ()
         echo "";
     fi
 }
-OSTEST () 
+
+function OSTEST () 
 { 
     if [[ $UNAME = Linux ]]; then
         ENCRYPTION=LUKS;
@@ -668,7 +688,7 @@ OSTEST ()
 }
 
 
-TRUECRYPT () 
+function TRUECRYPT () 
 { 
 # Runtime Verification Checking
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]
@@ -690,7 +710,7 @@ fi
 }
 
 
-TRUECRYPTKEYFILE () 
+function TRUECRYPTKEYFILE () 
 { 
 # Runtime Verification Checking
 if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == KEYFILE ]] 
@@ -712,7 +732,7 @@ fi
 }
 
 
-TRUECRYPTOPEN () 
+function TRUECRYPTOPEN () 
 { 
     if [[ $ENCRYPTION == TRUECRYPT ]] && [[ $SECURITYMODE == PASSPHRASE ]]; then
         echo Attempting to open and mount the newly created Truecrypt encrypted volume;
@@ -730,7 +750,8 @@ TRUECRYPTOPEN ()
         fi;
     fi
 }
-WRITEINFORMATIONFILE () 
+
+function WRITEINFORMATIONFILE () 
 { 
     DISPLAYLOGO > $keydir/$name.information 2> $keydir/$name.information;
     DISPLAYSUMMARY >> $keydir/$name.information 2>> $keydir/$name.information;
@@ -747,3 +768,23 @@ WRITEINFORMATIONFILE ()
 
 
 
+function GNUPGP(){
+
+## adapted from Cyberciti: http://bash.cyberciti.biz/guide/The_file_selection_box
+        local f="$1"
+	local m="$0: file $f GPG Failed to encrypt file. Most probably due to password mismatch. Try again."
+	if [ -f $f ] 
+	then
+        gpg -o $FILE.gpg --cipher-algo AES256 --symmetric $FILE && m="
+	Encryption completed successfully!\n
+        \n\n The file newly encrypted file is $FILE.gpg 
+	\n Original file: $f
+	\n Cipher: AES-256
+	\n To decrypt file run: gpg $FILE.gpg
+	\n
+	\n Stay safe! :)"
+	else
+		m="$0: $f is not a file. You probably forgot to select file with the spacebar or specify the correct complete path to the file."
+	fi 
+	dialog --title "$programname has encrypted $f with $ENCRYPTION" --msgbox "$m" $dialogsize
+}

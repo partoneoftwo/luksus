@@ -318,10 +318,6 @@ autodetector.
 ################### TODO ###############################
 ########################################################
 
-wishlist / for future release
-Consider changing wizard out with form based menu
-as seen here http://bash.cyberciti.biz/guide/The_form_dialog_for_input
-
 [wishlist / target for 1.5.0]
 v1.5.0
 Add:
@@ -340,13 +336,16 @@ from within the program
 
 Code improvements:
 Clear out the temp files
-Merge upstream code
-Compare and re-edit readme file
-Improve requirements checks - reinstate them
 Consider running CHECKS after menu is done
 Implement robustness advice from bash-guides
 Complete implementing the NetBSD specific logic missing
 Improve menus from examples here: - http://bash.cyberciti.biz/guide/A_menu_box
+Consider which variables need to be set to readonly
+Make all variable names lowercase
+Make all function names lowercase
+Improve conditional statements, get rid of redundant echo "" lines
+Attempt to follow the Google shell script manual of style
+
 
 Project government, community feedback:
 Write a proper Markdown webpage on the GitHub readme file
@@ -359,16 +358,18 @@ Engines todo:
 Create an autodetector on OS and present available engines based on OS
 Add NetBSD support, cgd [50% done!]
 Add OpenBSD , bioctl support
-Add PGP / OpenPGP container support (maybe, if feasible)
 Add ecryptfs container support (maybe, if feasible)
 Other?
 
-# User interaction things
-Attempt to follow the Google shell script manual of style
-Improve conditional statements, get rid of redundant echo "" lines
 
+wishlist / for future releases:
+Consider changing wizard out with form based menu
+as seen here http://bash.cyberciti.biz/guide/The_form_dialog_for_input
+
+# User interaction things
 Improve LUKSUS output in Dialog window:
 remove keyfile information if the user is not using a keyfile.
+
 
 Consider using GNOME GDIALOG OR ZENITY OR YAD. 
 This would make the script graphical. Consider how to
@@ -388,6 +389,10 @@ file. And it should become a suggestion)
 ########################################################
 ###################CHANGELOG #########################
 ########################################################
+
+v1.5
++ Added GNUPGP support with a filemanager to
+pick files. 07.05.2014
 
 v1.4 07.05.2014 01:52 GMT+1
 +Finally got around to removing silly regressions on FreeBSD.
