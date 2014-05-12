@@ -800,16 +800,37 @@ function GNUPGP(){
 }
 
 
+function OPENSSLDIRECTORY(){
+# OpenSSL function
+        local f="$1"
+	local m="$0: file $f OpenSSL Failed to encrypt directory. Most probably due to password mismatch. Try again."
+        if [ -d $f ]
+        then
+        tar -zcf - $FILE | openssl aes-256-cbc -a -salt -out $FILE.encrypted.openssl && m="
+	\n Encryption completed successfully!
+        \n\n The directory encrypted file is $FILE.encrypted.openssl 
+	\n Original file: $f
+	\n Cipher: AES-256
+	\n To decrypt the file run: openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
+        \n Stay safe :)"
+        else
+        m="$0: $f is not a file. You probably forgot to select file with the spacebar or specify the correct complete path to the file."
+        fi 
+	dialog --title "$programname has encrypted $f with $ENCRYPTION" --msgbox "$m" $dialogsize
+}
+
+
+
 
 function OPENSSL(){
 # OpenSSL function
         local f="$1"
-	local m="$0: file $f OpenSSL Failed to encrypt file. Most probably due to password mismatch. Try again."
+	local m="$0: file $f OpenSSL Failed. Most probably due to password mismatch. Try again."
         if [ -f $f ]
         then
         openssl aes-256-cbc -a -salt -in $FILE -out $FILE.encrypted.openssl && m="
 	\n Encryption completed successfully!
-        \n\n The file newly encrypted file is $FILE.gpg 
+        \n\n The file newly encrypted file is $FILE.encrypted.openssl 
 	\n Original file: $f
 	\n Cipher: AES-256
 	\n To decrypt the file run: openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl

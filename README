@@ -321,13 +321,17 @@ dialog.
 [wishlist / target for next version]
 v2.0
 Use steganography on keys
+Different background colours
 
 v1.7.0
 Add:
 +NetBSD Support
 +OpenBSD Support
+OpenSSL directory support
+GNUPG PGP key support
 
 Code improvements:
+Complete OpenSSL
 Complete implementing the NetBSD specific logic missing
 Write a fool proof dependency check routine
 Complete implementing OpenBSD bioctl code

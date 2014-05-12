@@ -20,7 +20,7 @@ Press CTRL+C now to quit or select cancel on the next screen.\n\n
 # select filename using dialog
 # store it to $FILE
 
-FILE=$(dialog --title "Choose file to encrypt with OpenSSL" --stdout --title "Use tab, arrow keys, space, backspace to select file and enter to continue" --fselect / $dialogsize)
+FILE=$(dialog --title "Choose directory to encrypt with OpenSSL" --stdout --title "Use tab, arrow keys, space, backspace to select file and enter to continue" --dselect / $dialogsize)
  
 # encrypt file
 [ ! -z $FILE ] && OPENSSL "$FILE"
