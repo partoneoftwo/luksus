@@ -17,7 +17,7 @@ function ENCRYPTIONENGINE()
 DIALOGAPP=${DIALOG=dialog}
 
 $DIALOGAPP --clear --title "Select your preferred encryption engine" \
-	--menu "Please choose encryption engine" 20 51 4 \
+	--menu "Please choose encryption engine" 20 51 8 \
         "LUKS"  "Linux or DragonFlyBSD" \
         "TRUECRYPT" "Linux or DragonFlyBSD" \
         "GELI" "FreeBSD" \
@@ -805,20 +805,18 @@ function OPENSSL(){
 # OpenSSL function
         local f="$1"
 	local m="$0: file $f OpenSSL Failed to encrypt file. Most probably due to password mismatch. Try again."
-	if [ -f $f ] 
-	then
-#       openssl enc -in $FILE -out $FILE.encrypted -e -aes256 -k symmetrickey && m="
-        openssl aes-256-cbc -a -salt -in $FILE -out $FILE.encrypted.openssl && -m"
-        \n Encryption completed successfully!
-        \n\n The file newly encrypted file is $FILE.openssl 
+        if [ -f $f ]
+        then
+        openssl aes-256-cbc -a -salt -in $FILE -out $FILE.encrypted.openssl && m="
+	\n Encryption completed successfully!
+        \n\n The file newly encrypted file is $FILE.gpg 
 	\n Original file: $f
 	\n Cipher: AES-256
-	\n To decrypt file run: openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
-	\n
-	\n Stay safe! :)"
-	else
-		m="$0: $f is not a file. You probably forgot to select file with the spacebar or specify the correct complete path to the file."
-	fi 
+	\n To decrypt the file run: openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
+        \n Stay safe :)"
+        else
+        m="$0: $f is not a file. You probably forgot to select file with the spacebar or specify the correct complete path to the file."
+        fi 
 	dialog --title "$programname has encrypted $f with $ENCRYPTION" --msgbox "$m" $dialogsize
 }
 

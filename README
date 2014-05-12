@@ -391,6 +391,10 @@ file. And it should become a suggestion)
 ###################  CHANGELOG  ########################
 ########################################################
 
+v1.5.1
++Added OpenSSL support
+LUKSUS can now encrypt files using OpenSSL
+
 v1.5
 + Added GNUPGP support with a filemanager to
 pick files. 07.05.2014
