@@ -96,7 +96,7 @@ It's a fine tool and a good competitor :)
 http://code.google.com/p/zulucrypt/
 
 Tomb is interesting, and uses LUKSUS
-
+http://www.dyne.org/software/tomb/
 
 Q: Why is the AES-256 cipher used to encrypt files in LUKSUS?
 A: LUKSUS uses AES-256 because it presents itself as the safest
@@ -318,7 +318,10 @@ dialog.
 ################### TODO ###############################
 ########################################################
 
-[wishlist / target for 1.6.0]
+[wishlist / target for next version]
+v2.0
+Use steganography on keys
+
 v1.7.0
 Add:
 +NetBSD Support
@@ -333,11 +336,11 @@ Let CANCEL actually work everywhere
 Consider running CHECKS after menu is done
 Implement robustness advice from bash-guides
 Improve menus from examples here: - http://bash.cyberciti.biz/guide/A_menu_box
-Consider which variables need to be set to readonly
-Set variables local
-Attempt to follow the Google shell script manual of style
-Make all variable names lowercase
-Make all function names lowercase
+ Attempt to follow the Google shell script manual of style:
+ Consider which variables need to be set to readonly
+ Set variables local
+ Make all variable names lowercase
+ Make all function names lowercase
 Improve conditional statements, get rid of redundant echo "" lines
 
 * Some engines do not support keyfiles, and yet I let the user
@@ -361,7 +364,7 @@ as seen here http://bash.cyberciti.biz/guide/The_form_dialog_for_input
 Improve LUKSUS output in Dialog window:
 remove keyfile information if the user is not using a keyfile.
 
-
+# bad idea, this will probably not happen
 Consider using GNOME GDIALOG OR ZENITY OR YAD. 
 This would make the script graphical. Consider how to
 ask the user about this. ** Must be tested thoroughly. **
