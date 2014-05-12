@@ -22,9 +22,10 @@ $DIALOGAPP --clear --title "Select your preferred encryption engine" \
         "TRUECRYPT" "Linux or DragonFlyBSD" \
         "GELI" "FreeBSD" \
 	"GNUPGP"  "ENCRYPT A FILE WITH GNUPG OPENPGP" \
+	"OPENSSL" "ENCRYPT A FILE WITH OPENSSL" \
         "CGD" "NetBSD (NOT IMPLEMENTED YET)" \
         "BIOCTL"  "OpenBSD (NOT IMPLEMENTED YET)" 2> $tempfile.enginemode
-
+				    
 retval=$?
 
 choice=$(cat $tempfile.enginemode)
@@ -41,6 +42,7 @@ esac
 #CHOSEN THE ENGINE FROM NOW ON
 # SINCE THE GNUPGP MODE IS A BIT CHEEKY I MUST RUN IT FROM HERE AS WELL
 GNUPGPCHECK
+OPENSSLCHECK
 }
 
 function GOODBYE()
@@ -314,6 +316,15 @@ function GNUPGPCHECK ()
 { 
     if [[ $ENCRYPTION == GNUPGP ]]; then
         source LUKSUS.gnupgp;
+    else
+        echo .;
+    fi
+}
+
+function OPENSSLCHECK () 
+{ 
+    if [[ $ENCRYPTION == OPENSSL ]]; then
+        source LUKSUS.openssl;
     else
         echo .;
     fi
@@ -767,7 +778,6 @@ function WRITEINFORMATIONFILE ()
 }
 
 
-
 function GNUPGP(){
 
 ## adapted from Cyberciti: http://bash.cyberciti.biz/guide/The_file_selection_box
@@ -788,3 +798,29 @@ function GNUPGP(){
 	fi 
 	dialog --title "$programname has encrypted $f with $ENCRYPTION" --msgbox "$m" $dialogsize
 }
+
+
+
+function OPENSSL(){
+# OpenSSL function
+        local f="$1"
+	local m="$0: file $f OpenSSL Failed to encrypt file. Most probably due to password mismatch. Try again."
+	if [ -f $f ] 
+	then
+#       openssl enc -in $FILE -out $FILE.encrypted -e -aes256 -k symmetrickey && m="
+        openssl aes-256-cbc -a -salt -in $FILE -out $FILE.encrypted.openssl && -m"
+        \n Encryption completed successfully!
+        \n\n The file newly encrypted file is $FILE.openssl 
+	\n Original file: $f
+	\n Cipher: AES-256
+	\n To decrypt file run: openssl enc -in $FILE.encrypted -out $FILE.decrypted -d -aes56 -k symmetrickey
+	\n openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
+	\n
+	\n Stay safe! :)"
+	else
+		m="$0: $f is not a file. You probably forgot to select file with the spacebar or specify the correct complete path to the file."
+	fi 
+	dialog --title "$programname has encrypted $f with $ENCRYPTION" --msgbox "$m" $dialogsize
+}
+
+

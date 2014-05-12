@@ -1,0 +1,28 @@
+#!/bin/bash
+# LUKSUS.openssl - Encrypt file using dialog box
+# -------------------------------------------------
+# purpose - This is the OpenSSL functionality of LUKSUS
+# This file should to into LUKSUS.variables at a later stage
+#  $1 - filename (a local variable)
+ 
+"$dialogapp" --cancel-label "EXIT LUKSUS" --title "$programname in OpenSSL-mode" --msgbox "\n
+You have chosen to encrypt a single file with OpenSSL.\n
+When you proceed to the next screen you will be shown a filemanager.
+Use the arrow keys, the tab key and the spacebar to move around the filesystem.\n\n
+Go back to the root by hitting the backspace button on your keyboard.\n 
+The spacebar selects the chosen files. You can also write the complete\n
+path of the file you wish to use. Press enter when you have chosen the correct file.\n
+The program will then ask you twice for a password to protect the file.\n
+When OpenSSL is done encrypting, it will have created a new file with a .gpg extension.\n
+Press CTRL+C now to quit or select cancel on the next screen.\n\n
+" 0 0
+
+# select filename using dialog
+# store it to $FILE
+
+FILE=$(dialog --title "Choose file to encrypt with OpenSSL" --stdout --title "Use tab, arrow keys, space, backspace to select file and enter to continue" --fselect / $dialogsize)
+ 
+# encrypt file
+[ ! -z $FILE ] && OPENSSL "$FILE"
+cat welcomelogo.$$
+exit 0
