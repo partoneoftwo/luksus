@@ -7,10 +7,15 @@
 
 # SYNOPSIS
 
-LUKSUS is a tool that creates an encrypted volume and filesystem on a hardrive or other storage
-media as well as a filecontainer.
-It can use the following encryption facilities: LUKS, Truecrypt and GELI. 
-It works on Linux, DragonflyBSD and FreeBSD.
+LUKSUS is a text-based program for Linux and BSD which runs in a
+terminal window or console. LUKSUS lets you encrypt your files,
+hardrives, usb sticks and virtual container using your operating
+system's internal encryption mechanism and acts as the frontend to the
+internal encryption mechanism. 
+It can use the following encryption facilities: LUKS, Truecrypt, GELI
+and GNUPGP. It works on Linux, DragonflyBSD and FreeBSD. LUKSUS also
+supports GNU Privacy Guard and OpenSSL to encrypt single files.
+This project is maintained by Thomas Frivold.
 
 # BACKGROUND
 
@@ -25,10 +30,10 @@ LUKSUS is a wrapper script for cryptsetup/tcplay/geli, shred and mkfs.
 Instead of having to read up on the documentation for these
 tools, I wrote this wrapper script to handle the dirtywork.
 Being opinionated and pragmatic this program assumes that you (must)
-have: dialog or whiptail, gnutools / coretools , and a supported
+have: dialog, gnutools / coretools , and a supported
 encryption engine installed. On Linux this is either found in the
 cryptsetup package for LUKS support and tcplay for Truecrypt support.
-
+LUKSUS also supports GNU Privacy Guard (OpenPGP) and OpenSSL.
 
 Dependencies - packages you need in order for LUKSUS to run:
    On Linux - The following packages are required:
@@ -36,8 +41,8 @@ Dependencies - packages you need in order for LUKSUS to run:
    dialog
    cryptsetup - If you want to use LUKS
    tcplay - If you want to encrypt using truecrypt, note: tcplay and not TrueCrypt.com's package
-   gnutools (depending on your distro)
    coreutils (depending on your distro)
+   gnutools (depending on your distro) 
    
    On *BSD:
    bash
@@ -86,26 +91,34 @@ geli init -s 4096 $device
 Q: What are some alternatives to LUKSUS? (LUKSUS seeks to be different
 than other tools)
 
-The QT-based zulucrypt is a graphical option - and a good one too!:
+The QT-based zulucrypt is a graphical option for when you want to use X
+It's a fine tool and a good competitor :)
 http://code.google.com/p/zulucrypt/
 
-Q: Why are we using the AES-256 cipher?
-A: It is thoroughly vetted and impossible to crack unless Quantum
-Computers become a reality.
+Tomb is interesting, and uses LUKSUS
+
+
+Q: Why is the AES-256 cipher used to encrypt files in LUKSUS?
+A: LUKSUS uses AES-256 because it presents itself as the safest
+cipher available. It has been thoroughly vetted and impossible 
+to crack unless Quantum Computers become a reality.
+Take a look at this for more information: 
 http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html
 
 Q: I really want to learn more about crypto in Linux. Where should I start?
-A: This Kiwi guy wrote a series of excellent blog posts covering Linux
-crypto software and usage of these. I highly recommend reading through them:
+A: Tom Ryder wrote a series of excellent blog posts covering Linux
+crypto software and usage of these. I highly recommend reading them through:
 http://blog.sanctum.geek.nz/series/linux-crypto/
 Thanks a lot Tom Ryder, for these very thorough and awesome posts.
 
 Q: Should I trust TrueCrypt?
-A: I have stopped using Truecrypt altogether, and now use LUKS for
-all my security needs.
-
-Take a look here for a review on a proposed
-code review and full audit of the Truecrypt project: http://istruecryptauditedyet.com/
+A: I have stopped using Truecrypt altogether, the license is obscure,
+and the open source code doesn't compile. Thus the binaries
+distributed by TrueCrypt are possibly compiled by different codebase.
+A two part code audit og TrueCrypt has been propsed, and
+as of this writing, part one is complete. They found no irregularities.
+Here is the website of the Truecrypt Audit project: 
+http://istruecryptauditedyet.com/
 
 Q: What is the license of LUKSUS?
 A: LUKSUS is free libre open source software, released under the GPLv2
@@ -117,20 +130,11 @@ Q: Why should I encrypt?
 A: It is beyond the scope of this README to go indepth. 
    Please google/duckduckgo for more info. Read some of Bruce Schneier's excellent articles and essays.
    
-   imaginary scenario:
-   You are working for a top notch startup. You have written a bunch
-   of amazing code, and created some fantastic technical charts and your
-   competitors are envious. Then one day, at a cafe, your laptop gets
-   stolen. You loose all your files. You had a backup, sure, but the
-   thief might sell your data. The solution is to encrypt the drive
-   and protect your data.
+   Encrypting your date gives you the power to decide
+   who gets access to your data.
 
-   real scenario:
-   Your data is at risk, and you want to protect it.
-   Since it is your data, you deserve to decide who gets access.
-
-Q: Where have you learned from? What have you based this on?
-A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
+Q: Where have you learned from? What have is LUKSUS based on?
+A: Generally LUKSUS is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
    Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
    Truecrypt documentation:  http://www.truecrypt.org/docs/
    FreeBSD disk encryption documentation: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/disks-encrypting.html
@@ -143,7 +147,8 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    NetBSD disk encryption guide: http://gilbert.fernandes.pagesperso-orange.fr/fullcgd.txt
    NetBSD disk encryption description: http://www.imrryr.org/~elric/cgd/cgd.pdf
    NetBSD cgd author interview: http://www.onlamp.com/pub/a/bsd/2005/12/21/netbsd_cgd.html
-
+   Colin Barschel, Sleepyhead.de: http://sleepyhead.de/howto/?href=crypt
+   
    Bash and sh guides:
    Michael Potter, Advanced Shell Scripting, http://uniforum.chi.il.us/slides/bash1.pdf
    Steve Parker, Bourne Shell Programming Tutorial, http://steve-parker.org/sh/sh.shtml
@@ -154,7 +159,8 @@ A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and
    Google's shell script manual of style
 
 Q: How is the script designed?
-A: The script reuses code wherever possible and is heavily built around reusable variables.
+A: The script reuses code wherever possible and is heavily built
+around reusable variables and functions. The main() function is the entire LUKSUS file.
    The script works like this:
    all existing data will be brutally removed beyond reconstruction (forensically)
    then it writes random data to the drive
@@ -164,23 +170,24 @@ A: The script reuses code wherever possible and is heavily built around reusable
    please remember to take care of your /keys
    if you loose your /keys, the keyfile to your encrypted drive, then
    the data will be impossible to retrieve.
+   (rewrite of this part scheduled)
 
 
 Q: Is there a Disclaimer? 
 A: Yes:
-    As with all security measures: Think them through, use with caution.
-    There is no such thing as 100% guaranteed security. Also:
-    I, the author, take no responsibility if a black hole appears,
-    and implodes your house, your town and the entire planet earth as an
-    effect of using this script.
-    Understand that the author takes no responsibility, and cannot
-    be held liable if you, the user, use the script to destroy the
-    files/contents of your storage media.
-    As a consequence it is the sole responsibility of the user
-    to use this software correctly. The author cannot be held
-    liable for any damages, as of this disclaimer.
-    Furthermore you are responsible for the content you encrypt.
-    END DISCLAIMER
+   As with all security measures: Use with caution.
+   There is no such thing as 100% guaranteed security. Also:
+   I, the author, take no responsibility if a black hole appears,
+   and implodes your house, your town and the entire planet earth as an
+   effect of using this script.
+   Understand that the author takes no responsibility, and cannot
+   be held liable if you, the user, use the script to destroy the
+   files/contents of your storage media.
+   As a consequence it is the sole responsibility of the user
+   to use this software correctly. The author cannot be held
+   liable for any damages, as of this disclaimer.
+   Furthermore you are responsible for the content you encrypt.
+   END DISCLAIMER
 
 
 Q: I lost the key or the password, is there a way to restore the key
@@ -227,7 +234,6 @@ http://www.theatlantic.com/international/archive/2013/08/the-real-terrifying-rea
 Also the web is closing in even on longer passwords nowadays:
 http://arstechnica.com/security/2013/08/thereisnofatebutwhatwemake-turbo-charged-cracking-comes-to-long-passwords/
 
-
 Q: On what platforms and distributions has LUKSUS been tested?
 A: LUKSUS works on Linux, FreeBSD and DragonFlyBSD.
    Tested on the distros: Debian, Ubuntu, ArchLinux, DragonFlyBSD and
@@ -242,19 +248,19 @@ A: Any issues can be reported to the Github issue tracker for
    this project, located here: https://github.com/thomasfrivold/luksus/issues
    I really want to hear from you, feedback, the ways you use it, 
    suggestions, tips and so on. 
-   My email is: thomas.frivold./\a\/t/\.gmail.com
 
 Q: What is the LUKSUS homepage?
 A: LUKSUS is maintained in a Github repository.
    The latest version can always be downloaded
-   from GITHUB page, see the TAGS to download latest release
+   from the GITHUB page, see the TAGS to download latest release
    http://github.com/thomasfrivold/luksus
    or just go to the shiny fancy page:
    http://thomasfrivold.github.io/luksus
 
 
-
-### Notes ###
+##################
+##### Notes ######
+##################
 
 DRAGONFLYBSD NOTES:
 There are a few things to note about running this on DragonflyBSD...
@@ -271,7 +277,6 @@ Truecrypt defaults to using passphrase for volume security.
 A keyfile can be added by using the commandline argument: usekey
 This will add a key to the keychain in the volume, but TrueCrypt will
 also ask for a password. 
-
 
 TrueCrypt volume creation on loopback devices takes a lot of time,
 regardless of size. Just hang in there, it will complete eventually.
@@ -295,73 +300,58 @@ whatnot. Without exception they all condemmed my project
 saying it would fail and that with my building technique the balcony
 would only last for one season. 10 years on, the balcony is still
 there, the ice and tundra hasn't twisted the wood foundation, and
-it helped raise the value of the appartment by 15000EUR.
+it helped raise the value of the appartment by 10%.
 I see the same kind of sentiments from uber-coders about my project,
 and really I don't care since they are not giving constructive
 feedback such as real suggestions with code suggestions.
 
 The project is thoroughly tested and since I know firsthand that
 everything works, The goal is not to write 100% perfect zen prose.
-I code pragmatically and improve over time.
 
 * Whiptail seems to have unstable commandline options, and it seems
 to break randomly. I am considering eliminating whiptail support
 after all the pain involved in seeing where it isn't compatible with
 dialog.
 
-* Some engines do not support keyfiles, and yet I let the user
-specify keyfile usage with these engines. This needs to be fixed,
-just so that the user experience is smoother. Could be part of the
-autodetector.
 
 ########################################################
 ################### TODO ###############################
 ########################################################
 
 [wishlist / target for 1.6.0]
-v1.6.0
+v1.7.0
 Add:
 +NetBSD Support
 +OpenBSD Support
-+OpenSSL support
-
-+Extensive testing on supported platforms
-++Tested and verified on all in testing spreadsheet: 
-Linux> Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
-FreeBSD> FreeBSD, PCBSD
-DragonFlyBSD> DragonflyBSD. 
-NetBSD
-OpenBSD: OpenBSD, BitRig
-Add a pager which will let the user read the README
-from within the program
 
 Code improvements:
-Clear out the temp files
+Complete implementing the NetBSD specific logic missing
+Write a fool proof dependency check routine
+Complete implementing OpenBSD bioctl code
+Clear out the temp files properly, every time
+Let CANCEL actually work everywhere
 Consider running CHECKS after menu is done
 Implement robustness advice from bash-guides
-Complete implementing the NetBSD specific logic missing
 Improve menus from examples here: - http://bash.cyberciti.biz/guide/A_menu_box
 Consider which variables need to be set to readonly
+Set variables local
+Attempt to follow the Google shell script manual of style
 Make all variable names lowercase
 Make all function names lowercase
 Improve conditional statements, get rid of redundant echo "" lines
-Attempt to follow the Google shell script manual of style
 
+* Some engines do not support keyfiles, and yet I let the user
+specify keyfile usage with these engines. This needs to be fixed,
+just so that the user experience is smoother. Could be part of the
+autodetector.
 
 Project government, community feedback:
 Write a proper Markdown webpage on the GitHub readme file
-Get user feedback, feature requests
-(maybe never) Dare to post it to "Show Hackernews" (news.ycombinator.com)
-(maybe) Post it to newslists, DragonFlyBSD users list, NetBSD users
-list, FreeBSD users list 
 
 Engines todo:
 Create an autodetector on OS and present available engines based on OS
-Add NetBSD support, cgd [50% done!]
 Add OpenBSD , bioctl support
 Add ecryptfs container support (maybe, if feasible)
-Other?
-
 
 wishlist / for future releases:
 Consider changing wizard out with form based menu
@@ -391,7 +381,7 @@ file. And it should become a suggestion)
 ###################  CHANGELOG  ########################
 ########################################################
 
-v1.5.1
+v1.6
 +Added OpenSSL support
 LUKSUS can now encrypt files using OpenSSL
 
@@ -601,8 +591,9 @@ v0.1 16.04.2012 GMT+1 1320
 + initial release
 
 
-
-Developer docs: (notes to self mainly)
+###############################################
+Developer documentation (notes to self mainly)
+###############################################
 
 Q: How do I add another encryption engine?
 A: After having made the script more or less modular, this is the
@@ -634,6 +625,17 @@ passphrase with every supported encryption engine.
 Do this for all supported systems, and make a note in Changelog about testing after
 each OS has passed test.
 
++Extensive testing on supported platforms
+++Tested and verified on all in testing spreadsheet: 
+Linux> Debian, Ubuntu, Mint, Gentoo, Arch, Fedora,
+FreeBSD> FreeBSD, PCBSD
+DragonFlyBSD> DragonflyBSD. 
+NetBSD
+OpenBSD: OpenBSD, BitRig
+Add a pager which will let the user read the README
+from within the program
+
+
 On the following systems - Test in virtualbox:
 6 different Linux distributions: Debian, CentOS, Arch, Ubuntu, Fedora, Gentoo.
 FreeBSD distros: FreeBSD, PCBSD
@@ -650,7 +652,6 @@ Push a new tag to Github
 Update jekyll homepage at thomasfrivold.github.io/luksus
 Post to Freshmeat
 Consider posting elsewhere, if release is awesome enough.
-
 
 
 
