@@ -813,8 +813,7 @@ function OPENSSL(){
         \n\n The file newly encrypted file is $FILE.openssl 
 	\n Original file: $f
 	\n Cipher: AES-256
-	\n To decrypt file run: openssl enc -in $FILE.encrypted -out $FILE.decrypted -d -aes56 -k symmetrickey
-	\n openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
+	\n To decrypt file run: openssl aes-256-cbc -d -a -in $FILE.encrypted.openssl -out $FILE.decrypted.openssl
 	\n
 	\n Stay safe! :)"
 	else
