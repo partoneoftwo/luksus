@@ -1,6 +1,6 @@
 # This file contains variables and command substitutions (no more backticks) in variables
 programname=LUKSUS
-version=v1.5.1
+version=v1.6
 date="12.05.2014"
 author="Thomas J. Frivold"
 time1="$(date +%s.%N)"
