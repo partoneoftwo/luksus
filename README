@@ -30,16 +30,7 @@ encryption engine installed. On Linux this is either found in the
 cryptsetup package for LUKS support and tcplay for Truecrypt support.
 
 
-# USAGE
-
-./LUKSUS
-(No command line options needed, anymore)
-
-Dependencies:
-   an empty hardrive or storage media
-   knowledge about which device the hardrive or storage
-   (blkid or dmesg will provide this)
-   
+Dependencies - packages you need in order for LUKSUS to run:
    On Linux - The following packages are required:
    bash
    dialog
@@ -58,8 +49,18 @@ Dependencies:
    FreeBSD     : pkg_add -r bash dialog coreutils
    NetBSD      : pkg_add -v bash dialog coreutils
 
+   an empty hardrive or storage media
+   knowledge about which device the hardrive or storage
+   (blkid or dmesg will provide this)
+   
 
-# FAQ:
+# USAGE
+
+./LUKSUS
+(No command line options needed, anymore)
+
+
+# FREQUENTLY ASKED QUESTIONS:
 Q: Why should I use this script? 
 A: I wrote this script because I wanted to have a way to easily and casually create encrypted volumes.
    Because doing all these tasks manually is 
@@ -128,7 +129,7 @@ A: It is beyond the scope of this README to go indepth.
    Your data is at risk, and you want to protect it.
    Since it is your data, you deserve to decide who gets access.
 
-Q: What have you based this on?
+Q: Where have you learned from? What have you based this on?
 A: It is based on the guides provided in the LUKS FAQ, Truecrypt/Tcplay FAQ, and FreeBSD documentation:
    Cryptsetup / LUKS FAQ: https://code.google.com/p/cryptsetup/wiki/FrequentlyAskedQuestions
    Truecrypt documentation:  http://www.truecrypt.org/docs/
@@ -317,11 +318,12 @@ autodetector.
 ################### TODO ###############################
 ########################################################
 
-[wishlist / target for 1.5.0]
+[wishlist / target for 1.6.0]
 v1.6.0
 Add:
 +NetBSD Support
 +OpenBSD Support
++OpenSSL support
 
 +Extensive testing on supported platforms
 ++Tested and verified on all in testing spreadsheet: 
