@@ -15,7 +15,7 @@ internal encryption mechanism.
 It can use the following encryption facilities: LUKS, Truecrypt, GELI
 and GNUPGP. It works on Linux, DragonflyBSD and FreeBSD. LUKSUS also
 supports GNU Privacy Guard and OpenSSL to encrypt single files.
-This project is maintained by Thomas Frivold.
+
 
 # BACKGROUND
 
