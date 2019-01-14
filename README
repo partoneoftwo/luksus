@@ -320,7 +320,8 @@ dialog.
 
 [wishlist / target for next version]
 v2.0
-Use steganography on keys
+Use steganography on keys - eg. allowing a key to inserted into an image
+second idea is to put a key into the metadata of a media-file such as the ID3V2 section of an mp3 file, FLAC og meta-data of a JPEG or PNG
 Different background colours
 
 v1.7.0
