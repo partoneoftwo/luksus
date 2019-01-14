@@ -301,16 +301,13 @@ saying it would fail and that with my building technique the balcony
 would only last for one season. 10 years on, the balcony is still
 there, the ice and tundra hasn't twisted the wood foundation, and
 it helped raise the value of the appartment by 10%.
-I see the same kind of sentiments from uber-coders about my project,
+I see the same kind of sentiments from uber-coders about my project here,
 and really I don't care since they are not giving constructive
 feedback such as real suggestions with code suggestions.
 
-The project is thoroughly tested and since I know firsthand that
-everything works, The goal is not to write 100% perfect zen prose.
-
 * Whiptail seems to have unstable commandline options, and it seems
 to break randomly. I am considering eliminating whiptail support
-after all the pain involved in seeing where it isn't compatible with
+after all the pain involved in seeing where it isn't transparently compatible with
 dialog.
 
 
