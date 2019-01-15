@@ -7,7 +7,7 @@
 
 # SYNOPSIS
 
-LUKSUS is a text-based program for Linux and BSD which runs in a
+LUKSUS is a text-based menu driven program, for Linux and BSD which runs in a
 terminal window or console. LUKSUS lets you encrypt your files,
 hardrives, usb sticks and virtual container using your operating
 system's internal encryption mechanism and acts as the frontend to the
