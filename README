@@ -818,3 +818,5 @@ whiptail --menu "Choose encryption engine" 10 40 4 \
 source: http://www.techrepublic.com/blog/linux-and-open-source/how-to-use-whiptail-to-write-interactive-shell-scripts/
 
 
+
+Join the chat at https://gitter.im/thomasfrivold/luksus
